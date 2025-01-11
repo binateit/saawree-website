@@ -6,6 +6,7 @@ import SaleOrder from "./transactions/SaleOrder";
 import { useQuery } from "@tanstack/react-query";
 import { getRecordById } from "@/core/requests/customerRoutes";
 import { useSession } from "next-auth/react";
+import { getUserByToken } from "@/core/requests/authRequests";
 
 const page = () => {
   const { data: session } = useSession();
@@ -18,12 +19,22 @@ const page = () => {
   const { data: customerOverview, isLoading: customerOverviewLoading } =
     useQuery({
       queryKey: ["customerOverviewRec"],
-      queryFn: () => getRecordById(session?.user?.id),
+      queryFn: () => getRecordById(),
       refetchOnWindowFocus: false,
     });
+  const {
+    data: customerProfile,
+    isLoading: customerProfileLoading,
+    refetch: customerProfileRefetch,
+  } = useQuery({
+    queryKey: ["userByToken"],
+    queryFn: () => getUserByToken(session?.user?.token),
+    refetchOnWindowFocus: false,
+  });
 
   if (customerOverviewLoading) return <p>Loading....</p>;
-  console.log(customerOverview);
+
+  console.log(customerProfile?.data);
   return (
     <section className='dashboard-wrap'>
       <div className='container'>
@@ -116,8 +127,15 @@ const page = () => {
             </div>
           </div>
           <div className='col-xl-9 col-lg-9'>
-            {showRightPanel === "overview" && <Overview />}
-            {showRightPanel === "profile" && <ProfileDetails />}
+            {showRightPanel === "overview" && (
+              <Overview overview={customerOverview} />
+            )}
+            {showRightPanel === "profile" && (
+              <ProfileDetails
+                data={customerProfile?.data}
+                customerProfileRefetch={customerProfileRefetch}
+              />
+            )}
             {showRightPanel === "transaction" && <SaleOrder />}
           </div>
         </div>

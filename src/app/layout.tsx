@@ -10,6 +10,9 @@ import QueryProvider from "@/core/component/QueryProvider";
 import SessionProvider from "@/core/component/SessionProvider";
 import { getServerSession } from "next-auth";
 // import "bootstrap/dist/css/bootstrap.min.css";
+import { PrimeReactProvider } from "primereact/api";
+import "primereact/resources/themes/lara-light-cyan/theme.css";
+import { ToastContainer } from "react-toastify";
 
 export default async function RootLayout({
   children,
@@ -35,11 +38,14 @@ export default async function RootLayout({
       </Head>
       <SessionProvider session={session}>
         <QueryProvider>
-          <body>
-            <Header />
-            {children}
-            <Footer />
-          </body>
+          <PrimeReactProvider>
+            <body>
+              <Header />
+              {children}
+              <Footer />
+              <ToastContainer />
+            </body>
+          </PrimeReactProvider>
         </QueryProvider>
       </SessionProvider>
     </html>

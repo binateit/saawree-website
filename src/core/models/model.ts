@@ -91,3 +91,16 @@ export type Country = {
 };
 
 export type CountryQueryResponse = Response<Array<Country>>;
+
+export type userToken = {
+  token: string;
+  refreshToken: string;
+  refreshTokenExpiryTime: string;
+  firstName: string;
+  lastName: string;
+  emailAddress: string;
+  userId: string;
+  rateTypeId: number;
+  isGuestUser: boolean;
+  userType: string;
+};
