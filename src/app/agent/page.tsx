@@ -1,12 +1,9 @@
 "use client";
 import React, { useState } from "react";
 import Overview from "./overview";
-import ProfileDetails from "./profile/ProfileDetails";
-import SaleOrder from "./transactions/SaleOrder";
 import { useQuery } from "@tanstack/react-query";
-import { getRecordById } from "@/core/requests/customerRoutes";
 import { useSession } from "next-auth/react";
-import { getUserByToken } from "@/core/requests/authRequests";
+import { getRecordById } from "@/core/requests/agentRequests";
 
 const page = () => {
   const { data: session } = useSession();
@@ -16,23 +13,11 @@ const page = () => {
     name: "",
   });
 
-  const { data: customerOverview, isLoading: customerOverviewLoading } =
-    useQuery({
-      queryKey: ["customerOverviewRec"],
-      queryFn: () => getRecordById(),
-      refetchOnWindowFocus: false,
-    });
-  const {
-    data: customerProfile,
-    isLoading: customerProfileLoading,
-    refetch: customerProfileRefetch,
-  } = useQuery({
-    queryKey: ["userByToken"],
-    queryFn: () => getUserByToken(session?.user?.token),
+  const { data: agentOverview, isLoading: agentOverviewLoading } = useQuery({
+    queryKey: ["agentOverviewRec"],
+    queryFn: () => getRecordById(session?.user?.id),
     refetchOnWindowFocus: false,
   });
-
-  if (customerOverviewLoading) return <p>Loading....</p>;
 
   return (
     <section className='dashboard-wrap'>
@@ -127,15 +112,8 @@ const page = () => {
           </div>
           <div className='col-xl-9 col-lg-9'>
             {showRightPanel === "overview" && (
-              <Overview overview={customerOverview} />
+              <Overview overview={agentOverview} />
             )}
-            {showRightPanel === "profile" && (
-              <ProfileDetails
-                data={customerProfile?.data}
-                customerProfileRefetch={customerProfileRefetch}
-              />
-            )}
-            {showRightPanel === "transaction" && <SaleOrder />}
           </div>
         </div>
       </div>

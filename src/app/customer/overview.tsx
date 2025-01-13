@@ -3,7 +3,6 @@ import { CustomerRecord } from "@/core/models/customerModel";
 import React from "react";
 
 const Overview = ({ overview }: { overview: CustomerRecord | undefined }) => {
-  console.log(overview);
   return (
     <div className='card shadow rounded'>
       <div className='card-header bg-white'>

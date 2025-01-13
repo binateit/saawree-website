@@ -1,5 +1,4 @@
 import { AxiosResponse } from "axios";
-import axiosInstance from "../helpers/axiosInstance";
 import {
   AgentLoginResult,
   AgentModel,
@@ -14,6 +13,7 @@ import {
 } from "../models/authModel";
 import { Result } from "../models/model";
 
+import axiosInstance from "../helpers/axiosInstance";
 const API_URL = process.env.NEXT_PUBLIC_APP_STORE_API_URL;
 
 //store

@@ -37,21 +37,17 @@ const handler = NextAuth({
           );
 
           if (loginResponse.succeeded && loginResponse.data.token) {
-            const customerData = await getUserByToken(loginResponse.data.token);
-            console.log("customerData", customerData);
+            // const customerData = await getUserByToken(loginResponse.data.token);
+            // console.log("customerData", customerData);
             let user = {
               token: loginResponse.data.token,
               refreshToken: loginResponse.data.refreshToken,
               refreshTokenExpiryTime: loginResponse.data.refreshTokenExpiryTime,
-              id: customerData.data.id,
-              rateTypeId: customerData.data.rateTypeId,
-              firstName: customerData.data.firstName,
-              lastName: customerData.data.lastName,
-              emailAddress: customerData.data.emailAddress,
-              mobileNumber: customerData.data.mobileNumber,
-              userId: customerData.data.userId,
+              firstName: loginResponse.data.firstName,
+              lastName: loginResponse.data.lastName,
+              emailAddress: loginResponse.data.emailAddress,
+              mobileNumber: loginResponse.data.mobileNumber,
               userType: "customer",
-              isGuestUser: loginResponse.data.isGuestUser,
             };
             return user as any;
           } else {
@@ -82,22 +78,20 @@ const handler = NextAuth({
             credentials?.username as string,
             credentials?.password as string
           );
-          if (loginResponse && loginResponse.token) {
-            const agentData = await getAgentByToken(loginResponse.token);
+          if (loginResponse && loginResponse?.data?.token) {
+            // const agentData = await getAgentByToken(loginResponse.token);
+
             let agent = {
-              token: loginResponse.token,
-              refreshToken: loginResponse.refreshToken,
-              refreshTokenExpiryTime: loginResponse.refreshTokenExpiryTime,
-              id: agentData.data.id,
-              rateTypeId: agentData.data.rateTypeId,
-              firstName: agentData.data.firstName,
-              lastName: agentData.data.lastName,
-              emailAddress: agentData.data.emailAddress,
-              mobileNumber: agentData.data.mobileNumber,
-              userId: agentData.data.userId,
+              token: loginResponse?.data?.token,
+              refreshToken: loginResponse?.data?.refreshToken,
+              refreshTokenExpiryTime:
+                loginResponse?.data?.refreshTokenExpiryTime,
+              firstName: loginResponse?.data?.firstName,
+              lastName: loginResponse?.data?.lastName,
+              emailAddress: loginResponse?.data?.emailAddress,
+              mobileNumber: loginResponse?.data?.mobileNumber,
               userType: "agent",
-              commissionPercent: agentData?.data?.commissionPercent,
-              isGuestUser: loginResponse.isGuestUser,
+              agentCode: loginResponse?.data?.agentCode,
             };
             return agent as any;
           } else {
@@ -137,16 +131,11 @@ const handler = NextAuth({
           refreshToken: token?.user?.refreshToken as unknown as string,
           refreshTokenExpiryTime: token?.user
             ?.refreshTokenExpiryTime as unknown as Date,
-          id: token?.user?.id as unknown as number,
           firstName: token?.user?.firstName as unknown as string,
           lastName: token?.user?.lastName as unknown as string,
           emailAddress: token?.user?.emailAddress as unknown as string,
-          contactNumber: token?.user?.contactNumber as unknown as string,
-          userId: token?.user?.userId as unknown as string,
-          rateTypeId: token?.user?.rateTypeId as unknown as number,
-          isGuestUser: token?.user?.isGuestUser as unknown as boolean,
           userType: token?.user?.userType as unknown as boolean,
-          commissionPercent: token?.user?.commissionPercent,
+          printName: token?.user?.printName as unknown as string,
         };
       }
 
@@ -158,16 +147,12 @@ const handler = NextAuth({
           token: user.token,
           refreshToken: user.refreshToken,
           refreshTokenExpiryTime: user.refreshTokenExpiryTime,
-          id: user.id,
           firstName: user.firstName,
           lastName: user.lastName,
+          printName: user.printName,
           emailAddress: user.emailAddress,
           contactNumber: user.contactNumber,
-          userId: user.userId,
-          rateTypeId: user.rateTypeId,
           userType: user.userType,
-          isGuestUser: user.isGuestUser,
-          commissionPercent: user.commissionPercent,
         };
       }
 

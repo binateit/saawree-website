@@ -106,10 +106,22 @@ export type ResendOTP = {
 };
 
 export type AgentLoginResult = {
+  data: AgentLoginData;
+  messages: any[];
+  succeeded: boolean;
+};
+
+export type AgentLoginData = {
   token: string;
+  tokenExpiryTime: string;
   refreshToken: string;
   refreshTokenExpiryTime: string;
-  isGuestUser: boolean;
+  agentCode: string;
+  firstName: string;
+  lastName: string;
+  companyName: string;
+  emailAddress: string;
+  mobileNumber: string;
 };
 
 //ForgotPassword Model

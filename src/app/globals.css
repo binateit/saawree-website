@@ -602,6 +602,10 @@ ul.sub-menu {
     opacity: 0;
     transform: translateY(45px);
     transition: all 0.3s;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
 }
 
 .products-box:hover .action-btns {

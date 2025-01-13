@@ -17,10 +17,14 @@ import { signOut, useSession } from "next-auth/react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { Offcanvas } from "react-bootstrap";
+import { useQuery } from "@tanstack/react-query";
+import { getMenuCategories } from "@/core/requests/homeRequests";
 
 const Header = () => {
   const { data: session } = useSession();
   const [show, setShow] = useState(false);
+  const [isHamburgerClicked, setIsHamburgerClicked] = useState(false);
+  const [closeSubMenu, setCloseSubMenu] = useState(false);
   const [openDropDown, setOpenDropDown] = useState({
     display: false,
     name: "",
@@ -33,6 +37,11 @@ const Header = () => {
     signOut();
     navigate.push("/auth/login");
   };
+
+  const { data: menuCategoryData } = useQuery({
+    queryKey: ["menuCategoryData"],
+    queryFn: () => getMenuCategories(),
+  });
 
   return (
     <>
@@ -132,84 +141,10 @@ const Header = () => {
                 >
                   <BsSearch fontSize={25} />
                 </div>
-                {/* <!-- <div className="header-icons">
-                            <a href="customer-profile.html"><i className="bi bi-person"></i> <span className="login-span">My
-                                    account</span></a>
-                        </div> --> */}
-                {/* <!-- <div className="header-icons">
-                        <i className="bi bi-heart"></i><span className="badge badge-danger"></span>
-                    </div> --> */}
+
                 <a href='cart.html' className='cart-widget header-icons'>
                   <BsCart fontSize={25} />
                   <span className='badge badge-danger'>3</span>
-                  {/* <div className='cart-dropdown'>
-                    <div className='cart-list'>
-                      <div className='cart-prod-img'>
-                        <img
-                          src='img/jewel1.jpg'
-                          className='prod-img-cart'
-                          alt=''
-                        />
-                      </div>
-                      <div className='prod-name-cart'>
-                        <p className='prod-name'>
-                          Tahura Oxidized Plated Jhumki Earrings - Silver
-                        </p>
-                        <p className='prod-price'>Rs. 199.00</p>
-                      </div>
-                      <div className='remove-btn'>
-                        <i className='bi bi-x'></i>
-                      </div>
-                    </div>
-                    <div className='cart-list'>
-                      <div className='cart-prod-img'>
-                        <img
-                          src='img/jewel1.jpg'
-                          className='prod-img-cart'
-                          alt=''
-                        />
-                      </div>
-                      <div className='prod-name-cart'>
-                        <p className='prod-name'>
-                          Tahura Oxidized Plated Jhumki Earrings - Silver
-                        </p>
-                        <p className='prod-price'>Rs. 199.00</p>
-                      </div>
-                      <div className='remove-btn'>
-                        <i className='bi bi-x'></i>
-                      </div>
-                    </div>
-                    <div className='cart-list'>
-                      <div className='cart-prod-img'>
-                        <img
-                          src='img/jewel1.jpg'
-                          className='prod-img-cart'
-                          alt=''
-                        />
-                      </div>
-                      <div className='prod-name-cart'>
-                        <p className='prod-name'>
-                          Tahura Oxidized Plated Jhumki Earrings - Silver
-                        </p>
-                        <p className='prod-price'>Rs. 100.00</p>
-                      </div>
-                      <div className='remove-btn'>
-                        <i className='bi bi-x'></i>
-                      </div>
-                    </div>
-                    <div className='cart-footer'>
-                      <div className='total-box'>
-                        <span className='sb-ttl'>Subtotal :</span>
-                        <span className='sb-ttl-amt'>Rs.498</span>
-                      </div>
-                      <div className='cart-btns'>
-                        <a href='cart.html'>
-                          <button className='vw-cart'>View Cart</button>
-                        </a>
-                        <button className='ck-cart'>Checkout</button>
-                      </div>
-                    </div>
-                  </div> */}
                 </a>
                 {session?.user && (
                   <div className='header-icons dashboard-menu-icon'>
@@ -239,868 +174,78 @@ const Header = () => {
                         Make to Order <i className='fas fa-angle-down'></i>
                       </a>
                       <ul className='sub_menu'>
-                        <li className='has_dropdown'>
-                          <a href='#'>
-                            Jewellery <i className='fas fa-angle-down'></i>
-                          </a>
-                          <ul className='sub_menu'>
-                            <li className='has_dropdown'>
-                              <a href='#'>
-                                Pakistani <i className='fas fa-angle-down'></i>
-                              </a>
-                              <ul className='sub_menu row category-menu'>
-                                <li className='sub-menu-col'>
-                                  <a href='#'>Necklace</a>
-                                  <ul className='position-initial'>
-                                    <li>
-                                      <a href='#'>Reverse AD</a>
-                                    </li>
-                                    <li>
-                                      <a href='#'>Kundan</a>
-                                    </li>
-                                    <li>
-                                      <a href='#'>CZ AD Jewellery</a>
-                                    </li>
-                                    <li>
-                                      <a href='#'>Polki Kundan</a>
-                                    </li>
-                                  </ul>
-                                </li>
-
-                                <li className='sub-menu-col'>
-                                  <a href='#'>Long Necklace Set</a>
-                                  <ul className='position-initial'>
-                                    <li>
-                                      <a href='#'>Reverse AD</a>
-                                    </li>
-                                    <li>
-                                      <a href='#'>Kundan</a>
-                                    </li>
-                                    <li>
-                                      <a href='#'>CZ AD Jewellery</a>
-                                    </li>
-                                    <li>
-                                      <a href='#'>Polki Kundan</a>
-                                    </li>
-                                  </ul>
-                                </li>
-
-                                <li className='sub-menu-col'>
-                                  <a href='#'>Pakistani Set</a>
-                                </li>
-
-                                <li className='sub-menu-col'>
-                                  <a href='#'>Semi Bridal Set</a>
-                                  <ul className='position-initial'>
-                                    <li>
-                                      <a href='#'>Reverse AD</a>
-                                    </li>
-                                    <li>
-                                      <a href='#'>Kundan</a>
-                                    </li>
-                                    <li>
-                                      <a href='#'>CZ AD Jewellery</a>
-                                    </li>
-                                    <li>
-                                      <a href='#'>Polki Kundan</a>
-                                    </li>
-                                  </ul>
-                                </li>
-
-                                <li className='sub-menu-col'>
-                                  <a href='#'>Full Bridal Set</a>
-                                  <ul className='position-initial'>
-                                    <li>
-                                      <a href='#'>Reverse AD</a>
-                                    </li>
-                                    <li>
-                                      <a href='#'>Kundan</a>
-                                    </li>
-                                    <li>
-                                      <a href='#'>CZ AD Jewellery</a>
-                                    </li>
-                                    <li>
-                                      <a href='#'>Polki Kundan</a>
-                                    </li>
-                                  </ul>
-                                </li>
-
-                                <li className='sub-menu-col'>
-                                  <a href='#'>Rani Haar</a>
-                                  <ul className='position-initial'>
-                                    <li>
-                                      <a href='#'>Reverse AD</a>
-                                    </li>
-                                    <li>
-                                      <a href='#'>Kundan</a>
-                                    </li>
-                                    <li>
-                                      <a href='#'>CZ AD Jewellery</a>
-                                    </li>
-                                    <li>
-                                      <a href='#'>Polki Kundan</a>
-                                    </li>
-                                  </ul>
-                                </li>
-
-                                <li className='sub-menu-col'>
-                                  <a href='#'>Earring</a>
-                                  <ul className='position-initial'>
-                                    <li>
-                                      <a href='#'>Reverse AD</a>
-                                    </li>
-                                    <li>
-                                      <a href='#'>Kundan</a>
-                                    </li>
-                                    <li>
-                                      <a href='#'>CZ AD Jewellery</a>
-                                    </li>
-                                    <li>
-                                      <a href='#'>Polki Kundan</a>
-                                    </li>
-                                  </ul>
-                                </li>
-
-                                <li className='sub-menu-col'>
-                                  <a href='#'>Jhumka</a>
-                                  <ul className='position-initial'>
-                                    <li>
-                                      <a href='#'>Reverse AD</a>
-                                    </li>
-                                    <li>
-                                      <a href='#'>Kundan</a>
-                                    </li>
-                                    <li>
-                                      <a href='#'>CZ AD Jewellery</a>
-                                    </li>
-                                    <li>
-                                      <a href='#'>Polki Kundan</a>
-                                    </li>
-                                  </ul>
-                                </li>
-
-                                <li className='sub-menu-col'>
-                                  <a href='#'>Bali Jhumka</a>
-                                  <ul className='position-initial'>
-                                    <li>
-                                      <a href='#'>Reverse AD</a>
-                                    </li>
-                                    <li>
-                                      <a href='#'>Kundan</a>
-                                    </li>
-                                    <li>
-                                      <a href='#'>CZ AD Jewellery</a>
-                                    </li>
-                                    <li>
-                                      <a href='#'>Polki Kundan</a>
-                                    </li>
-                                  </ul>
-                                </li>
-
-                                <li className='sub-menu-col'>
-                                  <a href='#'>Earring Tikka</a>
-                                  <ul className='position-initial'>
-                                    <li>
-                                      <a href='#'>Reverse AD</a>
-                                    </li>
-                                    <li>
-                                      <a href='#'>Kundan</a>
-                                    </li>
-                                    <li>
-                                      <a href='#'>CZ AD Jewellery</a>
-                                    </li>
-                                    <li>
-                                      <a href='#'>Polki Kundan</a>
-                                    </li>
-                                  </ul>
-                                </li>
-
-                                <li className='sub-menu-col'>
-                                  <a href='#'>Jhumka Tikka</a>
-                                  <ul className='position-initial'>
-                                    <li>
-                                      <a href='#'>Reverse AD</a>
-                                    </li>
-                                    <li>
-                                      <a href='#'>Kundan</a>
-                                    </li>
-                                    <li>
-                                      <a href='#'>CZ AD Jewellery</a>
-                                    </li>
-                                    <li>
-                                      <a href='#'>Polki Kundan</a>
-                                    </li>
-                                  </ul>
-                                </li>
-
-                                <li className='sub-menu-col'>
-                                  <a href='#'>Bali Jhumka Tikka</a>
-                                  <ul className='position-initial'>
-                                    <li>
-                                      <a href='#'>Reverse AD</a>
-                                    </li>
-                                    <li>
-                                      <a href='#'>Kundan</a>
-                                    </li>
-                                    <li>
-                                      <a href='#'>CZ AD Jewellery</a>
-                                    </li>
-                                    <li>
-                                      <a href='#'>Polki Kundan</a>
-                                    </li>
-                                  </ul>
-                                </li>
-
-                                <li className='sub-menu-col'>
-                                  <a href='#'>Tops</a>
-                                  <ul className='position-initial'>
-                                    <li>
-                                      <a href='#'>Reverse AD</a>
-                                    </li>
-                                    <li>
-                                      <a href='#'>Kundan</a>
-                                    </li>
-                                    <li>
-                                      <a href='#'>CZ AD Jewellery</a>
-                                    </li>
-                                    <li>
-                                      <a href='#'>Polki Kundan</a>
-                                    </li>
-                                  </ul>
-                                </li>
-
-                                <li className='sub-menu-col'>
-                                  <a href='#'>Bangles</a>
-                                  <ul className='position-initial'>
-                                    <li>
-                                      <a href='#'>Reverse AD</a>
-                                    </li>
-                                    <li>
-                                      <a href='#'>Kundan</a>
-                                    </li>
-                                    <li>
-                                      <a href='#'>CZ AD Jewellery</a>
-                                    </li>
-                                    <li>
-                                      <a href='#'>Polki Kundan</a>
-                                    </li>
-                                  </ul>
-                                </li>
-
-                                <li className='sub-menu-col'>
-                                  <a href='#'>Payal</a>
-                                  <ul className='position-initial'>
-                                    <li>
-                                      <a href='#'>Reverse AD</a>
-                                    </li>
-                                    <li>
-                                      <a href='#'>Kundan</a>
-                                    </li>
-                                    <li>
-                                      <a href='#'>CZ AD Jewellery</a>
-                                    </li>
-                                    <li>
-                                      <a href='#'>Polki Kundan</a>
-                                    </li>
-                                  </ul>
-                                </li>
-
-                                <li className='sub-menu-col'>
-                                  <a href='#'>Hip Chain</a>
-                                  <ul className='position-initial'>
-                                    <li>
-                                      <a href='#'>Reverse AD</a>
-                                    </li>
-                                    <li>
-                                      <a href='#'>Kundan</a>
-                                    </li>
-                                    <li>
-                                      <a href='#'>CZ AD Jewellery</a>
-                                    </li>
-                                    <li>
-                                      <a href='#'>Polki Kundan</a>
-                                    </li>
-                                  </ul>
-                                </li>
-
-                                <li className='sub-menu-col'>
-                                  <a href='#'>Damini</a>
-                                  <ul className='position-initial'>
-                                    <li>
-                                      <a href='#'>Reverse AD</a>
-                                    </li>
-                                    <li>
-                                      <a href='#'>Kundan</a>
-                                    </li>
-                                    <li>
-                                      <a href='#'>CZ AD Jewellery</a>
-                                    </li>
-                                    <li>
-                                      <a href='#'>Polki Kundan</a>
-                                    </li>
-                                  </ul>
-                                </li>
-
-                                <li className='sub-menu-col'>
-                                  <a href='#'>Mata Patti</a>
-                                  <ul className='position-initial'>
-                                    <li>
-                                      <a href='#'>Reverse AD</a>
-                                    </li>
-                                    <li>
-                                      <a href='#'>Kundan</a>
-                                    </li>
-                                    <li>
-                                      <a href='#'>CZ AD Jewellery</a>
-                                    </li>
-                                    <li>
-                                      <a href='#'>Polki Kundan</a>
-                                    </li>
-                                  </ul>
-                                </li>
-
-                                <li className='sub-menu-col'>
-                                  <a href='#'>Pasa</a>
-                                  <ul className='position-initial'>
-                                    <li>
-                                      <a href='#'>Reverse AD</a>
-                                    </li>
-                                    <li>
-                                      <a href='#'>Kundan</a>
-                                    </li>
-                                    <li>
-                                      <a href='#'>CZ AD Jewellery</a>
-                                    </li>
-                                    <li>
-                                      <a href='#'>Polki Kundan</a>
-                                    </li>
-                                  </ul>
-                                </li>
-
-                                <li className='sub-menu-col'>
-                                  <a href='#'>Kan Chain</a>
-                                  <ul className='position-initial'>
-                                    <li>
-                                      <a href='#'>Reverse AD</a>
-                                    </li>
-                                    <li>
-                                      <a href='#'>Kundan</a>
-                                    </li>
-                                    <li>
-                                      <a href='#'>CZ AD Jewellery</a>
-                                    </li>
-                                    <li>
-                                      <a href='#'>Polki Kundan</a>
-                                    </li>
-                                  </ul>
-                                </li>
-
-                                <li className='sub-menu-col'>
-                                  <a href='#'>Choti</a>
-                                  <ul className='position-initial'>
-                                    <li>
-                                      <a href='#'>Reverse AD</a>
-                                    </li>
-                                    <li>
-                                      <a href='#'>Kundan</a>
-                                    </li>
-                                    <li>
-                                      <a href='#'>CZ AD Jewellery</a>
-                                    </li>
-                                    <li>
-                                      <a href='#'>Polki Kundan</a>
-                                    </li>
-                                  </ul>
-                                </li>
-
-                                <li className='sub-menu-col'>
-                                  <a href='#'>Panja</a>
-                                  <ul className='position-initial'>
-                                    <li>
-                                      <a href='#'>Reverse AD</a>
-                                    </li>
-                                    <li>
-                                      <a href='#'>Kundan</a>
-                                    </li>
-                                    <li>
-                                      <a href='#'>CZ AD Jewellery</a>
-                                    </li>
-                                    <li>
-                                      <a href='#'>Polki Kundan</a>
-                                    </li>
-                                  </ul>
-                                </li>
-
-                                <li className='sub-menu-col'>
-                                  <a href='#'>Braclets</a>
-                                  <ul className='position-initial'>
-                                    <li>
-                                      <a href='#'>Reverse AD</a>
-                                    </li>
-                                    <li>
-                                      <a href='#'>Kundan</a>
-                                    </li>
-                                    <li>
-                                      <a href='#'>CZ AD Jewellery</a>
-                                    </li>
-                                    <li>
-                                      <a href='#'>Polki Kundan</a>
-                                    </li>
-                                  </ul>
-                                </li>
-
-                                <li className='sub-menu-col'>
-                                  <a href='#'>Finger Ring</a>
-                                  <ul className='position-initial'>
-                                    <li>
-                                      <a href='#'>Reverse AD</a>
-                                    </li>
-                                    <li>
-                                      <a href='#'>Kundan</a>
-                                    </li>
-                                    <li>
-                                      <a href='#'>CZ AD Jewellery</a>
-                                    </li>
-                                    <li>
-                                      <a href='#'>Polki Kundan</a>
-                                    </li>
-                                  </ul>
-                                </li>
-                              </ul>
-                            </li>
-                          </ul>
-                        </li>
-                        <li className='has_dropdown'>
-                          <a href='#'>
-                            Jewellery 02<i className='fas fa-angle-down'></i>
-                          </a>
-                          <ul className='sub_menu'>
-                            <li className='has_dropdown'>
-                              <a href='#'>
-                                Pakistani <i className='fas fa-angle-down'></i>
-                              </a>
-                              <ul className='sub_menu row category-menu'>
-                                <li className='sub-menu-col'>
-                                  <a href='#'>Necklace</a>
-                                  <ul className='position-initial'>
-                                    <li>
-                                      <a href='#'>Reverse AD</a>
-                                    </li>
-                                    <li>
-                                      <a href='#'>Kundan</a>
-                                    </li>
-                                    <li>
-                                      <a href='#'>CZ AD Jewellery</a>
-                                    </li>
-                                    <li>
-                                      <a href='#'>Polki Kundan</a>
-                                    </li>
-                                  </ul>
-                                </li>
-
-                                <li className='sub-menu-col'>
-                                  <a href='#'>Long Necklace Set</a>
-                                  <ul className='position-initial'>
-                                    <li>
-                                      <a href='#'>Reverse AD</a>
-                                    </li>
-                                    <li>
-                                      <a href='#'>Kundan</a>
-                                    </li>
-                                    <li>
-                                      <a href='#'>CZ AD Jewellery</a>
-                                    </li>
-                                    <li>
-                                      <a href='#'>Polki Kundan</a>
-                                    </li>
-                                  </ul>
-                                </li>
-
-                                <li className='sub-menu-col'>
-                                  <a href='#'>Pakistani Set</a>
-                                </li>
-
-                                <li className='sub-menu-col'>
-                                  <a href='#'>Semi Bridal Set</a>
-                                  <ul className='position-initial'>
-                                    <li>
-                                      <a href='#'>Reverse AD</a>
-                                    </li>
-                                    <li>
-                                      <a href='#'>Kundan</a>
-                                    </li>
-                                    <li>
-                                      <a href='#'>CZ AD Jewellery</a>
-                                    </li>
-                                    <li>
-                                      <a href='#'>Polki Kundan</a>
-                                    </li>
-                                  </ul>
-                                </li>
-
-                                <li className='sub-menu-col'>
-                                  <a href='#'>Full Bridal Set</a>
-                                  <ul className='position-initial'>
-                                    <li>
-                                      <a href='#'>Reverse AD</a>
-                                    </li>
-                                    <li>
-                                      <a href='#'>Kundan</a>
-                                    </li>
-                                    <li>
-                                      <a href='#'>CZ AD Jewellery</a>
-                                    </li>
-                                    <li>
-                                      <a href='#'>Polki Kundan</a>
-                                    </li>
-                                  </ul>
-                                </li>
-
-                                <li className='sub-menu-col'>
-                                  <a href='#'>Rani Haar</a>
-                                  <ul className='position-initial'>
-                                    <li>
-                                      <a href='#'>Reverse AD</a>
-                                    </li>
-                                    <li>
-                                      <a href='#'>Kundan</a>
-                                    </li>
-                                    <li>
-                                      <a href='#'>CZ AD Jewellery</a>
-                                    </li>
-                                    <li>
-                                      <a href='#'>Polki Kundan</a>
-                                    </li>
-                                  </ul>
-                                </li>
-
-                                <li className='sub-menu-col'>
-                                  <a href='#'>Earring</a>
-                                  <ul className='position-initial'>
-                                    <li>
-                                      <a href='#'>Reverse AD</a>
-                                    </li>
-                                    <li>
-                                      <a href='#'>Kundan</a>
-                                    </li>
-                                    <li>
-                                      <a href='#'>CZ AD Jewellery</a>
-                                    </li>
-                                    <li>
-                                      <a href='#'>Polki Kundan</a>
-                                    </li>
-                                  </ul>
-                                </li>
-
-                                <li className='sub-menu-col'>
-                                  <a href='#'>Jhumka</a>
-                                  <ul className='position-initial'>
-                                    <li>
-                                      <a href='#'>Reverse AD</a>
-                                    </li>
-                                    <li>
-                                      <a href='#'>Kundan</a>
-                                    </li>
-                                    <li>
-                                      <a href='#'>CZ AD Jewellery</a>
-                                    </li>
-                                    <li>
-                                      <a href='#'>Polki Kundan</a>
-                                    </li>
-                                  </ul>
-                                </li>
-
-                                <li className='sub-menu-col'>
-                                  <a href='#'>Bali Jhumka</a>
-                                  <ul className='position-initial'>
-                                    <li>
-                                      <a href='#'>Reverse AD</a>
-                                    </li>
-                                    <li>
-                                      <a href='#'>Kundan</a>
-                                    </li>
-                                    <li>
-                                      <a href='#'>CZ AD Jewellery</a>
-                                    </li>
-                                    <li>
-                                      <a href='#'>Polki Kundan</a>
-                                    </li>
-                                  </ul>
-                                </li>
-
-                                <li className='sub-menu-col'>
-                                  <a href='#'>Earring Tikka</a>
-                                  <ul className='position-initial'>
-                                    <li>
-                                      <a href='#'>Reverse AD</a>
-                                    </li>
-                                    <li>
-                                      <a href='#'>Kundan</a>
-                                    </li>
-                                    <li>
-                                      <a href='#'>CZ AD Jewellery</a>
-                                    </li>
-                                    <li>
-                                      <a href='#'>Polki Kundan</a>
-                                    </li>
-                                  </ul>
-                                </li>
-
-                                <li className='sub-menu-col'>
-                                  <a href='#'>Jhumka Tikka</a>
-                                  <ul className='position-initial'>
-                                    <li>
-                                      <a href='#'>Reverse AD</a>
-                                    </li>
-                                    <li>
-                                      <a href='#'>Kundan</a>
-                                    </li>
-                                    <li>
-                                      <a href='#'>CZ AD Jewellery</a>
-                                    </li>
-                                    <li>
-                                      <a href='#'>Polki Kundan</a>
-                                    </li>
-                                  </ul>
-                                </li>
-
-                                <li className='sub-menu-col'>
-                                  <a href='#'>Bali Jhumka Tikka</a>
-                                  <ul className='position-initial'>
-                                    <li>
-                                      <a href='#'>Reverse AD</a>
-                                    </li>
-                                    <li>
-                                      <a href='#'>Kundan</a>
-                                    </li>
-                                    <li>
-                                      <a href='#'>CZ AD Jewellery</a>
-                                    </li>
-                                    <li>
-                                      <a href='#'>Polki Kundan</a>
-                                    </li>
-                                  </ul>
-                                </li>
-
-                                <li className='sub-menu-col'>
-                                  <a href='#'>Tops</a>
-                                  <ul className='position-initial'>
-                                    <li>
-                                      <a href='#'>Reverse AD</a>
-                                    </li>
-                                    <li>
-                                      <a href='#'>Kundan</a>
-                                    </li>
-                                    <li>
-                                      <a href='#'>CZ AD Jewellery</a>
-                                    </li>
-                                    <li>
-                                      <a href='#'>Polki Kundan</a>
-                                    </li>
-                                  </ul>
-                                </li>
-
-                                <li className='sub-menu-col'>
-                                  <a href='#'>Bangles</a>
-                                  <ul className='position-initial'>
-                                    <li>
-                                      <a href='#'>Reverse AD</a>
-                                    </li>
-                                    <li>
-                                      <a href='#'>Kundan</a>
-                                    </li>
-                                    <li>
-                                      <a href='#'>CZ AD Jewellery</a>
-                                    </li>
-                                    <li>
-                                      <a href='#'>Polki Kundan</a>
-                                    </li>
-                                  </ul>
-                                </li>
-
-                                <li className='sub-menu-col'>
-                                  <a href='#'>Payal</a>
-                                  <ul className='position-initial'>
-                                    <li>
-                                      <a href='#'>Reverse AD</a>
-                                    </li>
-                                    <li>
-                                      <a href='#'>Kundan</a>
-                                    </li>
-                                    <li>
-                                      <a href='#'>CZ AD Jewellery</a>
-                                    </li>
-                                    <li>
-                                      <a href='#'>Polki Kundan</a>
-                                    </li>
-                                  </ul>
-                                </li>
-
-                                <li className='sub-menu-col'>
-                                  <a href='#'>Hip Chain</a>
-                                  <ul className='position-initial'>
-                                    <li>
-                                      <a href='#'>Reverse AD</a>
-                                    </li>
-                                    <li>
-                                      <a href='#'>Kundan</a>
-                                    </li>
-                                    <li>
-                                      <a href='#'>CZ AD Jewellery</a>
-                                    </li>
-                                    <li>
-                                      <a href='#'>Polki Kundan</a>
-                                    </li>
-                                  </ul>
-                                </li>
-
-                                <li className='sub-menu-col'>
-                                  <a href='#'>Damini</a>
-                                  <ul className='position-initial'>
-                                    <li>
-                                      <a href='#'>Reverse AD</a>
-                                    </li>
-                                    <li>
-                                      <a href='#'>Kundan</a>
-                                    </li>
-                                    <li>
-                                      <a href='#'>CZ AD Jewellery</a>
-                                    </li>
-                                    <li>
-                                      <a href='#'>Polki Kundan</a>
-                                    </li>
-                                  </ul>
-                                </li>
-
-                                <li className='sub-menu-col'>
-                                  <a href='#'>Mata Patti</a>
-                                  <ul className='position-initial'>
-                                    <li>
-                                      <a href='#'>Reverse AD</a>
-                                    </li>
-                                    <li>
-                                      <a href='#'>Kundan</a>
-                                    </li>
-                                    <li>
-                                      <a href='#'>CZ AD Jewellery</a>
-                                    </li>
-                                    <li>
-                                      <a href='#'>Polki Kundan</a>
-                                    </li>
-                                  </ul>
-                                </li>
-
-                                <li className='sub-menu-col'>
-                                  <a href='#'>Pasa</a>
-                                  <ul className='position-initial'>
-                                    <li>
-                                      <a href='#'>Reverse AD</a>
-                                    </li>
-                                    <li>
-                                      <a href='#'>Kundan</a>
-                                    </li>
-                                    <li>
-                                      <a href='#'>CZ AD Jewellery</a>
-                                    </li>
-                                    <li>
-                                      <a href='#'>Polki Kundan</a>
-                                    </li>
-                                  </ul>
-                                </li>
-
-                                <li className='sub-menu-col'>
-                                  <a href='#'>Kan Chain</a>
-                                  <ul className='position-initial'>
-                                    <li>
-                                      <a href='#'>Reverse AD</a>
-                                    </li>
-                                    <li>
-                                      <a href='#'>Kundan</a>
-                                    </li>
-                                    <li>
-                                      <a href='#'>CZ AD Jewellery</a>
-                                    </li>
-                                    <li>
-                                      <a href='#'>Polki Kundan</a>
-                                    </li>
-                                  </ul>
-                                </li>
-
-                                <li className='sub-menu-col'>
-                                  <a href='#'>Choti</a>
-                                  <ul className='position-initial'>
-                                    <li>
-                                      <a href='#'>Reverse AD</a>
-                                    </li>
-                                    <li>
-                                      <a href='#'>Kundan</a>
-                                    </li>
-                                    <li>
-                                      <a href='#'>CZ AD Jewellery</a>
-                                    </li>
-                                    <li>
-                                      <a href='#'>Polki Kundan</a>
-                                    </li>
-                                  </ul>
-                                </li>
-
-                                <li className='sub-menu-col'>
-                                  <a href='#'>Panja</a>
-                                  <ul className='position-initial'>
-                                    <li>
-                                      <a href='#'>Reverse AD</a>
-                                    </li>
-                                    <li>
-                                      <a href='#'>Kundan</a>
-                                    </li>
-                                    <li>
-                                      <a href='#'>CZ AD Jewellery</a>
-                                    </li>
-                                    <li>
-                                      <a href='#'>Polki Kundan</a>
-                                    </li>
-                                  </ul>
-                                </li>
-
-                                <li className='sub-menu-col'>
-                                  <a href='#'>Braclets</a>
-                                  <ul className='position-initial'>
-                                    <li>
-                                      <a href='#'>Reverse AD</a>
-                                    </li>
-                                    <li>
-                                      <a href='#'>Kundan</a>
-                                    </li>
-                                    <li>
-                                      <a href='#'>CZ AD Jewellery</a>
-                                    </li>
-                                    <li>
-                                      <a href='#'>Polki Kundan</a>
-                                    </li>
-                                  </ul>
-                                </li>
-
-                                <li className='sub-menu-col'>
-                                  <a href='#'>Finger Ring</a>
-                                  <ul className='position-initial'>
-                                    <li>
-                                      <a href='#'>Reverse AD</a>
-                                    </li>
-                                    <li>
-                                      <a href='#'>Kundan</a>
-                                    </li>
-                                    <li>
-                                      <a href='#'>CZ AD Jewellery</a>
-                                    </li>
-                                    <li>
-                                      <a href='#'>Polki Kundan</a>
-                                    </li>
-                                  </ul>
-                                </li>
-                              </ul>
-                            </li>
-                          </ul>
-                        </li>
+                        {menuCategoryData?.mtoc
+                          ?.filter(
+                            (cat) => cat.isp === true && cat.pcid === null
+                          )
+                          .map((cat) => (
+                            <React.Fragment key={cat.id}>
+                              <li className='has_dropdown'>
+                                <Link
+                                  href={`/make-to-order/category/${cat.n}`}
+                                  onClick={() => setCloseSubMenu(!closeSubMenu)}
+                                >
+                                  {cat.n}
+                                  <i className='fas fa-angle-right' />
+                                </Link>
+                                <ul
+                                  className={
+                                    closeSubMenu ? "sub_menu open" : "sub_menu "
+                                  }
+                                >
+                                  {menuCategoryData?.mtoc
+                                    .filter((subCat) => subCat.pcid === cat.id)
+                                    .map((subCat, index) => (
+                                      <li key={index} className='has_dropdown'>
+                                        <Link
+                                          href={`/make-to-order/${subCat.id}-${subCat.n}`}
+                                          onClick={() => {
+                                            setIsHamburgerClicked(false);
+                                            setCloseSubMenu(!closeSubMenu);
+                                          }}
+                                        >
+                                          {subCat.n}{" "}
+                                          <i className='fas fa-angle-right' />
+                                        </Link>
+                                        <ul
+                                          className={
+                                            closeSubMenu
+                                              ? "sub_menu row category-menu open"
+                                              : "sub_menu row category-menu "
+                                          }
+                                        >
+                                          {menuCategoryData?.mtoc
+                                            .filter(
+                                              (ssubCat) =>
+                                                ssubCat.pcid === subCat.id
+                                            )
+                                            .map((ssubCat, index) => (
+                                              <li
+                                                key={index}
+                                                className='sub-menu-col'
+                                              >
+                                                <Link
+                                                  href={`/make-to-order/${ssubCat.id}-${ssubCat.n}`}
+                                                  onClick={() => {
+                                                    setIsHamburgerClicked(
+                                                      false
+                                                    );
+                                                    setCloseSubMenu(
+                                                      !closeSubMenu
+                                                    );
+                                                  }}
+                                                >
+                                                  {ssubCat.n}
+                                                </Link>
+                                              </li>
+                                            ))}
+                                        </ul>
+                                      </li>
+                                    ))}
+                                </ul>
+                              </li>
+                            </React.Fragment>
+                          ))}
                       </ul>
                     </li>
                     <li className='mega_menu_dropdown mega_menu_demo_2 has_dropdown'>

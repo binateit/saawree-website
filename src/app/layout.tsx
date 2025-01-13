@@ -35,6 +35,11 @@ export default async function RootLayout({
           rel='stylesheet'
           href='https://cdn.jsdelivr.net/npm/bootstrap-icons@1.3.0/font/bootstrap-icons.css'
         />
+        <link
+          rel='stylesheet'
+          type='text/css'
+          href='//cdn.jsdelivr.net/npm/slick-carousel@1.8.1/slick/slick.css'
+        />
       </Head>
       <SessionProvider session={session}>
         <QueryProvider>
