@@ -49,7 +49,7 @@ const Header = () => {
         <div className='container header-container text-right'>
           {session?.user ? (
             <div className='d-flex justify-content-end'>
-              Welcome {session.user.userType as string} -{" "}
+              Welcome {session?.user?.firstName} -{" "}
               <Link href={`/${session.user.userType}`} className='pl-2'>
                 <BsSpeedometer2 fontSize={18} /> Dashboard
               </Link>{" "}
@@ -182,7 +182,7 @@ const Header = () => {
                             <React.Fragment key={cat.id}>
                               <li className='has_dropdown'>
                                 <Link
-                                  href={`/make-to-order/category/${cat.n}`}
+                                  href={`/maketoorder/products?category=${cat.n}&categoryId=${cat?.id}`}
                                   onClick={() => setCloseSubMenu(!closeSubMenu)}
                                 >
                                   {cat.n}
@@ -198,7 +198,7 @@ const Header = () => {
                                     .map((subCat, index) => (
                                       <li key={index} className='has_dropdown'>
                                         <Link
-                                          href={`/make-to-order/${subCat.id}-${subCat.n}`}
+                                          href={`/maketoorder/products?categoryId=${subCat.n}&categoryId=${cat?.id}`}
                                           onClick={() => {
                                             setIsHamburgerClicked(false);
                                             setCloseSubMenu(!closeSubMenu);
@@ -225,7 +225,7 @@ const Header = () => {
                                                 className='sub-menu-col'
                                               >
                                                 <Link
-                                                  href={`/make-to-order/${ssubCat.id}-${ssubCat.n}`}
+                                                  href={`/maketoorder/products?categoryId=${ssubCat.n}&categoryId=${cat?.id}`}
                                                   onClick={() => {
                                                     setIsHamburgerClicked(
                                                       false

@@ -2,7 +2,6 @@ import Head from "next/head";
 import "@/assets/bootstrap/bootstrap.min.css";
 import "@/assets/fontawesome/css/all.min.css";
 import "@/assets/slik/slick.css";
-import "./globals.css";
 import "@/assets/css/navbar.css";
 import Header from "@/component/Header";
 import Footer from "@/component/Footer";
@@ -13,6 +12,8 @@ import { getServerSession } from "next-auth";
 import { PrimeReactProvider } from "primereact/api";
 import "primereact/resources/themes/lara-light-cyan/theme.css";
 import { ToastContainer } from "react-toastify";
+import { Session } from "@/core/models/model";
+import "./globals.css";
 
 export default async function RootLayout({
   children,

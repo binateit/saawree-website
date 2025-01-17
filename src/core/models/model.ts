@@ -104,3 +104,50 @@ export type userToken = {
   isGuestUser: boolean;
   userType: string;
 };
+
+export type Session = {
+  user: User;
+  expires: string;
+};
+export type User = {
+  token: string;
+  refreshToken: string;
+  refreshTokenExpiryTime: string;
+  firstName: string;
+  lastName: string;
+  emailAddress: string;
+  userType: string;
+};
+
+export type Search = {
+  keyword?: string | undefined;
+  fields?: Array<string> | undefined;
+};
+
+export type Filter = {
+  logic?: string | undefined;
+  filters?: Array<Filter> | undefined;
+  field?: string | undefined;
+  operator?: string | undefined;
+  value?: any | undefined;
+};
+
+export type BaseFilter = {
+  keyword?: string | undefined;
+  advancedSearch?: Search | undefined;
+  advancedFilter?: Filter | undefined;
+};
+export type StatusFilter = BaseFilter & {
+  isActive?: boolean;
+};
+export type PaginationFilter = BaseFilter & {
+  first?: number;
+  tenantTypeId?: number;
+  pageNumber?: number;
+  pageSize?: number;
+  orderBy?: Array<string>;
+};
+
+export type RecomendedProductsFilter = {
+  categoryIds: number[];
+};

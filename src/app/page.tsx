@@ -1,13 +1,7 @@
 "use client";
 import { useSession } from "next-auth/react";
-import pakistaniNecklaceBanner from "@/assets/images/pakistaniNecklaceBanner.jpg";
-import pakistaniNecklaceBanner2 from "@/assets/images/pakistaniNecklaceBanner2.jpg";
 import underlineIcon from "@/assets/images/underlineIcon.png";
-import S1 from "@/assets/images/S1.jpg";
-import manglsutra from "@/assets/images/manglsutra.jpg";
 import Link from "next/link";
-import bnr3 from "@/assets/images/bnr3.jpg";
-import diamondCity from "@/assets/images/diamondCity.png";
 import { useQuery } from "@tanstack/react-query";
 import { getHomePage } from "@/core/requests/homeRequests";
 import Image from "next/image";
@@ -22,23 +16,22 @@ export default function Home() {
     queryFn: () => getHomePage(),
   });
   if (homePageLoading) return <p>Loading....</p>;
-  console.log(homePageData);
   return (
     <>
       {/* <!----------- Top Banner Section ----------> */}
       <section className='banner-slider'>
         <Galleria
-          value={homePageData?.bl.filter((t) => t.sid == 1)}
+          value={homePageData?.bl?.filter((t) => t.sid == 1)}
           numVisible={1}
           style={{ maxWidth: "100%" }}
           showIndicators={
-            (homePageData?.bl.filter((t) => t.sid == 1)?.length || 0) > 1
+            (homePageData?.bl?.filter((t) => t.sid == 1)?.length || 0) > 1
               ? true
               : false
           }
           showThumbnails={false}
           showItemNavigators={
-            (homePageData?.bl.filter((t) => t.sid == 1)?.length || 0) > 1
+            (homePageData?.bl?.filter((t) => t.sid == 1)?.length || 0) > 1
               ? true
               : false
           }
@@ -76,8 +69,8 @@ export default function Home() {
           </div>
           <div className='categ-bar d-flex flex-wrap justify-content-center'>
             {homePageData?.fc?.map((cat) => (
-              <div className='categ-items'>
-                <Link href={`category/${cat?.id}`}>
+              <div className='categ-items' key={cat?.id}>
+                <Link href={`readystock/products?categoryId=${cat?.id}`}>
                   <div className='catg-img'>
                     <img
                       src={`${process.env.NEXT_PUBLIC_APP_IMAGE_API_URL}/${cat?.cip}`}
@@ -103,7 +96,7 @@ export default function Home() {
             <img src={underlineIcon?.src} alt='' />
           </div>
           {homePageData?.nal?.map((newArraival, index) => (
-            <div className='row'>
+            <div className='row' key={index}>
               <div
                 className={`col-md-6 col-lg-6  ${
                   index / 2 == 0 ? "order-1" : "order-2"
@@ -182,17 +175,17 @@ export default function Home() {
       {/* <!----------- Middle Banner Section ----------> */}
       <section className='banner-slider'>
         <Galleria
-          value={homePageData?.bl.filter((t) => t.sid == 2)}
+          value={homePageData?.bl?.filter((t) => t.sid == 2)}
           numVisible={1}
           style={{ maxWidth: "100%" }}
           showIndicators={
-            (homePageData?.bl.filter((t) => t.sid == 1)?.length || 0) > 1
+            (homePageData?.bl?.filter((t) => t.sid == 1)?.length || 0) > 1
               ? true
               : false
           }
           showThumbnails={false}
           showItemNavigators={
-            (homePageData?.bl.filter((t) => t.sid == 1)?.length || 0) > 1
+            (homePageData?.bl?.filter((t) => t.sid == 1)?.length || 0) > 1
               ? true
               : false
           }

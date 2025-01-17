@@ -9,7 +9,7 @@ const nextConfig: NextConfig = {
         protocol: "http",
         hostname: "saawree.binateit.local",
         port: "",
-        pathname: "/Files/**",
+        // pathname: "/Files/**",
         search: "",
       },
     ],
