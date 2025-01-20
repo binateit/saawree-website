@@ -43,7 +43,7 @@ const page = () => {
   });
   useEffect(() => {
     let polishTypes: any = [];
-    response?.polishingTypeDropdownDtos.map((ptype) => {
+    response?.polishingTypeList?.map((ptype) => {
       return polishTypes.push({
         name: ptype?.polishingTypeName,
         value: ptype?.polishingTypeId,
@@ -113,7 +113,7 @@ const page = () => {
                         zoomedImge: pi?.zoomImagePath,
                       })
                     }
-                    key={pi?.id}
+                    key={index}
                   >
                     <img
                       src={`${process.env.NEXT_PUBLIC_APP_IMAGE_API_URL}/${pi?.thumbnailImagePath}`}
@@ -190,7 +190,7 @@ const page = () => {
                     </div>
                   </div>
                   <div className='row'>
-                    {response?.colorDropdownDtos?.map((color) => (
+                    {response?.colorList?.map((color) => (
                       <div
                         className='col-xl-6 col-lg-6 col-md-12 col-sm-6 mb-2'
                         key={color?.colorId}

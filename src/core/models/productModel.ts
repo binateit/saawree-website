@@ -60,6 +60,16 @@ export type ProductList = {
   availableQuantity: number;
 };
 
+export type ProductColor = {
+  productId?: number;
+  productName?: string;
+  colorId?: number;
+  colorName?: string;
+  colorCode?: string;
+  imagePath?: string;
+  quantity?: number;
+  price?: number;
+};
 export type ReadyStockProductsQueryResponse = Response<Array<ProductList>>;
 
 export type MakeToOrderProduct = {
@@ -111,8 +121,8 @@ export type ProductDetailsResponse = {
   brandName: string;
   manufacturerId: number;
   manufacturerName: string;
-  polishingTypeDropdownDtos: PolishingTypeDropdownDto[];
-  colorDropdownDtos: ColorDropdownDto[];
+  polishingTypeList: PolishingTypeDropdownDto[];
+  colorList: ColorDropdownDto[];
   productImages: ProductImage[];
 };
 export type ProductImage = {
