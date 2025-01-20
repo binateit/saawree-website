@@ -57,24 +57,24 @@ const layout = ({
                         >
                           Profile Details
                         </Link>
-                        <a
+                        <Link
                           className='nav-link pl-0 py-2 px-3'
-                          href='accounting-details.html'
+                          href='/customer/profile/accounting-details'
                         >
                           Accounting Details
-                        </a>
-                        <a
+                        </Link>
+                        <Link
                           className='nav-link pl-0 py-2 px-3'
-                          href='address.html'
+                          href='/customer/profile/address'
                         >
                           Address
-                        </a>
-                        <a
+                        </Link>
+                        <Link
                           className='nav-link pl-0 py-2 px-3'
-                          href='change-password.html'
+                          href='/customer/profile/change-password'
                         >
                           Change Password
-                        </a>
+                        </Link>
                       </div>
                     </div>
                   )}

@@ -165,9 +165,9 @@ const Header = () => {
                 <div className='main_menu'>
                   <ul>
                     <li>
-                      <a href='index.html' className='active'>
+                      <Link href='/' className='active'>
                         Home
-                      </a>
+                      </Link>
                     </li>
                     <li className='has_dropdown'>
                       <a href='#'>
@@ -268,10 +268,10 @@ const Header = () => {
                       </div>
                     </li>
                     <li>
-                      <a href='track-order.html'>Track Order</a>
+                      <Link href='/track-order'>Track Order</Link>
                     </li>
                     <li>
-                      <a href='contact-us.html'>Contact</a>
+                      <Link href='/contact-us'>Contact</Link>
                     </li>
                     <li>
                       <a href='ordering-process.html'>Order Process</a>
