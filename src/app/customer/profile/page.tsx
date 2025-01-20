@@ -1,3 +1,4 @@
+"use client";
 import CalendarInput from "@/core/component/CalenderInput";
 import { formatDate, isNotEmpty } from "@/core/helpers/helperFunctions";
 import { EditCustomerProfile } from "@/core/models/customerModel";
@@ -8,14 +9,10 @@ import { Field, FormikProvider, useFormik } from "formik";
 import { useSession } from "next-auth/react";
 import React, { useState } from "react";
 import * as Yup from "yup";
+import { useQuery } from "@tanstack/react-query";
+import { getUserProfileByToken } from "@/core/requests/authRequests";
 
-const ProfileDetails = ({
-  data,
-  customerProfileRefetch,
-}: {
-  data: any;
-  customerProfileRefetch: () => void;
-}) => {
+const ProfileDetails = () => {
   const [editMode, setEditMode] = useState<boolean>();
   const { data: session } = useSession();
   const editProfileSchema = Yup.object().shape({
@@ -30,18 +27,27 @@ const ProfileDetails = ({
   });
   const sessionData = session?.user as userToken;
 
+  const {
+    data: customerProfile,
+    isLoading: customerProfileLoading,
+    refetch: customerProfileRefetch,
+  } = useQuery({
+    queryKey: ["userByToken"],
+    queryFn: () => getUserProfileByToken(session?.user?.token),
+    refetchOnWindowFocus: false,
+  });
   const formik = useFormik({
     enableReinitialize: true,
     initialValues: {
-      firstName: data.firstName || undefined,
-      lastName: data.lastName || undefined,
-      companyName: data.companyName || undefined,
-      mobileNumber: data.mobileNumber,
-      emailAddress: data.emailAddress || undefined,
-      website: data.website || undefined,
-      whatsappNumber: data.whatsappNumber || undefined,
-      dateOfBirth: data.dateOfBirth || undefined,
-      dateOfAnniversary: data.dateOfAnniversary || undefined,
+      firstName: customerProfile?.firstName || undefined,
+      lastName: customerProfile?.lastName || undefined,
+      companyName: customerProfile?.companyName || undefined,
+      mobileNumber: customerProfile?.mobileNumber,
+      emailAddress: customerProfile?.emailAddress || undefined,
+      website: customerProfile?.website || undefined,
+      whatsappNumber: customerProfile?.whatsappNumber || undefined,
+      dateOfBirth: customerProfile?.dateOfBirth || undefined,
+      dateOfAnniversary: customerProfile?.dateOfAnniversary || undefined,
     },
     validationSchema: editProfileSchema,
 
@@ -50,17 +56,16 @@ const ProfileDetails = ({
       try {
         const profilePayload: EditCustomerProfile = {
           userId: sessionData?.userId,
-          firstName: formValues.firstName,
-          lastName: formValues.lastName,
-          companyName: formValues.companyName,
-          mobileNumber: formValues.mobileNumber,
-          emailAddress: formValues.emailAddress,
-          website: formValues.website,
-          whatsappNumber: formValues.whatsappNumber,
-          dateOfBirth: formValues.dateOfBirth,
-          dateOfAnniversary: formValues.dateOfAnniversary,
+          firstName: formValues.firstName as string,
+          lastName: formValues.lastName as string,
+          companyName: formValues.companyName as string,
+          mobileNumber: formValues.mobileNumber as string,
+          emailAddress: formValues.emailAddress as string,
+          website: formValues.website as string,
+          whatsappNumber: formValues.whatsappNumber as string,
+          dateOfBirth: formValues.dateOfBirth as string,
+          dateOfAnniversary: formValues.dateOfAnniversary as string,
         };
-
         let result;
         result = await updateCustomerProfile(profilePayload);
         console.log(result);
@@ -73,6 +78,8 @@ const ProfileDetails = ({
       }
     },
   });
+
+  if (customerProfileLoading) return <p>Loading....</p>;
 
   return (
     <>
@@ -94,7 +101,7 @@ const ProfileDetails = ({
                   <label className='font-weight-bold custome-lg-label mb-0'>
                     First Name :
                   </label>
-                  <span className='ml-xl-2'>{data?.firstName}</span>
+                  <span className='ml-xl-2'>{customerProfile?.firstName}</span>
                 </div>
               </div>
               <div className='col-xl-6 col-lg-12 col-md-12 mb-3'>
@@ -102,7 +109,7 @@ const ProfileDetails = ({
                   <label className='font-weight-bold custome-lg-label mb-0'>
                     Last Name :
                   </label>
-                  <span className='ml-xl-2'>{data?.lastName}</span>
+                  <span className='ml-xl-2'>{customerProfile?.lastName}</span>
                 </div>
               </div>
               <div className='col-xl-6 col-lg-12 col-md-12 mb-3'>
@@ -110,7 +117,9 @@ const ProfileDetails = ({
                   <label className='font-weight-bold custome-lg-label mb-0'>
                     Company Name :
                   </label>
-                  <span className='ml-xl-2'>{data?.companyName}</span>
+                  <span className='ml-xl-2'>
+                    {customerProfile?.companyName}
+                  </span>
                 </div>
               </div>
               <div className='col-xl-6 col-lg-12 col-md-12 mb-3'>
@@ -118,7 +127,7 @@ const ProfileDetails = ({
                   <label className='font-weight-bold custome-lg-label mb-0'>
                     Print Name :
                   </label>
-                  <span className='ml-xl-2'>{data?.printName}</span>
+                  <span className='ml-xl-2'>{customerProfile?.printName}</span>
                 </div>
               </div>
               <div className='col-xl-6 col-lg-12 col-md-12 mb-3'>
@@ -126,7 +135,7 @@ const ProfileDetails = ({
                   <label className='font-weight-bold custome-lg-label mb-0'>
                     Fax Number :
                   </label>
-                  <span className='ml-xl-2'>{data?.faxNumber}</span>
+                  <span className='ml-xl-2'>{customerProfile?.faxNumber}</span>
                 </div>
               </div>
               <div className='col-xl-6 col-lg-12 col-md-12 mb-3'>
@@ -134,7 +143,9 @@ const ProfileDetails = ({
                   <label className='font-weight-bold custome-lg-label mb-0'>
                     E-mail Address :
                   </label>
-                  <span className='ml-xl-2'>{data?.emailAddress}</span>
+                  <span className='ml-xl-2'>
+                    {customerProfile?.emailAddress}
+                  </span>
                 </div>
               </div>
               <div className='col-xl-6 col-lg-12 col-md-12 mb-3'>
@@ -142,7 +153,9 @@ const ProfileDetails = ({
                   <label className='font-weight-bold custome-lg-label mb-0'>
                     Contact Person :
                   </label>
-                  <span className='ml-xl-2'>{data?.contactPerson}</span>
+                  <span className='ml-xl-2'>
+                    {customerProfile?.contactPerson}
+                  </span>
                 </div>
               </div>
               <div className='col-xl-6 col-lg-12 col-md-12 mb-3'>
@@ -150,7 +163,7 @@ const ProfileDetails = ({
                   <label className='font-weight-bold custome-lg-label mb-0'>
                     Website :
                   </label>
-                  <span className='ml-xl-2'>{data?.website}</span>
+                  <span className='ml-xl-2'>{customerProfile?.website}</span>
                 </div>
               </div>
               <div className='col-xl-6 col-lg-12 col-md-12 mb-3'>
@@ -158,7 +171,9 @@ const ProfileDetails = ({
                   <label className='font-weight-bold custome-lg-label mb-0'>
                     Mobile Number :
                   </label>
-                  <span className='ml-xl-2'>{data?.mobileNumber}</span>
+                  <span className='ml-xl-2'>
+                    {customerProfile?.mobileNumber}
+                  </span>
                 </div>
               </div>
               <div className='col-xl-6 col-lg-12 col-md-12 mb-3'>
@@ -166,7 +181,9 @@ const ProfileDetails = ({
                   <label className='font-weight-bold custome-lg-label mb-0'>
                     Whatsapp Number :
                   </label>
-                  <span className='ml-xl-2'>{data?.whatsappNumber}</span>
+                  <span className='ml-xl-2'>
+                    {customerProfile?.whatsappNumber}
+                  </span>
                 </div>
               </div>
               <div className='col-xl-6 col-lg-12 col-md-12 mb-3'>
@@ -175,8 +192,8 @@ const ProfileDetails = ({
                     Date of Birth :
                   </label>
                   <span className='ml-xl-2'>
-                    {data?.dateOfBirth &&
-                      formatDate(data?.dateOfBirth, "dd MMM yyyy")}
+                    {customerProfile?.dateOfBirth &&
+                      formatDate(customerProfile?.dateOfBirth, "dd MMM yyyy")}
                   </span>
                 </div>
               </div>
@@ -186,8 +203,11 @@ const ProfileDetails = ({
                     Date of Anniversary :
                   </label>
                   <span className='ml-xl-2'>
-                    {data?.dateOfAnniversary &&
-                      formatDate(data?.dateOfAnniversary, "dd MMM yyyy")}
+                    {customerProfile?.dateOfAnniversary &&
+                      formatDate(
+                        customerProfile?.dateOfAnniversary,
+                        "dd MMM yyyy"
+                      )}
                   </span>
                 </div>
               </div>
@@ -356,6 +376,12 @@ const ProfileDetails = ({
                   </div>
                   <div className='row'>
                     <div className='col-12 text-right'>
+                      <button
+                        className='btn btn-saawree close-edit-form mr-3'
+                        onClick={() => setEditMode(false)}
+                      >
+                        <span className='indicator-label'>Cancel</span>
+                      </button>
                       <button
                         type='submit'
                         className='btn btn-saawree close-edit-form'

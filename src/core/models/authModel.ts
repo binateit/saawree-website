@@ -137,3 +137,21 @@ export type ResetPassword = {
   confirmPassword?: string;
   token?: string;
 };
+
+export type UserProfile = {
+  companyName: string;
+  contactPerson: string;
+  dateOfAnniversary?: string;
+  dateOfBirth: string;
+  emailAddress: string;
+  faxNumber?: string;
+  firstName: string;
+  lastName: string;
+  mobileNumber: string;
+  printName: string;
+  rateTypeId: number;
+  rateTypeName: string;
+  userId: string;
+  website?: string;
+  whatsappNumber?: string;
+};

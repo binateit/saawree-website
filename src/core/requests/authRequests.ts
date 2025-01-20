@@ -10,6 +10,7 @@ import {
   ResendOTP,
   ResetPassword,
   UserModel,
+  UserProfile,
 } from "../models/authModel";
 import { Result } from "../models/model";
 
@@ -179,6 +180,16 @@ const getRefreshToken = async (refreshToken: RefreshToken) => {
   );
 };
 
+const getUserProfileByToken = (token: string): Promise<UserProfile> => {
+  const headers = {
+    Authorization: `Bearer ${token}`,
+  };
+  return axiosInstance
+    .get(GET_USER_BY_ACCESSTOKEN_URL, {
+      headers: headers,
+    })
+    .then((res: AxiosResponse<UserProfile>) => res.data);
+};
 const getAgentRefreshToken = async (refreshToken: RefreshToken) => {
   const headers = {
     tenant: "ho",
@@ -301,4 +312,5 @@ export {
   forgotAgentPassword,
   resetPassword,
   resetAgentPassword,
+  getUserProfileByToken,
 };

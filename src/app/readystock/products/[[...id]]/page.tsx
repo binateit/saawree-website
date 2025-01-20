@@ -284,7 +284,7 @@ const page = () => {
                       className='w-full md:w-14rem'
                     />
                   </div>
-                  <div className='list-grid'>
+                  <div className='list-grid d-flex'>
                     <div
                       onClick={() => setViewType("grid")}
                       className='list-grid-link'

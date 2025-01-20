@@ -1,20 +1,16 @@
 "use client";
 import React, { useState } from "react";
 import Overview from "./overview";
-import ProfileDetails from "./profile/ProfileDetails";
+import ProfileDetails from "./profile/page";
 import SaleOrder from "./transactions/SaleOrder";
 import { useQuery } from "@tanstack/react-query";
 import { getRecordById } from "@/core/requests/customerRoutes";
 import { useSession } from "next-auth/react";
 import { getUserByToken } from "@/core/requests/authRequests";
+import { formatCurrency } from "@/core/helpers/helperFunctions";
 
 const page = () => {
   const { data: session } = useSession();
-  const [showRightPanel, setShowRightPanel] = useState("overview");
-  const [showDropDown, setShowDropDown] = useState({
-    display: false,
-    name: "",
-  });
 
   const { data: customerOverview, isLoading: customerOverviewLoading } =
     useQuery({
@@ -22,124 +18,80 @@ const page = () => {
       queryFn: () => getRecordById(),
       refetchOnWindowFocus: false,
     });
-  const {
-    data: customerProfile,
-    isLoading: customerProfileLoading,
-    refetch: customerProfileRefetch,
-  } = useQuery({
-    queryKey: ["userByToken"],
-    queryFn: () => getUserByToken(session?.user?.token),
-    refetchOnWindowFocus: false,
-  });
 
   if (customerOverviewLoading) return <p>Loading....</p>;
 
   return (
-    <section className='dashboard-wrap'>
-      <div className='container'>
+    <div className='card shadow rounded'>
+      <div className='card-header bg-white'>
+        <h5 className='mb-0'>Overview</h5>
+      </div>
+
+      <div className='card-body'>
         <div className='row'>
-          <div className='col-xl-3 col-lg-3 d-none d-lg-block'>
-            <div className='panel-menu'>
-              <ul className='nav flex-column nav-pills nav-pills-custom'>
-                <li
-                  className={`nav-link mb-2 ${
-                    showRightPanel == "overview" ? "shadow active" : ""
-                  }`}
-                  onClick={() => setShowRightPanel("overview")}
-                >
-                  <div className='font-weight-bold small text-uppercase nav-link-item  py-3 px-3 d-block'>
-                    Overview
-                  </div>
-                </li>
-                <li className='mb-2 shadow tab-has-dropdown nav-link cursor-pointer'>
-                  <div
-                    className={`font-weight-bold small text-uppercase py-3 px-3 nav-link-item ${
-                      showRightPanel == "profile" ? "shadow active" : ""
-                    }`}
-                    onClick={() => setShowRightPanel("profile")}
-                  >
-                    Profile
-                  </div>
-                  {showDropDown.display && showDropDown.name == "profile" && (
-                    <div className=''>
-                      <div
-                        className='nav flex-column nav-pills nav-pills-custom-dropdown'
-                        id='v-pills-tab'
-                        role='tablist'
-                        aria-orientation='vertical'
-                      >
-                        <a
-                          className='nav-link pl-0 py-2 px-3'
-                          href='profile-details.html'
-                        >
-                          Profile Details
-                        </a>
-                        <a
-                          className='nav-link pl-0 py-2 px-3'
-                          href='accounting-details.html'
-                        >
-                          Accounting Details
-                        </a>
-                        <a
-                          className='nav-link pl-0 py-2 px-3'
-                          href='address.html'
-                        >
-                          Address
-                        </a>
-                        <a
-                          className='nav-link pl-0 py-2 px-3'
-                          href='change-password.html'
-                        >
-                          Change Password
-                        </a>
-                      </div>
-                    </div>
-                  )}
-                </li>
-                <li className='mb-2 shadow tab-has-dropdown nav-link cursor-pointer'>
-                  <div
-                    className='font-weight-bold small text-uppercase py-3 px-3'
-                    onClick={() => setShowRightPanel("transaction")}
-                  >
-                    Transaction
-                  </div>
-                  <div className='tab-dropdown'>
-                    <div
-                      className='nav flex-column nav-pills nav-pills-custom-dropdown'
-                      id='v-pills-tab'
-                      role='tablist'
-                      aria-orientation='vertical'
-                    >
-                      <a className='nav-link py-2 px-3' href='sale-order.html'>
-                        Sales Order
-                      </a>
-                      <a className='nav-link py-2 px-3' href='invoice.html'>
-                        Invoice
-                      </a>
-                      <a className='nav-link py-2 px-3' href='payment.html'>
-                        Payment
-                      </a>
-                    </div>
-                  </div>
-                </li>
-              </ul>
+          <div className='col-xl-6 col-lg-6 col-md-6 mb-3'>
+            <div className='p-3 border text-center'>
+              <p className='mb-0 h5'>{customerOverview?.totalSaleOrderCount}</p>
+              <p className='mb-0 text-muted'>Sales Order Count</p>
             </div>
           </div>
-          <div className='col-xl-9 col-lg-9'>
-            {showRightPanel === "overview" && (
-              <Overview overview={customerOverview} />
-            )}
-            {showRightPanel === "profile" && (
-              <ProfileDetails
-                data={customerProfile?.data}
-                customerProfileRefetch={customerProfileRefetch}
-              />
-            )}
-            {showRightPanel === "transaction" && <SaleOrder />}
+          <div className='col-xl-6 col-lg-6 col-md-6 mb-3'>
+            <div className='p-3 border text-center'>
+              <p className='mb-0 h5'>
+                {formatCurrency(customerOverview?.totalSaleOrderAmount)}
+              </p>
+              <p className='mb-0 text-muted'>Sales Order Amount</p>
+            </div>
+          </div>
+          <div className='col-xl-6 col-lg-6 col-md-6 mb-3'>
+            <div className='p-3 border text-center'>
+              <p className='mb-0 h5'>
+                {formatCurrency(customerOverview?.totalPaymentReceived)}
+              </p>
+              <p className='mb-0 text-muted'>Sales Order Paid Amount</p>
+            </div>
+          </div>
+          <div className='col-xl-6 col-lg-6 col-md-6 mb-3'>
+            <div className='p-3 border text-center'>
+              <p className='mb-0 h5'>
+                {formatCurrency(customerOverview?.outstandingAmount)}
+              </p>
+              <p className='mb-0 text-muted'>Sales Order Pending Amount</p>
+            </div>
+          </div>
+          <div className='col-xl-6 col-lg-6 col-md-6 mb-3'>
+            <div className='p-3 border text-center'>
+              <p className='mb-0 h5'>{customerOverview?.totalInvoiceCount}</p>
+              <p className='mb-0 text-muted'>Invoice Count</p>
+            </div>
+          </div>
+          <div className='col-xl-6 col-lg-6 col-md-6 mb-3'>
+            <div className='p-3 border text-center'>
+              <p className='mb-0 h5'>
+                {formatCurrency(customerOverview?.totalInvoiceAmount)}
+              </p>
+              <p className='mb-0 text-muted'>Invoice Amount</p>
+            </div>
+          </div>
+          <div className='col-xl-6 col-lg-6 col-md-6 mb-3'>
+            <div className='p-3 border text-center'>
+              <p className='mb-0 h5'>
+                {formatCurrency(customerOverview?.totalInovicePaymentReceived)}
+              </p>
+              <p className='mb-0 text-muted'>Invoice Paid Amount</p>
+            </div>
+          </div>
+          <div className='col-xl-6 col-lg-6 col-md-6 mb-3'>
+            <div className='p-3 border text-center'>
+              <p className='mb-0 h5'>
+                {formatCurrency(customerOverview?.outstandingInvoiceAmount)}
+              </p>
+              <p className='mb-0 text-muted'>Invoice Pending Amount</p>
+            </div>
           </div>
         </div>
       </div>
-    </section>
+    </div>
   );
 };
 
