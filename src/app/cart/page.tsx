@@ -1,7 +1,21 @@
 "use client";
+import { formatCurrency } from "@/core/helpers/helperFunctions";
+import { getCartDetails } from "@/core/requests/cartRequests";
+import { useQuery } from "@tanstack/react-query";
 import React from "react";
+import { BsDash, BsPlus } from "react-icons/bs";
+import { FaMinus } from "react-icons/fa";
 
 const page = () => {
+  const { data: cartData, isLoading: cartDetailsLoading } = useQuery({
+    queryKey: ["cartDetails"],
+    queryFn: () => getCartDetails(),
+  });
+
+  if (cartDetailsLoading) {
+    return <p>Loading...</p>;
+  }
+  console.log(cartData);
   return (
     <section className='cart-page'>
       <div className='container'>
@@ -25,78 +39,45 @@ const page = () => {
               </tr>
             </thead>
             <tbody>
-              <tr>
-                <td>
-                  <div className='selected-prod-img'>
-                    <img src='img/S1.jpg' alt='' />
-                  </div>
-                </td>
-                <td>
-                  <div className='selected-product'>
-                    <a href='#'>
-                      Tahura Oxidized Plated Jhumki Earrings - Silver
-                    </a>
-                  </div>
-                </td>
-                <td>₹ 199.0</td>
-                <td>
-                  <div className='quantity'>
-                    <button className='minus' aria-label='Decrease'>
-                      &minus;
-                    </button>
-                    <input
-                      type='number'
-                      className='input-box'
-                      value='1'
-                      min='1'
-                      max='10'
-                    />
-                    <button className='plus' aria-label='Increase'>
-                      &plus;
-                    </button>
-                  </div>
-                </td>
-                <td>₹ 199.0</td>
-                <td className='trash-box'>
-                  <i className='bi bi-trash'></i>
-                </td>
-              </tr>
-              <tr>
-                <td>
-                  <div className='selected-prod-img'>
-                    <img src='img/S1.jpg' alt='' />
-                  </div>
-                </td>
-                <td>
-                  <div className='selected-product'>
-                    <a href='#'>
-                      Tahura Oxidized Plated Jhumki Earrings - Silver
-                    </a>
-                  </div>
-                </td>
-                <td>₹ 199.0</td>
-                <td>
-                  <div className='quantity'>
-                    <button className='minus' aria-label='Decrease'>
-                      &minus;
-                    </button>
-                    <input
-                      type='number'
-                      className='input-box'
-                      value='1'
-                      min='1'
-                      max='10'
-                    />
-                    <button className='plus' aria-label='Increase'>
-                      &plus;
-                    </button>
-                  </div>
-                </td>
-                <td>₹ 199.0</td>
-                <td className='trash-box'>
-                  <i className='bi bi-trash'></i>
-                </td>
-              </tr>
+              {cartData?.items?.map((item) => (
+                <tr>
+                  <td>
+                    <div className='selected-prod-img'>
+                      <img
+                        src={`${process.env.NEXT_PUBLIC_APP_IMAGE_API_URL}/${item?.imagePath}`}
+                        alt=''
+                      />
+                    </div>
+                  </td>
+                  <td>
+                    <div className='selected-product'>
+                      <a href='#'>{item?.productName}</a>
+                    </div>
+                  </td>
+                  <td>{formatCurrency(item?.productPrice)}</td>
+                  <td>
+                    <div className='quantity'>
+                      <button className='minus' aria-label='Decrease'>
+                        <BsDash />
+                      </button>
+                      <input
+                        type='number'
+                        className='input-box'
+                        value='1'
+                        min='1'
+                        max='10'
+                      />
+                      <button className='plus' aria-label='Increase'>
+                        <BsPlus />
+                      </button>
+                    </div>
+                  </td>
+                  <td>{formatCurrency(item?.productPrice)}</td>
+                  <td className='trash-box'>
+                    <i className='bi bi-trash'></i>
+                  </td>
+                </tr>
+              ))}
             </tbody>
           </table>
 
@@ -119,7 +100,9 @@ const page = () => {
                       <td>
                         <span className='amount'>
                           <span id='bk-cart-subtotal-price'>
-                            <span className='money'>₹ 398.00</span>
+                            <span className='money'>
+                              {formatCurrency(cartData?.orderSubTotal)}
+                            </span>
                           </span>
                         </span>
                       </td>
@@ -130,7 +113,9 @@ const page = () => {
                         <strong>
                           <span className='amount'>
                             <span id='bk-cart-subtotal-price'>
-                              <span className='money'>₹ 398.00</span>
+                              <span className='money'>
+                                {formatCurrency(cartData?.orderTotal)}
+                              </span>
                             </span>
                           </span>
                         </strong>

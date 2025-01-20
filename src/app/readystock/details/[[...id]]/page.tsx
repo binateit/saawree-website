@@ -205,7 +205,7 @@ const page = () => {
                               {color.colorName}{" "}
                             </span>
                           </div>
-
+                          <div className='stock'></div>
                           <div className='color-quntity'>
                             <input type='text' className='quntity-input' />
                           </div>

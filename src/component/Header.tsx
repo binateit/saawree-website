@@ -142,10 +142,10 @@ const Header = () => {
                   <BsSearch fontSize={25} />
                 </div>
 
-                <a href='cart.html' className='cart-widget header-icons'>
+                <Link href='/cart' className='cart-widget header-icons'>
                   <BsCart fontSize={25} />
                   <span className='badge badge-danger'>3</span>
-                </a>
+                </Link>
                 {session?.user && (
                   <div className='header-icons dashboard-menu-icon'>
                     <BsList fontSize={25} onClick={handleShow} />
