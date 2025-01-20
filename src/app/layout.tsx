@@ -14,6 +14,7 @@ import "primereact/resources/themes/lara-light-cyan/theme.css";
 import { ToastContainer } from "react-toastify";
 import { Session } from "@/core/models/model";
 import "./globals.css";
+import { CartCountProvider } from "@/core/context/useCartCount";
 
 export default async function RootLayout({
   children,
@@ -43,16 +44,18 @@ export default async function RootLayout({
         />
       </Head>
       <SessionProvider session={session}>
-        <QueryProvider>
-          <PrimeReactProvider>
-            <body>
-              <Header />
-              {children}
-              <Footer />
-              <ToastContainer />
-            </body>
-          </PrimeReactProvider>
-        </QueryProvider>
+        <CartCountProvider>
+          <QueryProvider>
+            <PrimeReactProvider>
+              <body>
+                <Header />
+                {children}
+                <Footer />
+                <ToastContainer />
+              </body>
+            </PrimeReactProvider>
+          </QueryProvider>
+        </CartCountProvider>
       </SessionProvider>
     </html>
   );

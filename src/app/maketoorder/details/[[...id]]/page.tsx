@@ -9,7 +9,7 @@ import {
 } from "@/core/requests/productsRequests";
 import { useQuery } from "@tanstack/react-query";
 import { useSession } from "next-auth/react";
-import { useSearchParams } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import { Dropdown } from "primereact/dropdown";
 import React, { useEffect, useState } from "react";
 import Image from "next/image";
@@ -19,11 +19,20 @@ import InnerImageZoom from "react-inner-image-zoom";
 
 import "react-inner-image-zoom/lib/InnerImageZoom/styles.css";
 import { Dialog } from "primereact/dialog";
+import { ProductColor } from "@/core/models/productModel";
+import { Items } from "@/core/models/cartModel";
+import { createCart } from "@/core/requests/cartRequests";
+import { toast } from "react-toastify";
+import { useCartCount } from "@/core/context/useCartCount";
 
 const page = () => {
   const { data: session } = useSession();
+  const router = useRouter();
+  const { setCartCount, cartCount, setIsBuyNow } = useCartCount();
   const [visible, setVisible] = useState(false);
   const searchParams = useSearchParams();
+  const [selectedProductId, setSelectedProductId] = useState<number>();
+  const [selectedColors, setSelectedColors] = useState<ProductColor[]>([]);
   const productId = searchParams.get("productId");
   const [mainProductImage, setMainProductImage] = useState({
     mainImage: "",
@@ -40,7 +49,7 @@ const page = () => {
 
   useEffect(() => {
     let polishTypes: any = [];
-    response?.polishingTypeDropdownDtos.map((ptype) => {
+    response?.polishingTypeList.map((ptype) => {
       return polishTypes.push({
         name: ptype?.polishingTypeName,
         value: ptype?.polishingTypeId,
@@ -81,6 +90,59 @@ const page = () => {
     }
   };
 
+  const handleQuantityChange = (
+    productId: number,
+    colorId: number,
+    quantity: number
+  ) => {
+    setSelectedColors((prevColors) => {
+      const existingColor = prevColors.find(
+        (color) => color.colorId === colorId
+      );
+      if (existingColor) {
+        return prevColors.map((color) =>
+          color.colorId === colorId ? { ...color, quantity, productId } : color
+        );
+      } else {
+        return [...prevColors, { colorId, quantity, productId }];
+      }
+    });
+  };
+  console.log("selectedColors", selectedColors);
+  const handleAddToCart = async (isBuyNow: boolean) => {
+    try {
+      if (session?.user?.token === undefined) {
+        router.push("/login");
+      } else {
+        if (session?.user?.token && response && selectedColors.length > 0) {
+          let updatedItems: Items[] = selectedColors.map((color) => ({
+            productId: color.productId as number,
+            quantity: color.quantity as number,
+          }));
+          const carts = {
+            orderType: 2,
+            items: updatedItems,
+            isFromBuyNow: isBuyNow,
+          };
+
+          const result = await createCart(carts);
+          if (result.succeeded) {
+            setCartCount((cartCount as number) + 1);
+            toast.success("Items added to cart successfully");
+            return true;
+          } else {
+            toast.error("Failed to add items to cart");
+            return false;
+          }
+        } else {
+          toast.error("Please select the quantity");
+          return false;
+        }
+      }
+    } catch (error) {
+      toast.error("An error occurred while adding item to cart");
+    }
+  };
   return (
     <section className='product-details'>
       <div className='container'>
@@ -117,7 +179,7 @@ const page = () => {
                         zoomedImge: pi?.zoomImagePath,
                       });
                     }}
-                    key={pi?.id}
+                    key={index}
                   >
                     <img
                       src={`${process.env.NEXT_PUBLIC_APP_IMAGE_API_URL}/${pi?.thumbnailImagePath}`}
@@ -194,42 +256,75 @@ const page = () => {
                     </div>
                   </div>
                   <div className='row'>
-                    {response?.colorDropdownDtos?.map((color) => (
-                      <div className='col-xl-6 col-lg-6 col-md-12 col-sm-6 mb-2'>
+                    {response?.colorList?.map((color, index) => (
+                      <div
+                        className='col-xl-6 col-lg-6 col-md-12 col-sm-6 mb-2'
+                        key={color?.colorId}
+                      >
                         <div className='d-flex'>
                           <div className='moti-color'>
                             <img
                               src={`${process.env.NEXT_PUBLIC_APP_IMAGE_API_URL}/${color?.imagePath}`}
                               alt=''
                             />
-                            <span className='color-name'>
+                            <span
+                              className='color-name'
+                              onClick={() =>
+                                setSelectedProductId(color.productId)
+                              }
+                            >
                               {color.colorName}{" "}
                             </span>
                           </div>
 
                           <div className='color-quntity'>
-                            <input type='text' className='quntity-input' />
+                            <input
+                              type='text'
+                              className='quntity-input'
+                              id={index.toString()}
+                              defaultValue={0}
+                              min={1}
+                              max={99999}
+                              onChange={(e) => {
+                                let qty = parseInt(e.target.value);
+                                if (qty < 0) {
+                                  e.target.value = "";
+                                } else if (qty > 99999) {
+                                  e.target.value = "";
+                                } else {
+                                  handleQuantityChange(
+                                    color.productId as number,
+                                    color.colorId as number,
+                                    qty
+                                  );
+                                }
+                              }}
+                            />
                           </div>
                         </div>
                       </div>
                     ))}
                   </div>
-
-                  {session?.user && (
-                    <div className='action-btn-wrapper'>
-                      <button className='btn btn-saawree-outline'>
-                        Add to cart
-                      </button>
-                      <a href='cart.html' className='btn btn-saawree'>
-                        Buy now
-                      </a>
-                      {/* <button className="btn btn-saawree-outline"><i className="bi bi-heart"></i></button>  */}
-                      <a href='#' className='whatsapp'>
-                        <img src='img/whats-aap.png' alt='' />
-                      </a>
-                    </div>
-                  )}
                 </div>
+                {session?.user && (
+                  <div className='action-btn-wrapper mt-10'>
+                    <button
+                      className='btn btn-saawree-outline'
+                      onClick={() => {
+                        handleAddToCart(false);
+                      }}
+                    >
+                      Add to cart
+                    </button>
+                    <a href='cart.html' className='btn btn-saawree'>
+                      Buy now
+                    </a>
+                    {/* <button className="btn btn-saawree-outline"><i className="bi bi-heart"></i></button>  */}
+                    <a href='#' className='whatsapp'>
+                      <img src='img/whats-aap.png' alt='' />
+                    </a>
+                  </div>
+                )}
               </div>
             </div>
           </div>
@@ -351,7 +446,7 @@ const page = () => {
               <h1>YOU MAY ALSO LIKE THIS</h1>
             </div>
             <div className='title-septer'>
-              <img src='img/underline-icon.png' alt='' />
+              <img src={underlineIcon.src} alt='underlineIcon' />
             </div>
             <div className='kada-collections'>
               <Carousel

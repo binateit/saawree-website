@@ -82,28 +82,36 @@ const layout = ({
                 <li className='mb-2 shadow tab-has-dropdown nav-link cursor-pointer'>
                   <div
                     className='font-weight-bold small text-uppercase py-3 px-3'
-                    onClick={() => setShowRightPanel("transaction")}
+                    onClick={() =>
+                      setShowDropDown({ name: "transaction", display: true })
+                    }
                   >
                     Transaction
                   </div>
-                  <div className='tab-dropdown'>
-                    <div
-                      className='nav flex-column nav-pills nav-pills-custom-dropdown'
-                      id='v-pills-tab'
-                      role='tablist'
-                      aria-orientation='vertical'
-                    >
-                      <a className='nav-link py-2 px-3' href='sale-order.html'>
-                        Sales Order
-                      </a>
-                      <a className='nav-link py-2 px-3' href='invoice.html'>
-                        Invoice
-                      </a>
-                      <a className='nav-link py-2 px-3' href='payment.html'>
-                        Payment
-                      </a>
-                    </div>
-                  </div>
+                  {showDropDown.display &&
+                    showDropDown.name == "transaction" && (
+                      <div className=''>
+                        <div
+                          className='nav flex-column nav-pills nav-pills-custom-dropdown'
+                          id='v-pills-tab'
+                          role='tablist'
+                          aria-orientation='vertical'
+                        >
+                          <a
+                            className='nav-link py-2 px-3'
+                            href='sale-order.html'
+                          >
+                            Sales Order
+                          </a>
+                          <a className='nav-link py-2 px-3' href='invoice.html'>
+                            Invoice
+                          </a>
+                          <a className='nav-link py-2 px-3' href='payment.html'>
+                            Payment
+                          </a>
+                        </div>
+                      </div>
+                    )}
                 </li>
               </ul>
             </div>
