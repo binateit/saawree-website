@@ -140,7 +140,7 @@ const Registration: FC<Props> = ({ updateStep, setUserId }) => {
     if (country) {
       countryResult = country as Country[];
       let countryArray: any[] = [];
-      countryResult.map((item: any) => {
+      countryResult?.map((item: any) => {
         return countryArray.push({ value: item.id, label: item.name });
       });
       setCountryList(countryArray);
@@ -285,9 +285,9 @@ const Registration: FC<Props> = ({ updateStep, setUserId }) => {
                 <div className='row'>
                   <div className='col-md-4'>
                     <div className='select-field'>
-                      <label className='country-label' htmlFor='country-option'>
+                      {/* <label className='country-label' htmlFor='country-option'>
                         Countr/region
-                      </label>
+                      </label> */}
                       <Field
                         name={"countryId"}
                         className='search-category-dropdown'
@@ -308,9 +308,9 @@ const Registration: FC<Props> = ({ updateStep, setUserId }) => {
                   </div>
                   <div className='col-md-4'>
                     <div className='select-field'>
-                      <label className='country-label' htmlFor='country-option'>
+                      {/* <label className='country-label' htmlFor='country-option'>
                         State
-                      </label>
+                      </label> */}
                       <Field
                         className='form-select-solid'
                         options={stateList}

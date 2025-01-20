@@ -15,17 +15,25 @@ import { useSearchParams } from "next/navigation";
 import { Dropdown } from "primereact/dropdown";
 import React, { useEffect, useState } from "react";
 import Image from "next/image";
-import { BsHeart } from "react-icons/bs";
+import { BsDownload, BsHeart } from "react-icons/bs";
 import { Carousel } from "primereact/carousel";
-import Zoom from "reactjs-image-zoom";
+import InnerImageZoom from "react-inner-image-zoom";
+
+import "react-inner-image-zoom/lib/InnerImageZoom/styles.css";
+import { Dialog } from "primereact/dialog";
 
 const page = () => {
   const { data: session } = useSession();
 
   const searchParams = useSearchParams();
   const productId = searchParams.get("productId");
-  const [mainProductImage, setMainProductImage] = useState("");
+  const [mainProductImage, setMainProductImage] = useState({
+    mainImage: "",
+    zoomedImge: "",
+  });
   const [polishType, setPolishType] = useState<string>("");
+  const [visible, setVisible] = useState(false);
+
   const [polishTypeList, setPolishTypeList] = useState<SelectOptionProps[]>([]);
   const [visibleTab, setVisibleTab] = useState<string>("description");
 
@@ -43,7 +51,10 @@ const page = () => {
     });
     setPolishTypeList(polishTypes);
 
-    setMainProductImage(response?.productImages[0]?.mediumImagePath || "");
+    setMainProductImage({
+      mainImage: response?.productImages[0]?.mediumImagePath || "",
+      zoomedImge: response?.productImages[0]?.zoomImagePath || "",
+    });
   }, [response]);
 
   const { data: recomendedProducts } = useQuery({
@@ -56,6 +67,16 @@ const page = () => {
     enabled: !!response,
   });
 
+  function download() {
+    const a = document.createElement("a");
+    a.href = mainProductImage?.mainImage;
+    a.download = mainProductImage?.mainImage?.split("/").pop() || "";
+    document.body.appendChild(a);
+
+    a.click();
+    document.body.removeChild(a);
+  }
+
   return (
     <section className='product-details'>
       <div className='container'>
@@ -63,14 +84,21 @@ const page = () => {
           <div className='col-md-6'>
             <div id='js-gallery' className='gallery sticky-layer'>
               <div className='gallery__hero'>
-                <img
-                  src={`${process.env.NEXT_PUBLIC_APP_IMAGE_API_URL}/${mainProductImage}`}
-                  className='img-responsive main-img'
-                  alt=''
-                />
+                <div onClick={() => setVisible(true)}>
+                  <InnerImageZoom
+                    src={`${process.env.NEXT_PUBLIC_APP_IMAGE_API_URL}/${mainProductImage?.mainImage}`}
+                    zoomSrc={`${process.env.NEXT_PUBLIC_APP_IMAGE_API_URL}/${mainProductImage?.zoomedImge}`}
+                    zoomType='hover'
+                    hideHint
+                    width={600}
+                    zoomScale={2}
+                    hasSpacer={true}
+                    zoomPreload={true}
+                  />
+                </div>
                 <div className='icons-wrap'>
                   <div className='icon-1 down-btn'>
-                    <i className='bi bi-download'></i>
+                    <BsDownload onClick={() => download()} />
                   </div>
                 </div>
               </div>
@@ -79,8 +107,13 @@ const page = () => {
                   <div
                     data-gallery='thumb'
                     className='is-active'
-                    onClick={() => setMainProductImage(pi?.mediumImagePath)}
-                    key={index}
+                    onClick={() =>
+                      setMainProductImage({
+                        mainImage: pi?.mediumImagePath,
+                        zoomedImge: pi?.zoomImagePath,
+                      })
+                    }
+                    key={pi?.id}
                   >
                     <img
                       src={`${process.env.NEXT_PUBLIC_APP_IMAGE_API_URL}/${pi?.thumbnailImagePath}`}
@@ -375,6 +408,24 @@ const page = () => {
           </div>
         </div>
       </div>
+      <Dialog
+        visible={visible}
+        onHide={() => {
+          if (!visible) return;
+          setVisible(false);
+        }}
+      >
+        <InnerImageZoom
+          src={`${process.env.NEXT_PUBLIC_APP_IMAGE_API_URL}/${mainProductImage?.mainImage}`}
+          zoomSrc={`${process.env.NEXT_PUBLIC_APP_IMAGE_API_URL}/${mainProductImage?.zoomedImge}`}
+          zoomType='hover'
+          hideHint
+          width={650}
+          zoomScale={2}
+          hasSpacer={true}
+          zoomPreload={true}
+        />
+      </Dialog>
     </section>
   );
 };

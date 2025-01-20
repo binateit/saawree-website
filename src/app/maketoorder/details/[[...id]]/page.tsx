@@ -13,15 +13,22 @@ import { useSearchParams } from "next/navigation";
 import { Dropdown } from "primereact/dropdown";
 import React, { useEffect, useState } from "react";
 import Image from "next/image";
-import { BsHeart } from "react-icons/bs";
+import { BsDownload, BsHeart } from "react-icons/bs";
 import { Carousel } from "primereact/carousel";
+import InnerImageZoom from "react-inner-image-zoom";
+
+import "react-inner-image-zoom/lib/InnerImageZoom/styles.css";
+import { Dialog } from "primereact/dialog";
 
 const page = () => {
   const { data: session } = useSession();
-
+  const [visible, setVisible] = useState(false);
   const searchParams = useSearchParams();
   const productId = searchParams.get("productId");
-  const [mainProductImage, setMainProductImage] = useState("");
+  const [mainProductImage, setMainProductImage] = useState({
+    mainImage: "",
+    zoomedImge: "",
+  });
   const [polishType, setPolishType] = useState<string>("");
   const [polishTypeList, setPolishTypeList] = useState<SelectOptionProps[]>([]);
   const [visibleTab, setVisibleTab] = useState<string>("description");
@@ -41,7 +48,10 @@ const page = () => {
     });
     setPolishTypeList(polishTypes);
 
-    setMainProductImage(response?.productImages[0]?.mediumImagePath || "");
+    setMainProductImage({
+      mainImage: response?.productImages[0]?.mediumImagePath || "",
+      zoomedImge: response?.productImages[0]?.zoomImagePath || "",
+    });
   }, [response]);
 
   const { data: recomendedProducts } = useQuery({
@@ -54,6 +64,23 @@ const page = () => {
     enabled: !!response,
   });
 
+  const downloadImage = async () => {
+    try {
+      const imageUrl = `${process.env.NEXT_PUBLIC_APP_IMAGE_API_URL}/${mainProductImage?.mainImage}`;
+      const response = await fetch(imageUrl);
+      const blob = await response.blob();
+      const blobUrl = URL.createObjectURL(blob);
+      const link = document.createElement("a");
+      link.href = blobUrl;
+      link.download = imageUrl.split("/").pop() || "";
+      link.click();
+
+      URL.revokeObjectURL(blobUrl);
+    } catch (error) {
+      console.error("Error downloading the image:", error);
+    }
+  };
+
   return (
     <section className='product-details'>
       <div className='container'>
@@ -61,14 +88,21 @@ const page = () => {
           <div className='col-md-6'>
             <div id='js-gallery' className='gallery sticky-layer'>
               <div className='gallery__hero'>
-                <img
-                  src={`${process.env.NEXT_PUBLIC_APP_IMAGE_API_URL}/${mainProductImage}`}
-                  className='img-responsive main-img'
-                  alt=''
-                />
+                <div onClick={() => setVisible(true)}>
+                  <InnerImageZoom
+                    src={`${process.env.NEXT_PUBLIC_APP_IMAGE_API_URL}/${mainProductImage?.mainImage}`}
+                    zoomSrc={`${process.env.NEXT_PUBLIC_APP_IMAGE_API_URL}/${mainProductImage?.zoomedImge}`}
+                    zoomType='hover'
+                    hideHint
+                    width={600}
+                    zoomScale={2}
+                    hasSpacer={true}
+                    zoomPreload={true}
+                  />
+                </div>
                 <div className='icons-wrap'>
                   <div className='icon-1 down-btn'>
-                    <i className='bi bi-download'></i>
+                    <BsDownload onClick={() => downloadImage()} />
                   </div>
                 </div>
               </div>
@@ -77,7 +111,12 @@ const page = () => {
                   <div
                     data-gallery='thumb'
                     className='is-active'
-                    onClick={() => setMainProductImage(pi?.mediumImagePath)}
+                    onClick={() => {
+                      setMainProductImage({
+                        mainImage: pi?.mediumImagePath,
+                        zoomedImge: pi?.zoomImagePath,
+                      });
+                    }}
                     key={pi?.id}
                   >
                     <img
@@ -370,6 +409,24 @@ const page = () => {
           </div>
         </div>
       </div>
+      <Dialog
+        visible={visible}
+        onHide={() => {
+          if (!visible) return;
+          setVisible(false);
+        }}
+      >
+        <InnerImageZoom
+          src={`${process.env.NEXT_PUBLIC_APP_IMAGE_API_URL}/${mainProductImage?.mainImage}`}
+          zoomSrc={`${process.env.NEXT_PUBLIC_APP_IMAGE_API_URL}/${mainProductImage?.zoomedImge}`}
+          zoomType='hover'
+          hideHint
+          width={650}
+          zoomScale={2}
+          hasSpacer={true}
+          zoomPreload={true}
+        />
+      </Dialog>
     </section>
   );
 };

@@ -112,7 +112,7 @@ const page = () => {
         </form>
         <p className='arha'>
           New customer?{" "}
-          <Link href={"/auth/register"} className='frg-psd'>
+          <Link href={"/auth/registrationprocess"} className='frg-psd'>
             Create your account
           </Link>
         </p>

@@ -5,10 +5,7 @@ import ProductListCard from "@/core/component/Products/ProductListCard";
 import { CategoryList, CheckBoxFilter } from "@/core/models/productModel";
 import {
   getCategoryList,
-  getColorList,
   getMaketoOrderProducts,
-  getPolishingTypeList,
-  getReadyStockProducts,
 } from "@/core/requests/productsRequests";
 import { useQuery } from "@tanstack/react-query";
 import { useSession } from "next-auth/react";
@@ -231,13 +228,13 @@ const page = () => {
               {viewType === "list" && (
                 <div className='products-list-wrap'>
                   {response?.data?.map((product) => (
-                    <>
+                    <div key={product?.productId}>
                       <ProductListCard
                         product={product}
                         session={session}
                         type={"mto"}
                       />
-                    </>
+                    </div>
                   ))}
                 </div>
               )}

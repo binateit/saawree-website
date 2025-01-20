@@ -76,9 +76,9 @@ const Header = () => {
                 <span className='res-nav-btn'>
                   <i className='fas fa-bars fa-1x'></i>
                 </span>
-                <a href='index.html'>
+                <Link href='/'>
                   <img src={finalLogo.src} className='img-logo' alt='Saawree' />
-                </a>
+                </Link>
               </div>
             </div>
             <div
@@ -368,15 +368,18 @@ const Header = () => {
                 {openDropDown.display &&
                   openDropDown.name === "transaction" && (
                     <div className='nav flex-column nav-pills nav-pills-custom-dropdown'>
-                      <a className='nav-link py-2 px-3' href='sale-order.html'>
+                      <Link
+                        className='nav-link py-2 px-3'
+                        href='sale-order.html'
+                      >
                         Sales Order
-                      </a>
-                      <a className='nav-link py-2 px-3' href='invoice.html'>
+                      </Link>
+                      <Link className='nav-link py-2 px-3' href='invoice.html'>
                         Invoice
-                      </a>
-                      <a className='nav-link py-2 px-3' href='payment.html'>
+                      </Link>
+                      <Link className='nav-link py-2 px-3' href='payment.html'>
                         Payment
-                      </a>
+                      </Link>
                     </div>
                   )}
               </li>
