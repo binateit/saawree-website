@@ -40,7 +40,7 @@ const page = () => {
             </thead>
             <tbody>
               {cartData?.items?.map((item) => (
-                <tr>
+                <tr key={item?.cartId}>
                   <td>
                     <div className='selected-prod-img'>
                       <img
@@ -63,7 +63,7 @@ const page = () => {
                       <input
                         type='number'
                         className='input-box'
-                        value='1'
+                        value={item?.quantity}
                         min='1'
                         max='10'
                       />
