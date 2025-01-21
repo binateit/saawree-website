@@ -178,14 +178,15 @@ const page = () => {
                 </div>
                 <div className='d-flex'>
                   <div className='right-side-bar'>
-                    <label>Sort by </label>
+                    <label className="mr-2">Sort by </label>
                     <Dropdown
                       value={paginationFilters?.orderBy?.[0]}
                       onChange={(e) => onSort(e.value)}
                       options={sortList}
                       optionLabel='name'
                       placeholder='Select options'
-                      className='w-full md:w-14rem'
+                      // className='form-control'
+                      panelClassName="custom-dropDown-panel"
                     />
                   </div>
                   <div className='list-grid d-flex'>

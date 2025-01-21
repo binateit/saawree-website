@@ -48,30 +48,19 @@ const layout = ({
                         role='tablist'
                         aria-orientation='vertical'
                       >
-                        <a
+                        <Link
                           className='nav-link pl-0 py-2 px-3'
-                          href='profile-details.html'
+                          href='/agent/profile/details'
                         >
                           Profile Details
-                        </a>
-                        <a
+                        </Link>
+                        
+                        <Link
                           className='nav-link pl-0 py-2 px-3'
-                          href='accounting-details.html'
-                        >
-                          Accounting Details
-                        </a>
-                        <a
-                          className='nav-link pl-0 py-2 px-3'
-                          href='address.html'
-                        >
-                          Address
-                        </a>
-                        <a
-                          className='nav-link pl-0 py-2 px-3'
-                          href='change-password.html'
+                          href='/agent/profile/change-password'
                         >
                           Change Password
-                        </a>
+                        </Link>
                       </div>
                     </div>
                   )}

@@ -274,7 +274,7 @@ const page = () => {
                 </div>
                 <div className='d-flex'>
                   <div className='right-side-bar'>
-                    <label>Sort by </label>
+                    <label className="mr-2">Sort by </label>
                     <Dropdown
                       value={paginationFilters?.orderBy?.[0]}
                       onChange={(e) => onSort(e.value)}

@@ -48,11 +48,12 @@
     background: #fff;
     transition: 0.5s;
     padding: 0px 0px;
+    box-shadow: 0px 6px 9px -1px rgb(0 0 0 / 0.15);
   }
   
   .main_menu ul li ul li a {
     padding: 3px 10px;
-    font-size: 13px;
+    font-size: 15px;
     width: 100%;
     align-items: center;
     display: flex;
@@ -146,8 +147,9 @@
   }
 
   .main_menu ul li ul li ul.category-menu>li>a{
-    font-size: 12px;
-    font-weight: 600;
+    font-size: 14px;
+    font-weight: 500;
+    text-align: left;
   }
 
   .main_menu ul li ul li ul.category-menu>li>ul>li>a{

@@ -131,8 +131,8 @@ export default function Home() {
                             </>
                           ) : (
                             <a href='#'>
-                              <button className='btn btn-small btn-saawree-outline'>
-                                Login to view price
+                              <button className='btn btn-small btn-saawree-outline mt-2'>
+                                Login
                               </button>
                             </a>
                           )}
@@ -178,11 +178,12 @@ export default function Home() {
           value={homePageData?.bl?.filter((t) => t.sid == 2)}
           numVisible={1}
           style={{ maxWidth: "100%" }}
-          showIndicators={
-            (homePageData?.bl?.filter((t) => t.sid == 1)?.length || 0) > 1
-              ? true
-              : false
-          }
+          // showIndicators={
+          //   (homePageData?.bl?.filter((t) => t.sid == 1)?.length || 0) > 1
+          //     ? true
+          //     : false
+          // }
+          showIndicators={false}
           showThumbnails={false}
           showItemNavigators={
             (homePageData?.bl?.filter((t) => t.sid == 1)?.length || 0) > 1
@@ -253,7 +254,7 @@ export default function Home() {
                           </>
                         ) : (
                           <a href='#'>
-                            <button className='btn btn-small btn-saawree-outline'>
+                            <button className='btn btn-small btn-saawree-outline mt-2'>
                               Login to view price
                             </button>
                           </a>
