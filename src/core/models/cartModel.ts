@@ -43,3 +43,8 @@ export type Item = {
   taxAmount: number;
   totalInclusiveTax: number;
 };
+
+export type UpdateCartPayload = {
+  cartId: number;
+  quantity: number;
+}[];

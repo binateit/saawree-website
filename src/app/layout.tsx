@@ -12,9 +12,8 @@ import { getServerSession } from "next-auth";
 import { PrimeReactProvider } from "primereact/api";
 import "primereact/resources/themes/lara-light-cyan/theme.css";
 import { ToastContainer } from "react-toastify";
-import { Session } from "@/core/models/model";
-import "./globals.css";
 import { CartCountProvider } from "@/core/context/useCartCount";
+import "./globals.css";
 
 export default async function RootLayout({
   children,

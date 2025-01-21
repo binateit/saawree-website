@@ -2,12 +2,15 @@
 import { useSession } from "next-auth/react";
 import underlineIcon from "@/assets/images/underlineIcon.png";
 import Link from "next/link";
-import { useQuery } from "@tanstack/react-query";
+import { useMutation, useQuery } from "@tanstack/react-query";
 import { getHomePage } from "@/core/requests/homeRequests";
 import Image from "next/image";
 import { Carousel } from "primereact/carousel";
 import { BsHeart } from "react-icons/bs";
 import { Galleria } from "primereact/galleria";
+import { createCart } from "@/core/requests/cartRequests";
+import { toast } from "react-toastify";
+import { formatCurrency } from "@/core/helpers/helperFunctions";
 
 export default function Home() {
   const { data: session } = useSession();
@@ -15,7 +18,9 @@ export default function Home() {
     queryKey: ["homePageData"],
     queryFn: () => getHomePage(),
   });
+
   if (homePageLoading) return <p>Loading....</p>;
+
   return (
     <>
       {/* <!----------- Top Banner Section ----------> */}
@@ -137,16 +142,6 @@ export default function Home() {
                             </a>
                           )}
                         </div>
-                        {!!session?.user && (
-                          <div className='action-btns'>
-                            <button className='btn btn-saawree'>
-                              Add to Cart
-                            </button>
-                            <button className='btn btn-saawree'>
-                              <BsHeart />
-                            </button>
-                          </div>
-                        )}
                       </div>
                     </div>
                   )}
@@ -247,10 +242,12 @@ export default function Home() {
                       <div className='prod-rate1'>
                         {!!session?.user ? (
                           <>
-                            <span className='mrp'>
+                            {/* <span className='mrp'>
                               <s>Rs. 200.00</s>
-                            </span>
-                            <span className='seling'>Rs. 150.00</span>{" "}
+                            </span> */}
+                            <span className='seling'>
+                              {formatCurrency(prodData?.pp)}
+                            </span>{" "}
                           </>
                         ) : (
                           <a href='#'>
@@ -260,16 +257,6 @@ export default function Home() {
                           </a>
                         )}
                       </div>
-                      {!!session?.user && (
-                        <div className='action-btns'>
-                          <button className='btn btn-saawree'>
-                            Add to Cart
-                          </button>
-                          <button className='btn btn-saawree'>
-                            <BsHeart />
-                          </button>
-                        </div>
-                      )}
                     </div>
                   </div>
                 )}

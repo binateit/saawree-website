@@ -3,28 +3,29 @@ import { formatCurrency } from "@/core/helpers/helperFunctions";
 import { SelectOptionProps } from "@/core/models/model";
 import underlineIcon from "@/assets/images/underlineIcon.png";
 import {
-  getMaketoOrderProductDetails,
-  getMaketoOrderProducts,
   getReadyStockRecomendedProducts,
-  getRecomendedMaketoOrderProducts,
   getRSProductDetails,
 } from "@/core/requests/productsRequests";
 import { useQuery } from "@tanstack/react-query";
 import { useSession } from "next-auth/react";
-import { useSearchParams } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import { Dropdown } from "primereact/dropdown";
 import React, { useEffect, useState } from "react";
 import Image from "next/image";
-import { BsDownload, BsHeart } from "react-icons/bs";
+import { BsHeart } from "react-icons/bs";
 import { Carousel } from "primereact/carousel";
 import InnerImageZoom from "react-inner-image-zoom";
-
 import "react-inner-image-zoom/lib/InnerImageZoom/styles.css";
 import { Dialog } from "primereact/dialog";
+import { createCart } from "@/core/requests/cartRequests";
+import { Items } from "@/core/models/cartModel";
+import { ProductColor } from "@/core/models/productModel";
+import { toast } from "react-toastify";
+import { useCartCount } from "@/core/context/useCartCount";
 
 const page = () => {
   const { data: session } = useSession();
-
+  const router = useRouter();
   const searchParams = useSearchParams();
   const productId = searchParams.get("productId");
   const [mainProductImage, setMainProductImage] = useState({
@@ -33,9 +34,11 @@ const page = () => {
   });
   const [polishType, setPolishType] = useState<string>("");
   const [visible, setVisible] = useState(false);
-
+  const [selectedProductId, setSelectedProductId] = useState<number>();
+  const [selectedColors, setSelectedColors] = useState<ProductColor[]>([]);
   const [polishTypeList, setPolishTypeList] = useState<SelectOptionProps[]>([]);
   const [visibleTab, setVisibleTab] = useState<string>("description");
+  const { setCartCount, cartCount, setIsBuyNow } = useCartCount();
 
   const { data: response, isLoading: isProductDetailsLoading } = useQuery({
     queryKey: ["getRSProductDetailsData"],
@@ -50,6 +53,11 @@ const page = () => {
       });
     });
     setPolishTypeList(polishTypes);
+    setPolishType(
+      polishTypes.filter(
+        (p: { name: string }) => p.name === response?.polishingTypeName
+      )[0]?.value
+    );
 
     setMainProductImage({
       mainImage: response?.productImages[0]?.mediumImagePath || "",
@@ -67,17 +75,62 @@ const page = () => {
     enabled: !!response,
   });
 
-  function download() {
-    const a = document.createElement("a");
-    a.href = mainProductImage?.mainImage;
-    a.download = mainProductImage?.mainImage?.split("/").pop() || "";
-    document.body.appendChild(a);
+  const handleQuantityChange = (
+    productId: number,
+    colorId: number,
+    quantity: number
+  ) => {
+    setSelectedColors((prevColors) => {
+      const existingColor = prevColors.find(
+        (color) => color.colorId === colorId
+      );
+      if (existingColor) {
+        return prevColors.map((color) =>
+          color.colorId === colorId ? { ...color, quantity, productId } : color
+        );
+      } else {
+        return [...prevColors, { colorId, quantity, productId }];
+      }
+    });
+  };
+  const handleAddToCart = async (isBuyNow: boolean) => {
+    try {
+      if (session?.user?.token === undefined) {
+        router.push("/login");
+      } else {
+        if (session?.user?.token && response && selectedColors.length > 0) {
+          let updatedItems: Items[] = selectedColors.map((color) => ({
+            productId: color.productId as number,
+            quantity: color.quantity as number,
+          }));
+          const carts = {
+            orderType: 2,
+            items: updatedItems,
+            isFromBuyNow: isBuyNow,
+          };
 
-    a.click();
-    document.body.removeChild(a);
-  }
+<<<<<<< Updated upstream
 
-
+=======
+          const result = await createCart(carts);
+          if (result.succeeded) {
+            setCartCount((cartCount as number) + 1);
+            toast.success("Items added to cart successfully");
+            return true;
+          } else {
+            toast.error("Failed to add items to cart");
+            return false;
+          }
+        } else {
+          toast.error("Please select the quantity");
+          return false;
+        }
+      }
+    } catch (error) {
+      toast.error("An error occurred while adding item to cart");
+    }
+  };
+>>>>>>> Stashed changes
   return (
     <section className='product-details'>
       <div className='container'>
@@ -96,11 +149,6 @@ const page = () => {
                     hasSpacer={true}
                     zoomPreload={true}
                   />
-                </div>
-                <div className='icons-wrap'>
-                  <div className='icon-1 down-btn'>
-                    <BsDownload onClick={() => download()} />
-                  </div>
                 </div>
               </div>
               <div className='gallery__thumbs'>
@@ -170,6 +218,7 @@ const page = () => {
                     panelClassName="custom-dropDown-panel"
                   />
                 </div>
+<<<<<<< Updated upstream
                 {response?.colorList?.length as number > 1 ?
                   <div className='product-color-options mt-4'>
                     <div className='row option-heading'>
@@ -191,6 +240,92 @@ const page = () => {
                           </div>
                         </div>
                       </div>
+=======
+                <div className='product-color-options mt-4'>
+                  <div className='row option-heading'>
+                    <div className='col-xl-6 col-lg-6 col-md-12 col-sm-6'>
+                      <div className='d-flex'>
+                        <div className='moti-color options-title'>Colors</div>
+                        <div className='stock options-title'>Stock</div>
+                        <div className='color-quntity  options-title text-center'>
+                          Qty
+                        </div>
+                      </div>
+                    </div>
+                    <div className='col-xl-6 col-lg-6 col-md-12 col-sm-6 d-none d-sm-block d-md-none d-lg-block'>
+                      <div className='d-flex'>
+                        <div className='moti-color options-title'>Colors</div>
+                        <div className='stock options-title'>Stock</div>
+                        <div className='color-quntity  options-title text-center'>
+                          Qty
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                  <div className='row'>
+                    {response?.colorList?.map((color, index) => (
+                      <div
+                        className='col-xl-6 col-lg-6 col-md-12 col-sm-6 mb-2'
+                        key={color?.colorId}
+                      >
+                        <div className='d-flex'>
+                          <div className='moti-color'>
+                            <img
+                              src={`${process.env.NEXT_PUBLIC_APP_IMAGE_API_URL}/${color?.imagePath}`}
+                              alt=''
+                            />
+                            <span className='color-name'>
+                              {color.colorName}{" "}
+                            </span>
+                          </div>
+                          <div className='stock'></div>
+                          <div className='color-quntity'>
+                            <input
+                              type='text'
+                              className='quntity-input'
+                              id={index.toString()}
+                              defaultValue={0}
+                              min={1}
+                              max={99999}
+                              onChange={(e) => {
+                                let qty = parseInt(e.target.value);
+                                if (qty < 0) {
+                                  e.target.value = "";
+                                } else if (qty > 99999) {
+                                  e.target.value = "";
+                                } else {
+                                  handleQuantityChange(
+                                    color.productId as number,
+                                    color.colorId as number,
+                                    qty
+                                  );
+                                }
+                              }}
+                            />
+                          </div>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+
+                  {session?.user && (
+                    <div className='action-btn-wrapper'>
+                      <button
+                        className='btn btn-saawree-outline'
+                        onClick={() => {
+                          handleAddToCart(false);
+                        }}
+                      >
+                        Add to cart
+                      </button>
+                      <a href='cart.html' className='btn btn-saawree'>
+                        Buy now
+                      </a>
+                      {/* <button className="btn btn-saawree-outline"><i className="bi bi-heart"></i></button>  */}
+                      <a href='#' className='whatsapp'>
+                        <img src='img/whats-aap.png' alt='' />
+                      </a>
+>>>>>>> Stashed changes
                     </div>
                     <div className='row'>
                       {response?.colorList?.map((color) => (
@@ -395,7 +530,7 @@ const page = () => {
               <h1>YOU MAY ALSO LIKE THIS</h1>
             </div>
             <div className='title-septer'>
-              <img src='img/underline-icon.png' alt='' />
+              <img src={underlineIcon.src} alt='' />
             </div>
             <div className='kada-collections'>
               <Carousel
@@ -435,16 +570,6 @@ const page = () => {
                           </a>
                         )}
                       </div>
-                      {!!session?.user && (
-                        <div className='action-btns'>
-                          <button className='btn btn-saawree'>
-                            Add to Cart
-                          </button>
-                          <button className='btn btn-saawree'>
-                            <BsHeart />
-                          </button>
-                        </div>
-                      )}
                     </div>
                   </div>
                 )}

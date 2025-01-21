@@ -21,16 +21,6 @@ const ProductGridCard = ({ product, session, type }: ProductsProps) => {
             alt={product?.productName || "Product"}
           />
           <div className='pro-act-btn'>
-            {session?.user && (
-              <>
-                <div className='act-btn'>
-                  <BsBag />
-                </div>
-                <div className='act-btn'>
-                  <BsHeart />
-                </div>
-              </>
-            )}
             <Link
               href={
                 type === "mto"

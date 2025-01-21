@@ -4,7 +4,6 @@ import { SelectOptionProps } from "@/core/models/model";
 import underlineIcon from "@/assets/images/underlineIcon.png";
 import {
   getMaketoOrderProductDetails,
-  getMaketoOrderProducts,
   getRecomendedMaketoOrderProducts,
 } from "@/core/requests/productsRequests";
 import { useQuery } from "@tanstack/react-query";
@@ -24,6 +23,7 @@ import { Items } from "@/core/models/cartModel";
 import { createCart } from "@/core/requests/cartRequests";
 import { toast } from "react-toastify";
 import { useCartCount } from "@/core/context/useCartCount";
+import { set } from "date-fns";
 
 const page = () => {
   const { data: session } = useSession();
@@ -56,6 +56,11 @@ const page = () => {
       });
     });
     setPolishTypeList(polishTypes);
+    setPolishType(
+      polishTypes.filter(
+        (p: { name: string }) => p.name === response?.polishingTypeName
+      )[0]?.value
+    );
 
     setMainProductImage({
       mainImage: response?.productImages[0]?.mediumImagePath || "",
@@ -64,7 +69,7 @@ const page = () => {
   }, [response]);
 
   const { data: recomendedProducts } = useQuery({
-    queryKey: ["geRecomendedMakeToOrderProductRecords"],
+    queryKey: ["geRecomendedMakeToOrderProductRecords", response],
     queryFn: async () => {
       return await getRecomendedMaketoOrderProducts({
         categoryIds: [Number(response?.categoryId)],
@@ -108,11 +113,10 @@ const page = () => {
       }
     });
   };
-  console.log("selectedColors", selectedColors);
   const handleAddToCart = async (isBuyNow: boolean) => {
     try {
       if (session?.user?.token === undefined) {
-        router.push("/login");
+        router.push("/auth/login");
       } else {
         if (session?.user?.token && response && selectedColors.length > 0) {
           let updatedItems: Items[] = selectedColors.map((color) => ({
@@ -127,7 +131,7 @@ const page = () => {
 
           const result = await createCart(carts);
           if (result.succeeded) {
-            setCartCount((cartCount as number) + 1);
+            setCartCount((cartCount as number) + updatedItems.length);
             toast.success("Items added to cart successfully");
             return true;
           } else {
@@ -534,16 +538,6 @@ const page = () => {
                           </a>
                         )}
                       </div>
-                      {!!session?.user && (
-                        <div className='action-btns'>
-                          <button className='btn btn-saawree'>
-                            Add to Cart
-                          </button>
-                          <button className='btn btn-saawree'>
-                            <BsHeart />
-                          </button>
-                        </div>
-                      )}
                     </div>
                   </div>
                 )}

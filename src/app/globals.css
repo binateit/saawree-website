@@ -1754,6 +1754,11 @@ label .span {
     justify-content: center;
 }
 
+.cart-pg-btn {
+    display: flex;
+    gap: 5px;
+}
+
 .quantity button {
     background-color: #e1e1e1;
     color: #353535;
@@ -3213,6 +3218,7 @@ label .span {
     .cart-pg-btn {
         display: flex;
         justify-content: space-between;
+        /* gap: 3px; */
     }
 
 }

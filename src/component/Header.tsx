@@ -19,10 +19,13 @@ import { useRouter } from "next/navigation";
 import { Offcanvas } from "react-bootstrap";
 import { useQuery } from "@tanstack/react-query";
 import { getMenuCategories } from "@/core/requests/homeRequests";
+import { useCartCount } from "@/core/context/useCartCount";
 
 const Header = () => {
   const { data: session } = useSession();
   const [show, setShow] = useState(false);
+  const { cartCount } = useCartCount();
+
   const [isHamburgerClicked, setIsHamburgerClicked] = useState(false);
   const [closeSubMenu, setCloseSubMenu] = useState(false);
   const [openDropDown, setOpenDropDown] = useState({
@@ -144,7 +147,7 @@ const Header = () => {
 
                 <Link href='/cart' className='cart-widget header-icons'>
                   <BsCart fontSize={25} />
-                  <span className='badge badge-danger'>3</span>
+                  <span className='badge badge-danger'>{cartCount}</span>
                 </Link>
                 {session?.user && (
                   <div className='header-icons dashboard-menu-icon'>
