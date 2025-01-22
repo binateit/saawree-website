@@ -109,9 +109,6 @@ const page = () => {
             isFromBuyNow: isBuyNow,
           };
 
-<<<<<<< Updated upstream
-
-=======
           const result = await createCart(carts);
           if (result.succeeded) {
             setCartCount((cartCount as number) + 1);
@@ -130,7 +127,6 @@ const page = () => {
       toast.error("An error occurred while adding item to cart");
     }
   };
->>>>>>> Stashed changes
   return (
     <section className='product-details'>
       <div className='container'>
@@ -215,11 +211,10 @@ const page = () => {
                     optionLabel='name'
                     placeholder='Select options'
                     className='w-full md:w-14rem'
-                    panelClassName="custom-dropDown-panel"
+                    panelClassName='custom-dropDown-panel'
                   />
                 </div>
-<<<<<<< Updated upstream
-                {response?.colorList?.length as number > 1 ?
+                {(response?.colorList?.length as number) > 1 ? (
                   <div className='product-color-options mt-4'>
                     <div className='row option-heading'>
                       <div className='col-xl-6 col-lg-6 col-md-12 col-sm-6'>
@@ -240,92 +235,6 @@ const page = () => {
                           </div>
                         </div>
                       </div>
-=======
-                <div className='product-color-options mt-4'>
-                  <div className='row option-heading'>
-                    <div className='col-xl-6 col-lg-6 col-md-12 col-sm-6'>
-                      <div className='d-flex'>
-                        <div className='moti-color options-title'>Colors</div>
-                        <div className='stock options-title'>Stock</div>
-                        <div className='color-quntity  options-title text-center'>
-                          Qty
-                        </div>
-                      </div>
-                    </div>
-                    <div className='col-xl-6 col-lg-6 col-md-12 col-sm-6 d-none d-sm-block d-md-none d-lg-block'>
-                      <div className='d-flex'>
-                        <div className='moti-color options-title'>Colors</div>
-                        <div className='stock options-title'>Stock</div>
-                        <div className='color-quntity  options-title text-center'>
-                          Qty
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-                  <div className='row'>
-                    {response?.colorList?.map((color, index) => (
-                      <div
-                        className='col-xl-6 col-lg-6 col-md-12 col-sm-6 mb-2'
-                        key={color?.colorId}
-                      >
-                        <div className='d-flex'>
-                          <div className='moti-color'>
-                            <img
-                              src={`${process.env.NEXT_PUBLIC_APP_IMAGE_API_URL}/${color?.imagePath}`}
-                              alt=''
-                            />
-                            <span className='color-name'>
-                              {color.colorName}{" "}
-                            </span>
-                          </div>
-                          <div className='stock'></div>
-                          <div className='color-quntity'>
-                            <input
-                              type='text'
-                              className='quntity-input'
-                              id={index.toString()}
-                              defaultValue={0}
-                              min={1}
-                              max={99999}
-                              onChange={(e) => {
-                                let qty = parseInt(e.target.value);
-                                if (qty < 0) {
-                                  e.target.value = "";
-                                } else if (qty > 99999) {
-                                  e.target.value = "";
-                                } else {
-                                  handleQuantityChange(
-                                    color.productId as number,
-                                    color.colorId as number,
-                                    qty
-                                  );
-                                }
-                              }}
-                            />
-                          </div>
-                        </div>
-                      </div>
-                    ))}
-                  </div>
-
-                  {session?.user && (
-                    <div className='action-btn-wrapper'>
-                      <button
-                        className='btn btn-saawree-outline'
-                        onClick={() => {
-                          handleAddToCart(false);
-                        }}
-                      >
-                        Add to cart
-                      </button>
-                      <a href='cart.html' className='btn btn-saawree'>
-                        Buy now
-                      </a>
-                      {/* <button className="btn btn-saawree-outline"><i className="bi bi-heart"></i></button>  */}
-                      <a href='#' className='whatsapp'>
-                        <img src='img/whats-aap.png' alt='' />
-                      </a>
->>>>>>> Stashed changes
                     </div>
                     <div className='row'>
                       {response?.colorList?.map((color) => (
@@ -354,7 +263,10 @@ const page = () => {
 
                     {session?.user && (
                       <div className='action-btn-wrapper'>
-                        <button className='btn btn-saawree-outline'>
+                        <button
+                          className='btn btn-saawree-outline'
+                          onClick={() => handleAddToCart(false)}
+                        >
                           Add to cart
                         </button>
                         <a href='cart.html' className='btn btn-saawree'>
@@ -367,14 +279,16 @@ const page = () => {
                       </div>
                     )}
                   </div>
-                  :
-                  <div className="row">
-                    <div className="col-md-6">
+                ) : (
+                  <div className='row'>
+                    <div className='col-md-6'>
                       <div className='product-color-options mt-4'>
-                        <div className="row option-heading">
-                          <div className="col-md-12">
+                        <div className='row option-heading'>
+                          <div className='col-md-12'>
                             <div className='d-flex'>
-                              <div className='moti-color options-title'>Colors</div>
+                              <div className='moti-color options-title'>
+                                Colors
+                              </div>
                               <div className='stock options-title'>Stock</div>
                               <div className='color-quntity  options-title text-center'>
                                 Qty
@@ -386,33 +300,45 @@ const page = () => {
                         {response?.colorList?.map((color) => (
                           <div className='d-flex' key={color?.colorId}>
                             <div className='moti-color'>
-                            <img
+                              <img
                                 src={`${process.env.NEXT_PUBLIC_APP_IMAGE_API_URL}/${color?.imagePath}`}
                                 alt=''
                               />
-                               <span className='color-name'>
+                              <span className='color-name'>
                                 {color.colorName}{" "}
                               </span>
                             </div>
                             <div className='stock'></div>
 
                             <div className='color-quntity'>
-                            <div className='color-quntity'>
-                              <input type='text' className='quntity-input' />
-                            </div>
+                              <div className='color-quntity'>
+                                <input type='text' className='quntity-input' />
+                              </div>
                             </div>
                           </div>
                         ))}
+
+                        {session?.user && (
+                          <div className='action-btn-wrapper'>
+                            <button
+                              className='btn btn-saawree-outline'
+                              onClick={() => handleAddToCart(false)}
+                            >
+                              Add to cart
+                            </button>
+                            <a href='cart.html' className='btn btn-saawree'>
+                              Buy now
+                            </a>
+                            {/* <button className="btn btn-saawree-outline"><i className="bi bi-heart"></i></button>  */}
+                            <a href='#' className='whatsapp'>
+                              <img src='img/whats-aap.png' alt='' />
+                            </a>
+                          </div>
+                        )}
                       </div>
                     </div>
                   </div>
-                }
-
-
-
-
-
-
+                )}
               </div>
             </div>
           </div>
@@ -433,8 +359,9 @@ const page = () => {
                   onClick={() => setVisibleTab("description")}
                 >
                   <button
-                    className={`nav-link ${visibleTab == "description" ? "active" : ""
-                      }`}
+                    className={`nav-link ${
+                      visibleTab == "description" ? "active" : ""
+                    }`}
                     id='description-tab'
                     data-toggle='tab'
                     data-target='#description'
@@ -454,8 +381,9 @@ const page = () => {
                   onClick={() => setVisibleTab("policy")}
                 >
                   <button
-                    className={`nav-link ${visibleTab == "policy" ? "active" : ""
-                      }`}
+                    className={`nav-link ${
+                      visibleTab == "policy" ? "active" : ""
+                    }`}
                     id='policy-tab'
                     data-toggle='tab'
                     data-target='#policy'
@@ -470,8 +398,9 @@ const page = () => {
               </ul>
               <div className='tab-content' id='myTabContent'>
                 <div
-                  className={`tab-pane fade ${visibleTab == "description" ? "show active" : ""
-                    } `}
+                  className={`tab-pane fade ${
+                    visibleTab == "description" ? "show active" : ""
+                  } `}
                   id='description'
                   role='tabpanel'
                   aria-labelledby='description-tab'
@@ -479,8 +408,9 @@ const page = () => {
                   {response?.description}
                 </div>
                 <div
-                  className={`tab-pane fade ${visibleTab == "policy" ? "show active" : ""
-                    } `}
+                  className={`tab-pane fade ${
+                    visibleTab == "policy" ? "show active" : ""
+                  } `}
                   id='policy'
                   role='tabpanel'
                   aria-labelledby='policy-tab'
