@@ -21,3 +21,12 @@ export type EditCustomerProfile = {
   dateOfBirth: string;
   dateOfAnniversary: string;
 };
+
+export type CustomerAddressQueryResponse = {
+  customerAddressId: number;
+  addressId: number;
+  addressTypeId: number;
+  addressTypeName: string;
+  displayAddress: string;
+  isDefault: boolean;
+};

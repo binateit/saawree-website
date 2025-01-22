@@ -130,6 +130,7 @@ const page = () => {
           };
 
           const result = await createCart(carts);
+          debugger;
           if (result.succeeded) {
             setCartCount((cartCount as number) + updatedItems.length);
             toast.success("Items added to cart successfully");
@@ -236,92 +237,94 @@ const page = () => {
                     optionLabel='name'
                     placeholder='Select options'
                     className=''
-                    panelClassName="custom-dropDown-panel"
+                    panelClassName='custom-dropDown-panel'
                   />
                 </div>
 
-                {response?.colorList?.length as number > 1 ? 
-                <div className='product-color-options mt-4'>
-                <div className='row option-heading'>
-                  <div className='col-xl-6 col-lg-6 col-md-12 col-sm-6'>
-                    <div className='d-flex'>
-                      <div className='moti-color options-title'>Colors</div>
-                      <div className='stock options-title'>Stock</div>
-                      <div className='color-quntity  options-title text-center'>
-                        Qty
-                      </div>
-                    </div>
-                  </div>
-                  <div className='col-xl-6 col-lg-6 col-md-12 col-sm-6 d-none d-sm-block d-md-none d-lg-block'>
-                    <div className='d-flex'>
-                      <div className='moti-color options-title'>Colors</div>
-                      <div className='stock options-title'>Stock</div>
-                      <div className='color-quntity  options-title text-center'>
-                        Qty
-                      </div>
-                    </div>
-                  </div>
-                </div>
-                <div className='row'>
-                  {response?.colorList?.map((color, index) => (
-                    <div
-                      className='col-xl-6 col-lg-6 col-md-12 col-sm-6 mb-2'
-                      key={color?.colorId}
-                    >
-                      <div className='d-flex'>
-                        <div className='moti-color'>
-                          <img
-                            src={`${process.env.NEXT_PUBLIC_APP_IMAGE_API_URL}/${color?.imagePath}`}
-                            alt=''
-                          />
-                          <span
-                            className='color-name'
-                            onClick={() =>
-                              setSelectedProductId(color.productId)
-                            }
-                          >
-                            {color.colorName}{" "}
-                          </span>
+                {(response?.colorList?.length as number) > 1 ? (
+                  <div className='product-color-options mt-4'>
+                    <div className='row option-heading'>
+                      <div className='col-xl-6 col-lg-6 col-md-12 col-sm-6'>
+                        <div className='d-flex'>
+                          <div className='moti-color options-title'>Colors</div>
+                          <div className='stock options-title'>Stock</div>
+                          <div className='color-quntity  options-title text-center'>
+                            Qty
+                          </div>
                         </div>
-                        <div className='stock'></div>
+                      </div>
+                      <div className='col-xl-6 col-lg-6 col-md-12 col-sm-6 d-none d-sm-block d-md-none d-lg-block'>
+                        <div className='d-flex'>
+                          <div className='moti-color options-title'>Colors</div>
+                          <div className='stock options-title'>Stock</div>
+                          <div className='color-quntity  options-title text-center'>
+                            Qty
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                    <div className='row'>
+                      {response?.colorList?.map((color, index) => (
+                        <div
+                          className='col-xl-6 col-lg-6 col-md-12 col-sm-6 mb-2'
+                          key={color?.colorId}
+                        >
+                          <div className='d-flex'>
+                            <div className='moti-color'>
+                              <img
+                                src={`${process.env.NEXT_PUBLIC_APP_IMAGE_API_URL}/${color?.imagePath}`}
+                                alt=''
+                              />
+                              <span
+                                className='color-name'
+                                onClick={() =>
+                                  setSelectedProductId(color.productId)
+                                }
+                              >
+                                {color.colorName}{" "}
+                              </span>
+                            </div>
+                            <div className='stock'></div>
 
-                        <div className='color-quntity'>
-                          <input
-                            type='text'
-                            className='quntity-input'
-                            id={index.toString()}
-                            defaultValue={0}
-                            min={1}
-                            max={99999}
-                            onChange={(e) => {
-                              let qty = parseInt(e.target.value);
-                              if (qty < 0) {
-                                e.target.value = "";
-                              } else if (qty > 99999) {
-                                e.target.value = "";
-                              } else {
-                                handleQuantityChange(
-                                  color.productId as number,
-                                  color.colorId as number,
-                                  qty
-                                );
-                              }
-                            }}
-                          />
+                            <div className='color-quntity'>
+                              <input
+                                type='text'
+                                className='quntity-input'
+                                id={index.toString()}
+                                defaultValue={0}
+                                min={1}
+                                max={99999}
+                                onChange={(e) => {
+                                  let qty = parseInt(e.target.value);
+                                  if (qty < 0) {
+                                    e.target.value = "";
+                                  } else if (qty > 99999) {
+                                    e.target.value = "";
+                                  } else {
+                                    handleQuantityChange(
+                                      color.productId as number,
+                                      color.colorId as number,
+                                      qty
+                                    );
+                                  }
+                                }}
+                              />
+                            </div>
+                          </div>
                         </div>
-                      </div>
+                      ))}
                     </div>
-                  ))}
-                </div>
-              </div>
-                : 
-                <div className="row">
-                    <div className="col-md-6">
+                  </div>
+                ) : (
+                  <div className='row'>
+                    <div className='col-md-6'>
                       <div className='product-color-options mt-4'>
-                        <div className="row option-heading">
-                          <div className="col-md-12">
+                        <div className='row option-heading'>
+                          <div className='col-md-12'>
                             <div className='d-flex'>
-                              <div className='moti-color options-title'>Colors</div>
+                              <div className='moti-color options-title'>
+                                Colors
+                              </div>
                               <div className='stock options-title'>Stock</div>
                               <div className='color-quntity  options-title text-center'>
                                 Qty
@@ -333,30 +336,27 @@ const page = () => {
                         {response?.colorList?.map((color) => (
                           <div className='d-flex' key={color?.colorId}>
                             <div className='moti-color'>
-                            <img
+                              <img
                                 src={`${process.env.NEXT_PUBLIC_APP_IMAGE_API_URL}/${color?.imagePath}`}
                                 alt=''
                               />
-                               <span className='color-name'>
+                              <span className='color-name'>
                                 {color.colorName}{" "}
                               </span>
                             </div>
                             <div className='stock'></div>
 
                             <div className='color-quntity'>
-                            <div className='color-quntity'>
-                              <input type='text' className='quntity-input' />
-                            </div>
+                              <div className='color-quntity'>
+                                <input type='text' className='quntity-input' />
+                              </div>
                             </div>
                           </div>
                         ))}
                       </div>
                     </div>
                   </div>
-                  }
-
-                
-
+                )}
 
                 {session?.user && (
                   <div className='action-btn-wrapper mt-10'>

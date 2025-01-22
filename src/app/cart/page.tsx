@@ -8,19 +8,20 @@ import {
   removeCartItem,
   updateCartItems,
 } from "@/core/requests/cartRequests";
-import { useMutation, useQuery } from "@tanstack/react-query";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import React, { useEffect, useState } from "react";
 import { BsDash, BsPlus, BsTrash } from "react-icons/bs";
 import { toast } from "react-toastify";
 import { useSession } from "next-auth/react";
 import { useRouter } from "next/navigation";
 import { useCartCount } from "@/core/context/useCartCount";
+import Link from "next/link";
 
 const page = () => {
   const { data: session } = useSession();
   const router = useRouter();
-  const { setCartCount, cartCount } = useCartCount();
-
+  const { setCartCount, cartCount, cartData } = useCartCount();
+  const queryClient = useQueryClient();
   const [cartDetails, setCartDetails] = useState<CartDetails | undefined>(
     undefined
   );
@@ -28,21 +29,13 @@ const page = () => {
     router.push("/auth/login");
     toast.error("Please login to view your cart.");
   }
-  const {
-    data: cartData,
-    isLoading: cartDetailsLoading,
-    refetch,
-  } = useQuery({
-    queryKey: ["cartDetails"],
-    queryFn: () => getCartDetails(),
-  });
 
   const { mutate: handleRemoveCartItem } = useMutation({
     mutationKey: ["removeItem"],
     mutationFn: (id: number) => removeCartItem(id),
     onSuccess: () => {
       toast.success("Item removed from cart successfully.");
-      refetch();
+      queryClient.invalidateQueries({ queryKey: ["cartDetails"] });
       setCartCount((cartCount as number) - 1);
     },
   });
@@ -52,7 +45,7 @@ const page = () => {
     mutationFn: (cart: UpdateCartPayload) => updateCartItems(cart),
     onSuccess: () => {
       toast.success("Item removed from cart successfully.");
-      refetch();
+      queryClient.invalidateQueries({ queryKey: ["cartDetails"] });
     },
   });
 
@@ -190,10 +183,6 @@ const page = () => {
       ),
     }));
   };
-
-  if (cartDetailsLoading) {
-    return <p>Loading...</p>;
-  }
 
   return (
     <section className='cart-page'>
@@ -354,15 +343,9 @@ const page = () => {
                     </tbody>
                   </table>
                   <div className='proceed-to-checkout'>
-                    <a href='select-customer.html'>
-                      <button
-                        type='submit'
-                        className='btn btn-saawree'
-                        name='checkout'
-                      >
-                        Proceed to Checkout
-                      </button>
-                    </a>
+                    <Link href='/checkout' className='btn btn-saawree'>
+                      Proceed to Checkout
+                    </Link>
                   </div>
                 </div>
               </div>

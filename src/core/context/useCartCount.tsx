@@ -1,11 +1,16 @@
 "use client";
+import { useQuery } from "@tanstack/react-query";
 import React, { createContext, useContext, useEffect, useState } from "react";
+import { getCartDetails } from "../requests/cartRequests";
+import { CartDetails } from "../models/cartModel";
+import { useSession } from "next-auth/react";
 
 interface CartCountContextType {
   cartCount: number | null;
   setCartCount: (data: number | null) => void;
   isBuyNow: boolean;
   setIsBuyNow: (isBuy: boolean) => void;
+  cartData: CartDetails | undefined;
 }
 
 const CartCountContext = createContext<CartCountContextType | undefined>(
@@ -18,9 +23,23 @@ interface CartCountProviderProps {
 export const CartCountProvider: React.FC<CartCountProviderProps> = ({
   children,
 }) => {
-  const [cartCount, setCount] = useState<number | null>(0);
+  const { data: session } = useSession();
+
+  const [cartCount, setCount] = useState<number | null>(null);
   const [isBuyNow, setIsBuy] = useState<boolean>(false);
 
+  const { data: cartData, isLoading: cartDetailsLoading } = useQuery({
+    queryKey: ["cartDetails", session],
+    queryFn: () => getCartDetails(),
+  });
+
+  useEffect(() => {
+    if (cartData) {
+      setCount(cartData?.items?.length as number);
+    } else {
+      setCount(0);
+    }
+  }, [cartData]);
   const setCartCount = (data: number | null) => {
     setCount(data);
   };
@@ -33,6 +52,7 @@ export const CartCountProvider: React.FC<CartCountProviderProps> = ({
     setCartCount,
     isBuyNow,
     setIsBuyNow,
+    cartData,
   };
 
   return (

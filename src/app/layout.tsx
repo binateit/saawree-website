@@ -43,8 +43,8 @@ export default async function RootLayout({
         />
       </Head>
       <SessionProvider session={session}>
-        <CartCountProvider>
-          <QueryProvider>
+        <QueryProvider>
+          <CartCountProvider>
             <PrimeReactProvider>
               <body>
                 <Header />
@@ -53,8 +53,8 @@ export default async function RootLayout({
                 <ToastContainer />
               </body>
             </PrimeReactProvider>
-          </QueryProvider>
-        </CartCountProvider>
+          </CartCountProvider>
+        </QueryProvider>
       </SessionProvider>
     </html>
   );
