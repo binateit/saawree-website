@@ -37,9 +37,9 @@ const ProductGridCard = ({ product, session, type }: ProductsProps) => {
                   </span>{" "} */}
                   <div className="d-flex justify-content-between align-items-center">
                     <div className="">
-                      <span className='mrp'>
+                      {/* <span className='mrp'>
                         <s>₹200.00</s>
-                      </span>
+                      </span> */}
                       <span className='seling'>₹150.00</span>
                     </div>
 
@@ -49,7 +49,7 @@ const ProductGridCard = ({ product, session, type }: ProductsProps) => {
                         href='#'
                         className='act-btn'
                       >
-                        <BsCart />
+                        <BsCart fontSize={20}/>
                       </Link>
                     </div>
                   </div>

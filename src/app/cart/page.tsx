@@ -2,6 +2,7 @@
 import { formatCurrency } from "@/core/helpers/helperFunctions";
 import { CartDetails, Item, UpdateCartPayload } from "@/core/models/cartModel";
 import underlineIcon from "@/assets/images/underlineIcon.png";
+import emptyCart from '@/assets/images/empty-cart.png';
 import {
   clearCart,
   getCartDetails,
@@ -18,14 +19,14 @@ import { useCartCount } from "@/core/context/useCartCount";
 import Link from "next/link";
 
 const page = () => {
-  const { data: session } = useSession();
+  const { data: session, status:authStatus } = useSession();
   const router = useRouter();
   const { setCartCount, cartCount, cartData } = useCartCount();
   const queryClient = useQueryClient();
   const [cartDetails, setCartDetails] = useState<CartDetails | undefined>(
     undefined
   );
-  if (session?.user?.token === undefined) {
+  if (authStatus === "unauthenticated") {
     router.push("/auth/login");
     toast.error("Please login to view your cart.");
   }
@@ -353,7 +354,11 @@ const page = () => {
           </div>
         ) : (
           <div className='titlehome'>
-            <h1>YOUR CART IS EMPTY</h1>{" "}
+            <div className="empty-cart text-center py-5">
+              <img src={emptyCart.src} width={100} className="img-fluid"/>
+              <h4 className="mt-2">Your cart is currently empty.</h4>
+              <Link href="/" className="btn btn-saawree mt-2">Continue Shopping</Link>
+            </div>
           </div>
         )}
       </div>
