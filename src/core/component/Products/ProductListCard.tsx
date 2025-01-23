@@ -28,23 +28,29 @@ const ProductListCard = ({ product, session, type }: ProductsProps) => {
             alt={`${product?.productName}`}
           />
         </div>
-        <div className='pt-3'>
-          <span>{product?.categoryName}</span>
-          <div className='list-view-product-name'>
-            <a href='product-details.html'>{product?.productName}</a>
+        <div className="pt-3">
+          <span className="text-dark">{product?.categoryName}</span>
+          <div className='prod-name2'>
+            <p className="mb-0">{product?.productName}</p>
+            <p className="mb-0"><small>Design Number: PET1</small></p>
           </div>
           <div className='prod-price2'>
             <div className='prc'>
               {session?.user ? (
                 <>
-                  <div className=''>
+                  <div className="">
                     <span className='seling'>
-                      {formatCurrency(product?.productPrice as number)}
+                      {formatCurrency(product?.productPrice || 0)}
                     </span>{" "}
                   </div>
                   <div className='cart-link'>
-                    <Link href='#' className='act-btn'>
-                      <BsCart /> Add to cart
+                    <Link
+                      href='#'
+                      className='act-btn d-inline-block w-auto px-2'
+                    >
+                      <div className="d-flex align-items-center">
+                      <BsCart fontSize={18} className="mr-2"/> <small>Add to Cart</small>
+                      </div>
                     </Link>
                   </div>
                 </>

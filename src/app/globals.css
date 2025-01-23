@@ -112,6 +112,9 @@ header.nav-up {
     position: relative;
     cursor: pointer;
 }
+.cart-widget:hover{
+    color:#aa7c5b;
+}
 
 .header-icons i {
     font-size: 25px;
@@ -1317,6 +1320,7 @@ ul.sub-menu {
 
 .page-title-box {
     /* background-image: url(../img/pendent-title-img.jpg); */
+    background-color:#f8f8f8;
     height: 200px;
     line-height: 170px;
     display: flex;
@@ -1326,7 +1330,8 @@ ul.sub-menu {
 }
 
 .page-title {
-    color: #fff6f0;
+    /* color: #fff6f0; */
+    color: #303030;
 }
 
 
@@ -3333,9 +3338,9 @@ label .span {
 }
 
 .products-list-image {
-    max-width: 150px;
+    max-width: 240px;
     width: 100%;
-    height: 150px;
+    height: 240px;
     margin-right: 20px;
 }
 
@@ -4278,6 +4283,10 @@ select {
 .p-dropdown:not(.p-disabled):hover {
     box-shadow: none;
     border-color: #ccc;
+}
+
+.p-galleria-item-nav{
+    transform: translateY(-50%);
 }
 
 
