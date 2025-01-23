@@ -11,6 +11,11 @@ import { Galleria } from "primereact/galleria";
 import { createCart } from "@/core/requests/cartRequests";
 import { toast } from "react-toastify";
 import { formatCurrency } from "@/core/helpers/helperFunctions";
+import Slider from "react-slick";
+import "slick-carousel/slick/slick.css";
+import "slick-carousel/slick/slick-theme.css";
+import { swap } from "formik";
+
 
 export default function Home() {
   const { data: session } = useSession();
@@ -19,7 +24,96 @@ export default function Home() {
     queryFn: () => getHomePage(),
   });
 
-  if (homePageLoading) return <p>Loading....</p>;
+  if (homePageLoading) return (
+
+    <div className="full-page-loader">
+      <div className="loader_box">
+        <div className="loader-logo">
+          <img src="https://saawree.com/images/logo4.png" alt="Loader Logo" width="100%" />
+        </div>
+        {/* <p className="loding-content text-center">Loading...</p> */}
+        <div className="progress mt-5">
+          <div className="progress-value"></div>
+        </div>
+      </div>
+    </div>)
+
+
+
+  var collectionSettings = {
+    dots: false,
+    swipeToSlide: true,
+    draggable: true,
+    arrows: false,
+    infinite: false,
+    speed: 500,
+    slidesToShow: 4,
+    slidesToScroll: 1,
+    initialSlide: 0,
+    responsive: [
+      {
+        breakpoint: 1199,
+        settings: {
+          slidesToShow: 4,
+          slidesToScroll: 1,
+        }
+      },
+      {
+        breakpoint: 991,
+        settings: {
+          slidesToShow: 3,
+          slidesToScroll: 1,
+          initialSlide: 3
+        }
+      },
+      {
+        breakpoint: 767,
+        settings: {
+          slidesToShow: 2,
+          slidesToScroll: 1
+        }
+      }
+
+    ]
+  };
+
+
+  var newArrivalsSettings = {
+    dots: false,
+    swipeToSlide: true,
+    draggable: true,
+    arrows: true,
+    infinite: false,
+    speed: 500,
+    slidesToShow: 3,
+    slidesToScroll: 1,
+    initialSlide: 0,
+    responsive: [
+      {
+        breakpoint: 1199,
+        settings: {
+          slidesToShow: 3,
+          slidesToScroll: 1,
+        }
+      },
+      {
+        breakpoint: 991,
+        settings: {
+          slidesToShow: 2,
+          slidesToScroll: 1,
+          initialSlide: 3
+        }
+      },
+      {
+        breakpoint: 767,
+        settings: {
+          slidesToShow: 2,
+          slidesToScroll: 1
+        }
+      }
+
+    ]
+  };
 
   return (
     <>
@@ -101,13 +195,53 @@ export default function Home() {
             <img src={underlineIcon?.src} alt='' />
           </div>
           {homePageData?.nal?.map((newArraival, index) => (
-            <div className='row' key={index}>
+            <div className='row mt-2' key={index}>
               <div
-                className={`col-md-6 col-lg-6  ${
-                  index / 2 == 0 ? "order-1" : "order-2"
-                }`}
+                className={`col-md-6 col-lg-6  ${index / 2 == 0 ? "order-1" : "order-2"
+                  }`}
               >
-                <Carousel
+
+
+                <Slider {...newArrivalsSettings}
+                >
+                  {newArraival?.prods?.map((prodData) => (
+                    <div className='products-box h-100'>
+                    <div className='inner-box-wraper h-100'>
+                      <div className='prod-img1'>
+                        <Image
+                          src={`${process.env.NEXT_PUBLIC_APP_IMAGE_API_URL}/${prodData?.ip}`}
+                          width={500}
+                          height={500}
+                          className='auto-fit'
+                          alt=''
+                        />
+                      </div>
+                      <div className='prod-name1'>{prodData?.pn}</div>
+                      <div className='prod-rate1'>
+                        {!!session?.user ? (
+                          <>
+                            <span className='mrp'>
+                              <s>Rs. 200.00</s>
+                            </span>
+                            <span className='seling'>Rs. 150.00</span>{" "}
+                          </>
+                        ) : (
+                          <a href='#'>
+                            <button className='btn btn-small btn-saawree-outline mt-2 w-100'>
+                              Login
+                            </button>
+                          </a>
+                        )}
+                      </div>
+                    </div>
+                  </div>
+                  ))}
+
+                </Slider>
+
+
+
+                {/* <Carousel
                   value={newArraival?.prods}
                   numVisible={3}
                   numScroll={3}
@@ -136,7 +270,7 @@ export default function Home() {
                             </>
                           ) : (
                             <a href='#'>
-                              <button className='btn btn-small btn-saawree-outline mt-2'>
+                              <button className='btn btn-small btn-saawree-outline mt-2 w-100'>
                                 Login
                               </button>
                             </a>
@@ -145,14 +279,13 @@ export default function Home() {
                       </div>
                     </div>
                   )}
-                />
+                /> */}
               </div>
               <div
-                className={`col-md-6 col-lg-6  ${
-                  index / 2 == 0 ? "order-2" : "order-1"
-                }`}
+                className={`col-md-6 col-lg-6  ${index / 2 == 0 ? "order-2" : "order-1"
+                  }`}
               >
-                <div className='shine'>
+                <div className='shine h-100'>
                   <Image
                     width={500}
                     height={500}
@@ -166,6 +299,7 @@ export default function Home() {
           ))}
         </div>
       </section>
+
 
       {/* <!----------- Middle Banner Section ----------> */}
       <section className='banner-slider'>
@@ -220,7 +354,51 @@ export default function Home() {
             </div>
 
             <div className='kada-collections'>
-              <Carousel
+
+              {/* {JSON.stringify(collection?.prods)} */}
+
+
+
+              <Slider {...collectionSettings}
+              >
+                {collection?.prods?.map((prodData) => (
+                  <div className="products-box">
+                    <div className="inner-box-wraper">
+                      <div className="prod-img1">
+                        <Image
+                          width={500}
+                          height={500}
+                          src={`${process.env.NEXT_PUBLIC_APP_IMAGE_API_URL}/${prodData?.ip}`}
+                          className='auto-fit'
+                          alt=''
+                        />
+                      </div>
+                      <div className="prod-name1">
+                        {prodData?.pn}
+                      </div>
+                      <div className="prod-rate1">
+                        {!!session?.user ? (
+                          <>
+                            <span className='seling'>
+                              {formatCurrency(prodData?.pp)}
+                            </span>{" "}
+                          </>
+                        ) : (
+                          <a href='#'>
+                            <button className='btn btn-small btn-saawree-outline mt-2 w-100'>
+                              Login
+                            </button>
+                          </a>
+                        )}
+                      </div>
+                    </div>
+                  </div>
+                ))}
+
+              </Slider>
+
+
+              {/* <Carousel
                 value={collection?.prods}
                 numVisible={5}
                 numScroll={5}
@@ -242,17 +420,14 @@ export default function Home() {
                       <div className='prod-rate1'>
                         {!!session?.user ? (
                           <>
-                            {/* <span className='mrp'>
-                              <s>Rs. 200.00</s>
-                            </span> */}
                             <span className='seling'>
                               {formatCurrency(prodData?.pp)}
                             </span>{" "}
                           </>
                         ) : (
                           <a href='#'>
-                            <button className='btn btn-small btn-saawree-outline mt-2'>
-                              Login to view price
+                            <button className='btn btn-small btn-saawree-outline mt-2 w-100'>
+                              Login
                             </button>
                           </a>
                         )}
@@ -260,11 +435,22 @@ export default function Home() {
                     </div>
                   </div>
                 )}
-              />
+              /> */}
+
+
+
+
             </div>
           </div>
         </section>
       ))}
+
+
+      <section>
+        <div className="container">
+
+        </div>
+      </section>
 
       {/* <!----------- Testimonials Section ----------> */}
       <section className='testimonials'>
@@ -297,6 +483,8 @@ export default function Home() {
           </div>
         </div>
       </section>
+
+
     </>
   );
 }

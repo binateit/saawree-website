@@ -14,6 +14,8 @@ import "primereact/resources/themes/lara-light-cyan/theme.css";
 import { ToastContainer } from "react-toastify";
 import { CartCountProvider } from "@/core/context/useCartCount";
 import "./globals.css";
+// import "slick-carousel/slick/slick.css";
+// import "slick-carousel/slick/slick-theme.css";
 
 export default async function RootLayout({
   children,
@@ -36,11 +38,11 @@ export default async function RootLayout({
           rel='stylesheet'
           href='https://cdn.jsdelivr.net/npm/bootstrap-icons@1.3.0/font/bootstrap-icons.css'
         />
-        <link
+        {/* <link
           rel='stylesheet'
           type='text/css'
           href='//cdn.jsdelivr.net/npm/slick-carousel@1.8.1/slick/slick.css'
-        />
+        /> */}
       </Head>
       <SessionProvider session={session}>
         <CartCountProvider>

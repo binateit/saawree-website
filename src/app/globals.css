@@ -253,8 +253,9 @@ header.nav-up {
     padding:0px;
     height:calc(1.5em + .75rem + 2px);
     padding:.375rem .75rem;
-    font-size: 14px;
+    font-size: 13px;
     border-radius: .25rem;
+    color: #000;
 }
 
 .p-dropdown-trigger>svg{
@@ -266,8 +267,8 @@ header.nav-up {
     padding: 0px;
 }
 .custom-dropDown-panel>.p-dropdown-items-wrapper>.p-dropdown-items>.p-dropdown-item{
-    padding:10px 15px;
-    font-size: 14px;
+    padding: 8px 14px;
+    font-size: 13px;
 }
 
 .form-control.search-box {
@@ -456,7 +457,7 @@ ul.sub-menu {
 
 .titlehome {
     text-align: center;
-    margin-top: 30px;
+    /* margin-top: 30px; */
 }
 
 .titlehome h1 {
@@ -479,7 +480,7 @@ ul.sub-menu {
     padding-bottom: 20px;
 }
 
-.banner-slider {
+.banner-slider, .category-sec {
     margin-bottom: 40px;
 }
 
@@ -534,29 +535,36 @@ ul.sub-menu {
 }
 
 .new-arrivals {
-    padding: 40px 0px;
+    /* padding: 40px 0px; */
+    margin-bottom: 40px;
 }
 
 .prod-name1 {
     text-align: center;
     margin: 8px 0px 0px;
+    padding: 0px 10px;
+    font-size: calc(16px + 2*(100vw - 320px) / 1600);
 }
 
 .prod-rate1 {
     text-align: center;
+    margin-top:auto;
+    padding:0px 10px 10px 10px;
 }
 
 .products-box {
     background-color: #fff;
     cursor: pointer;
     border: none;
-    padding: 5px 4px 8px 4px;
+    padding: 5px 4px 0px 4px;
 }
 
 .inner-box-wraper {
-    padding: 7px;
+    padding: 0px;
     border: 1px solid #ccc;
     overflow: hidden;
+    display: flex;
+    flex-direction: column;
 }
 
 .inner-box-wraper:hover {
@@ -664,12 +672,14 @@ ul.sub-menu {
 }
 
 .collections {
-    padding: 40px 0px;
+    /* padding: 40px 0px; */
+    margin-top:40px;
 }
 
 .testimonials {
     padding: 40px 0px;
     background-color: rgb(170 124 91 / 7%);
+    margin-top:40px;
 }
 
 .clients-list {
@@ -802,7 +812,7 @@ ul.sub-menu {
     position: relative;
     display: inline-block;
     transition: 0.3s;
-    font-size: 13px;
+    /* font-size: 13px; */
 }
 
 .btn::before {
@@ -831,7 +841,7 @@ ul.sub-menu {
 .shine:before {
     position: absolute;
     content: '';
-    height: 250px;
+    height: 300px;
     width: 400px;
     background-image: -webkit-linear-gradient(left, rgba(255, 255, 255, 0)0%, rgba(255, 255, 255, 0.2)50%, transparent 50%);
     top: 0;
@@ -2391,7 +2401,7 @@ label .span {
 
 .prod-img1 {
     height: 0;
-    padding-bottom: 100%;
+    padding-bottom: 120%;
     position: relative;
 }
 
@@ -2407,7 +2417,7 @@ label .span {
     width: 100%;
     height: 100%;
     padding-top: 5px;
-    object-fit: cover;
+    object-fit: fill;
 }
 
 /*------------------Policy------------*/
@@ -2451,7 +2461,7 @@ label .span {
 
 /*--------------Full Page Loader---------------*/
 .full-page-loader {
-    height: 100vh;
+    height: 60vh;
     position: relative;
 }
 
@@ -2466,7 +2476,7 @@ label .span {
     width: 150px;
     height: 150px;
     margin: 15px auto;
-    animation: zoom-in-zoom-out 1s ease-out;
+    /* animation: zoom-in-zoom-out 1s ease-out; */
 }
 
 @keyframes zoom-in-zoom-out {
@@ -2484,7 +2494,7 @@ label .span {
 
 .loding-content {
     font-size: 20px;
-    animation: zoom-in-zoom-out 1s ease-out;
+    /* animation: zoom-in-zoom-out 1s ease-out; */
 }
 
 .progress {
@@ -2930,6 +2940,10 @@ label .span {
         color: #4e4e4e;
     }
 
+    .titlehome>h1{
+        font-size: 24px;
+    }
+
 }
 
 @media screen and (max-width: 767px) {
@@ -2950,7 +2964,7 @@ label .span {
     .categ-bar {
         flex-wrap: nowrap !important;
         overflow: auto;
-        justify-content: flex-start !important;
+        /* justify-content: flex-start !important; */
     }
 
     .catg-img {
@@ -2979,9 +2993,9 @@ label .span {
         display: none;
     }
 
-    .titlehome h1 {
+    /* .titlehome h1 {
         font-size: 22px;
-    }
+    } */
 
     .main-category-effect:hover .inner-name {
         top: 35%;
@@ -3114,9 +3128,9 @@ label .span {
         width: 33.33%;
     }
 
-    .shine .product-banner {
+    /* .shine .product-banner {
         margin-top: 15px;
-    }
+    } */
 
     .payment-opt {
         max-width: 220px;
@@ -4147,4 +4161,79 @@ select {
 }
 .p-galleria-indicator.p-highlight>.p-link{
     opacity: 1;
+}
+
+/*----------Slick Slider------------*/
+
+.slick-prev:before, .slick-next:before{
+    color: #0e0000!important;
+    font-size: 28px!important;
+    background: #fff!important;
+    border-radius: 50%;
+    padding: 0!important;
+}
+
+.slick-prev, .slick-next{
+    z-index: 2;
+}
+
+.slick-prev{
+left:0px!important;
+}
+
+.slick-next{
+right:10px!important;
+}
+
+.slick-track
+{
+    display: flex !important;
+}
+
+.slick-slide
+{
+    height: inherit !important;
+}
+
+.slick-slide>div
+{
+    height: 100%;
+}
+
+ .slick-slide {
+    margin: 0 5px;
+}
+
+.slick-list {
+    margin: 0 -5px;
+}
+
+
+/*-------Prime React DrpDown-------*/
+.p-dropdown-panel .p-dropdown-items .p-dropdown-item.p-highlight.p-focus, .p-dropdown-panel .p-dropdown-items .p-dropdown-item.p-highlight {
+    background: #e5e7eb;
+}
+
+.p-dropdown-panel .p-dropdown-items .p-dropdown-item.p-highlight {
+    color: #000;
+}
+
+.p-dropdown, .p-dropdown:not(.p-disabled):hover {
+    display: inline-flex;
+    cursor: pointer;
+    position: relative;
+    user-select: none;
+}
+
+.p-dropdown:not(.p-disabled).p-focus, .p-dropdown:not(.p-disabled):hover{
+    box-shadow:none;
+    border-color:#ccc;
+}
+
+
+/*----------Additional css for Container-----------*/
+@media (min-width: 1430px) {
+    .container {
+        max-width: 1400px;
+    }
 }

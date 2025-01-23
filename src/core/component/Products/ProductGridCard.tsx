@@ -13,7 +13,7 @@ interface ProductsProps {
 const ProductGridCard = ({ product, session, type }: ProductsProps) => {
   return (
     <>
-      <div className='category-prod-box'>
+      <div className='category-prod-box border p-2'>
         <div className='prod-img-bx1'>
           <img
             src={`${process.env.NEXT_PUBLIC_APP_IMAGE_API_URL}/${product?.imagePath}`}
@@ -34,7 +34,7 @@ const ProductGridCard = ({ product, session, type }: ProductsProps) => {
           </div>
         </div>
         <div className='prod-name2'>
-          <p>{product?.productName}</p>
+          <p className="mb-0">{product?.productName}</p>
         </div>
         <div className='prod-price2'>
           <div className='prc'>

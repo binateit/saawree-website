@@ -1,3 +1,4 @@
+import Link from 'next/link'
 import React from 'react'
 
 const page = () => {
@@ -114,7 +115,7 @@ const page = () => {
                     </div>
                 </div>
                 <div className="card-footer text-right bg-white">
-                    <a href="sale-order-add-payment.html" className="btn btn-saawree">Add Payment</a>
+                    <Link href="/agent/transactions/sales-order/add-payment" className="btn btn-saawree">Add Payment</Link>
                 </div>
             </div>
 
