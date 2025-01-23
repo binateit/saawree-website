@@ -41,6 +41,7 @@ const page = () => {
   });
 
   const categoryId = searchParams.get("categoryId");
+  const subCategoryName = searchParams.get("subCategoryName");
 
   const sortOptions = [
     { name: "Alphabetically A-Z", value: "Name asc", show: "always" },
@@ -148,7 +149,7 @@ const page = () => {
     <>
       <section className='page-title-box'>
         <div className='container'>
-          <h1 className='page-title'>Pendants</h1>
+          <h1 className='page-title'>{subCategoryName}</h1>
         </div>
       </section>
       <section className='category-page'>

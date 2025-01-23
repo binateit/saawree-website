@@ -28,17 +28,19 @@ const ProductListCard = ({ product, session, type }: ProductsProps) => {
             alt={`${product?.productName}`}
           />
         </div>
-        <div className="pt-3">
-          <span className="text-dark">{product?.categoryName}</span>
+        <div className='pt-3'>
+          <span className='text-dark'>{product?.categoryName}</span>
           <div className='prod-name2'>
-            <p className="mb-0">{product?.productName}</p>
-            <p className="mb-0"><small>Design Number: PET1</small></p>
+            <p className='mb-0'>{product?.productName}</p>
+            <p className='mb-0'>
+              <small>Design Number: {product?.productGroupName}</small>
+            </p>
           </div>
           <div className='prod-price2'>
             <div className='prc'>
               {session?.user ? (
                 <>
-                  <div className="">
+                  <div className=''>
                     <span className='seling'>
                       {formatCurrency(product?.productPrice || 0)}
                     </span>{" "}
@@ -48,8 +50,9 @@ const ProductListCard = ({ product, session, type }: ProductsProps) => {
                       href='#'
                       className='act-btn d-inline-block w-auto px-2'
                     >
-                      <div className="d-flex align-items-center">
-                      <BsCart fontSize={18} className="mr-2"/> <small>Add to Cart</small>
+                      <div className='d-flex align-items-center'>
+                        <BsCart fontSize={18} className='mr-2' />{" "}
+                        <small>Add to Cart</small>
                       </div>
                     </Link>
                   </div>

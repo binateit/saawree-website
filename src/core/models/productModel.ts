@@ -78,6 +78,7 @@ export type MakeToOrderProduct = {
   name: string;
   categoryId: number;
   categoryName: string;
+  productGroupName: string;
   imagePath: string;
   productId: number;
   productName: string;

@@ -32,7 +32,7 @@ const ProductGridCard = ({ product, session, type }: ProductsProps) => {
             <div className='prod-name2'>
               <p className='mb-0'>{product?.productName}</p>
               <p className='mb-0'>
-                <small>Design Number: {product?.name}</small>
+                <small>Design Number: {product?.productGroupName}</small>
               </p>
             </div>
             <div className='prod-price2'>
@@ -44,9 +44,6 @@ const ProductGridCard = ({ product, session, type }: ProductsProps) => {
                   </span>{" "} */}
                     <div className='d-flex justify-content-between align-items-center'>
                       <div className=''>
-                        <span className='mrp'>
-                          <s>₹200.00</s>
-                        </span>
                         <span className='seling'>
                           {formatCurrency(product?.productPrice as number)}
                         </span>

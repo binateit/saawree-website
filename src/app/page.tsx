@@ -212,9 +212,11 @@ export default function Home() {
                               alt=''
                             />
                           </div>
-                          <div className='prod-name1'>
+                          <div className='prod-name1 text-dark'>
                             {prodData?.pn} <br />{" "}
-                            <small>Design Number :{prodData?.pgn}</small>
+                            <small className='text-dark'>
+                              Design Number :{prodData?.pgn}
+                            </small>
                           </div>
                           {/* <p>{JSON.stringify(prodData)}</p> */}
                           <div className='prod-rate1 '>
@@ -383,9 +385,11 @@ export default function Home() {
                           />
                           {/* <img src={`${process.env.NEXT_PUBLIC_APP_IMAGE_API_URL}/${prodData?.ip}`} className='auto-fit'/> */}
                         </div>
-                        <div className='prod-name1'>
+                        <div className='prod-name1 text-dark'>
                           {prodData?.pn} <br />{" "}
-                          <small>Design Number: {prodData?.pgn}</small>
+                          <small className='text-dark'>
+                            Design Number: {prodData?.pgn}
+                          </small>
                         </div>
                         <div className='prod-rate1 d-flex justify-content-between align-items-center'>
                           {!!session?.user ? (
