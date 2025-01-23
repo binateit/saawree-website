@@ -14,6 +14,8 @@ import "primereact/resources/themes/lara-light-cyan/theme.css";
 import { ToastContainer } from "react-toastify";
 import { CartCountProvider } from "@/core/context/useCartCount";
 import "./globals.css";
+import { Suspense } from "react";
+import Loading from "./loading";
 // import "slick-carousel/slick/slick.css";
 // import "slick-carousel/slick/slick-theme.css";
 
@@ -50,7 +52,7 @@ export default async function RootLayout({
             <PrimeReactProvider>
               <body>
                 <Header />
-                {children}
+                <Suspense fallback={<Loading />}>{children}</Suspense>
                 <Footer />
                 <ToastContainer />
               </body>

@@ -21,6 +21,12 @@ export type CustomerAddress = {
   isDefault?: boolean;
 };
 
+export interface CreateCustomerAddress {
+  address: Address;
+  addressType: number;
+  isDefault: boolean;
+}
+
 export type EditCustomerProfile = {
   userId: string;
   firstName: string;

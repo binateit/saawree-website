@@ -154,11 +154,10 @@ const page = () => {
   };
   const queryClient = useQueryClient();
 
-  const { mutate: placeOrder } = useMutation({
+  const { mutate: placeOrder, isPending: pendingMTO } = useMutation({
     mutationKey: ["placeMakeToOrder"],
     mutationFn: (result: PlaceOrderPayload) => placeOrderMTO(result),
     onSuccess: (data: Result) => {
-      console.log("data", data);
       if (data.succeeded) {
         if (isRazorPaySelected) {
           handleRazorPayment(data?.data?.orderId as string);
@@ -174,11 +173,10 @@ const page = () => {
     },
   });
 
-  const { mutate: placeOrderReadyStock } = useMutation({
+  const { mutate: placeOrderReadyStock, isPending: pendingRS } = useMutation({
     mutationKey: ["placeReadyStockOrder"],
     mutationFn: (result: PlaceOrderRSPayload) => placeOrderRS(result),
     onSuccess: (data: Result) => {
-      console.log("data", data);
       if (data.succeeded) {
         if (isRazorPaySelected) {
           handleRazorPayment(data?.data?.orderId as string);
@@ -208,90 +206,96 @@ const page = () => {
       ? placeOrderReadyStock(OrderDataRS)
       : placeOrder(orderData);
   };
-  return (
-    <div className='address-box'>
-      <h3>Select a delivery address</h3>
-      <div className='all-address'>
-        {customerAddressList
-          ?.filter((address) => address?.addressTypeId === 2)
-          .map((address) => (
-            <div className='address-list-item' key={address?.addressId}>
-              <input
-                type='radio'
-                className='address-radio'
-                id='add1'
-                name='address'
-                checked={shipAddressId === address?.customerAddressId}
-                onChange={() => {
-                  setShipAddressId(address?.customerAddressId as number);
-                }}
-              />
-              <label className='address-label' htmlFor='add1'>
-                <p className='select-add'>
-                  {address?.displayAddress}{" "}
-                  <div
-                    onClick={() => {
-                      onCustomerAddressChange(
-                        address.customerAddressId as number
-                      );
-                    }}
-                    className='add-link'
-                  >
-                    Edit Address
-                  </div>
-                </p>
-              </label>
-            </div>
-          ))}
-        <div className='add-new-address' onClick={addNewCustomerAdress}>
-          <span data-toggle='modal' data-target='#add-address'>
-            <i className='bi bi-plus'></i> Add new address
-          </span>
+  return pendingMTO || pendingRS ? (
+    <>
+      <p>Processing...</p>
+    </>
+  ) : (
+    <>
+      <div className='address-box'>
+        <h3>Select a delivery address</h3>
+        <div className='all-address'>
+          {customerAddressList
+            ?.filter((address) => address?.addressTypeId === 2)
+            .map((address) => (
+              <div className='address-list-item' key={address?.addressId}>
+                <input
+                  type='radio'
+                  className='address-radio'
+                  id='add1'
+                  name='address'
+                  checked={shipAddressId === address?.customerAddressId}
+                  onChange={() => {
+                    setShipAddressId(address?.customerAddressId as number);
+                  }}
+                />
+                <label className='address-label' htmlFor='add1'>
+                  <p className='select-add'>
+                    {address?.displayAddress}{" "}
+                    <div
+                      onClick={() => {
+                        onCustomerAddressChange(
+                          address.customerAddressId as number
+                        );
+                      }}
+                      className='add-link'
+                    >
+                      Edit Address
+                    </div>
+                  </p>
+                </label>
+              </div>
+            ))}
+          <div className='add-new-address' onClick={addNewCustomerAdress}>
+            <span data-toggle='modal' data-target='#add-address'>
+              <i className='bi bi-plus'></i> Add new address
+            </span>
+          </div>
         </div>
-      </div>
-      <h3 className='mt-4'>Select payment option</h3>
-      <div className='payment-options'>
-        <label>
-          <input
-            type='radio'
-            value={1}
-            checked={isRazorPaySelected}
-            onChange={() => {
-              setIsRazorPaySelected(true);
-            }}
-          />
-          <Image src={razorpay?.src} alt='razorpay' width={100} height={50} />
-        </label>
-        {/* {session?.user?.enableCredit && (
+        <h3 className='mt-4'>Select payment option</h3>
+        <div className='payment-options'>
+          <label>
+            <input
+              type='radio'
+              value={1}
+              checked={isRazorPaySelected}
+              onChange={() => {
+                setIsRazorPaySelected(true);
+              }}
+            />
+            <Image src={razorpay?.src} alt='razorpay' width={100} height={50} />
+          </label>
+          {/* {session?.user?.enableCredit && (
           <> */}
-        <label>
-          <input
-            type='radio'
-            value={2}
-            checked={!isRazorPaySelected}
-            onChange={() => setIsRazorPaySelected(false)}
-          />
-          <Image
-            src={paylater_icon?.src}
-            alt='paylater'
-            width={100}
-            height={50}
-          />
-        </label>
-        {/* </>
+          <label>
+            <input
+              type='radio'
+              value={2}
+              checked={!isRazorPaySelected}
+              onChange={() => setIsRazorPaySelected(false)}
+            />
+            <Image
+              src={paylater_icon?.src}
+              alt='paylater'
+              width={100}
+              height={50}
+            />
+          </label>
+          {/* </>
         )} */}
-      </div>
+        </div>
 
-      <button className='btn btn-saawree mt-4' onClick={handleConfirmOrder}>
-        Confirm Order
-      </button>
-      <AddressModal
-        isModalOpen={isModalOpen}
-        initialValues={editAddress as CustomerAddress}
-        isEditMode={isEditMode}
-        closeModal={closeModal}
-      />
-    </div>
+        <button className='btn btn-saawree mt-4' onClick={handleConfirmOrder}>
+          Confirm Order
+        </button>
+        <AddressModal
+          isModalOpen={isModalOpen}
+          initialValues={editAddress as CustomerAddress}
+          isEditMode={isEditMode}
+          closeModal={closeModal}
+        />
+      </div>
+    </>
   );
 };
 export default page;

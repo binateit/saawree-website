@@ -55,6 +55,7 @@ export type ProductList = {
   productName: string;
   productGroupName: string;
   categoryName: string;
+  name: string;
   productPrice: number;
   imagePath: string;
   availableQuantity: number;

@@ -167,6 +167,7 @@ const page = () => {
                     zoomScale={2}
                     hasSpacer={true}
                     zoomPreload={true}
+                    // className='w-100 h-100'
                   />
                 </div>
                 <div className='icons-wrap'>

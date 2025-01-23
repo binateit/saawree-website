@@ -245,13 +245,13 @@ const page = () => {
                         </div>
                       </div>
                     </div>
-                    <div className='row'>
+                    <div className='row '>
                       {response?.colorList?.map((color, index) => (
                         <div
-                          className='col-xl-6 col-lg-6 col-md-12 col-sm-6 mb-2'
+                          className='col-xl-6 col-lg-6 col-md-12 col-sm-6 mb-4'
                           key={color?.colorId}
                         >
-                          <div className='d-flex'>
+                          <div className='d-flex '>
                             <div className='moti-color'>
                               <img
                                 src={`${process.env.NEXT_PUBLIC_APP_IMAGE_API_URL}/${color?.imagePath}`}
@@ -312,7 +312,7 @@ const page = () => {
                 ) : (
                   <div className='row'>
                     <div className='col-md-6'>
-                      <div className='product-color-options mt-4'>
+                      <div className='product-color-options'>
                         <div className='row option-heading'>
                           <div className='col-md-12'>
                             <div className='d-flex'>
@@ -366,30 +366,29 @@ const page = () => {
                             </div>
                           </div>
                         ))}
-
-                        {session?.user && (
-                          <div className='action-btn-wrapper'>
-                            <button
-                              className='btn btn-saawree-outline'
-                              onClick={() => handleAddToCart(false)}
-                            >
-                              Add to cart
-                            </button>
-                            <div
-                              onClick={() => {
-                                handleAddToCart(true);
-                              }}
-                              className='btn btn-saawree'
-                            >
-                              Buy now
-                            </div>
-                            {/* <button className="btn btn-saawree-outline"><i className="bi bi-heart"></i></button>  */}
-                            <a href='#' className='whatsapp'>
-                              <img src='img/whats-aap.png' alt='' />
-                            </a>
-                          </div>
-                        )}
                       </div>
+                      {session?.user && (
+                        <div className='action-btn-wrapper'>
+                          <button
+                            className='btn btn-saawree-outline'
+                            onClick={() => handleAddToCart(false)}
+                          >
+                            Add to cart
+                          </button>
+                          <div
+                            onClick={() => {
+                              handleAddToCart(true);
+                            }}
+                            className='btn btn-saawree'
+                          >
+                            Buy now
+                          </div>
+                          {/* <button className="btn btn-saawree-outline"><i className="bi bi-heart"></i></button>  */}
+                          <a href='#' className='whatsapp'>
+                            <img src='img/whats-aap.png' alt='' />
+                          </a>
+                        </div>
+                      )}
                     </div>
                   </div>
                 )}

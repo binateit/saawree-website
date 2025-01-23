@@ -2,43 +2,41 @@
 import { useSession } from "next-auth/react";
 import underlineIcon from "@/assets/images/underlineIcon.png";
 import Link from "next/link";
-import { useMutation, useQuery } from "@tanstack/react-query";
+import { useQuery } from "@tanstack/react-query";
 import { getHomePage } from "@/core/requests/homeRequests";
 import Image from "next/image";
-import { Carousel } from "primereact/carousel";
-import { BsBoxArrowInUpRight, BsCart, BsHeart } from "react-icons/bs";
+import { BsCart } from "react-icons/bs";
 import { Galleria } from "primereact/galleria";
-import { createCart } from "@/core/requests/cartRequests";
-import { toast } from "react-toastify";
 import { formatCurrency } from "@/core/helpers/helperFunctions";
 import Slider from "react-slick";
 import "slick-carousel/slick/slick.css";
 import "slick-carousel/slick/slick-theme.css";
-import { swap } from "formik";
-
 
 export default function Home() {
-  const { data: session } = useSession();
+  const { data: session, status } = useSession();
   const { data: homePageData, isLoading: homePageLoading } = useQuery({
     queryKey: ["homePageData"],
     queryFn: () => getHomePage(),
   });
 
-  if (homePageLoading) return (
-
-    <div className="full-page-loader">
-      <div className="loader_box">
-        <div className="loader-logo">
-          <img src="https://saawree.com/images/logo4.png" alt="Loader Logo" width="100%" />
-        </div>
-        {/* <p className="loding-content text-center">Loading...</p> */}
-        <div className="progress mt-5">
-          <div className="progress-value"></div>
+  if (homePageLoading)
+    return (
+      <div className='full-page-loader'>
+        <div className='loader_box'>
+          <div className='loader-logo'>
+            <img
+              src='https://saawree.com/images/logo4.png'
+              alt='Loader Logo'
+              width='100%'
+            />
+          </div>
+          {/* <p className="loding-content text-center">Loading...</p> */}
+          <div className='progress mt-5'>
+            <div className='progress-value'></div>
+          </div>
         </div>
       </div>
-    </div>)
-
-
+    );
 
   var collectionSettings = {
     dots: false,
@@ -56,27 +54,25 @@ export default function Home() {
         settings: {
           slidesToShow: 4,
           slidesToScroll: 1,
-        }
+        },
       },
       {
         breakpoint: 991,
         settings: {
           slidesToShow: 3,
           slidesToScroll: 1,
-          initialSlide: 3
-        }
+          initialSlide: 3,
+        },
       },
       {
         breakpoint: 767,
         settings: {
           slidesToShow: 2,
-          slidesToScroll: 1
-        }
-      }
-
-    ]
+          slidesToScroll: 1,
+        },
+      },
+    ],
   };
-
 
   var newArrivalsSettings = {
     dots: false,
@@ -94,25 +90,24 @@ export default function Home() {
         settings: {
           slidesToShow: 3,
           slidesToScroll: 1,
-        }
+        },
       },
       {
         breakpoint: 991,
         settings: {
           slidesToShow: 2,
           slidesToScroll: 1,
-          initialSlide: 3
-        }
+          initialSlide: 3,
+        },
       },
       {
         breakpoint: 767,
         settings: {
           slidesToShow: 2,
-          slidesToScroll: 1
-        }
-      }
-
-    ]
+          slidesToScroll: 1,
+        },
+      },
+    ],
   };
 
   return (
@@ -197,67 +192,66 @@ export default function Home() {
           {homePageData?.nal?.map((newArraival, index) => (
             <div className='row mt-2' key={index}>
               <div
-                className={`col-md-6 col-lg-6 mb-2 mt-2 mt-md-0 mb-md-0 p-0  ${index / 2 == 0 ? "order-1" : "order-2"
-                  }`}
+                className={`col-md-6 col-lg-6 mb-2 mt-2 mt-md-0 mb-md-0 p-0  ${
+                  index / 2 == 0 ? "order-1" : "order-2"
+                }`}
               >
-
-
-                <Slider {...newArrivalsSettings}
-                >
+                <Slider {...newArrivalsSettings}>
                   {newArraival?.prods?.map((prodData) => (
-                    <div className='products-box h-100'>
-                      <div className='inner-box-wraper new-arrival-box h-100'>
-                        <div className='prod-img1'>
-                          <Image
-                            src={`${process.env.NEXT_PUBLIC_APP_IMAGE_API_URL}/${prodData?.ip}`}
-                            width={500}
-                            height={500}
-                            className='auto-fit'
-                            alt=''
-                          />
-
-
-                        </div>
-                        <div className='prod-name1'>{prodData?.pn} <br /> <small>Design Number :{prodData?.pgn}</small></div>
-                        {/* <p>{JSON.stringify(prodData)}</p> */}
-                        <div className='prod-rate1 '>
-                          {!!session?.user ? (
-                            <>
-                              <div className="d-flex justify-content-between align-items-center">
-                                <div className="">
-                                  <span className='mrp'>
+                    <Link
+                      href={`/readystock/details?productId=${prodData?.pi}`}
+                    >
+                      <div className='products-box h-100'>
+                        <div className='inner-box-wraper new-arrival-box h-100'>
+                          <div className='prod-img1'>
+                            <Image
+                              src={`${process.env.NEXT_PUBLIC_APP_IMAGE_API_URL}/${prodData?.ip}`}
+                              width={500}
+                              height={500}
+                              className='auto-fit'
+                              alt=''
+                            />
+                          </div>
+                          <div className='prod-name1'>
+                            {prodData?.pn} <br />{" "}
+                            <small>Design Number :{prodData?.pgn}</small>
+                          </div>
+                          {/* <p>{JSON.stringify(prodData)}</p> */}
+                          <div className='prod-rate1 '>
+                            {status === "authenticated" ? (
+                              <>
+                                <div className='d-flex justify-content-between align-items-center'>
+                                  <div className=''>
+                                    {/* <span className='mrp'>
                                     <s>₹200.00</s>
-                                  </span>
-                                  <span className='seling'>₹150.00</span>
-                                </div>
+                                  </span> */}
+                                    <span className='seling'>₹150.00</span>
+                                  </div>
 
-
-                                <div className='cart-link'>
-                                  <Link
-                                    href='#'
-                                    className='act-btn'
-                                  >
-                                    <BsCart fontSize={20}/>
-                                  </Link>
+                                  <div className='cart-link'>
+                                    <Link
+                                      href={`/readystock/details?productId=${prodData?.pi}`}
+                                      className='act-btn'
+                                    >
+                                      <BsCart fontSize={20} />
+                                    </Link>
+                                  </div>
                                 </div>
-                              </div>
-                            </>
-                          ) : (
-                            // <a href='#'>
-                            //   <button className='btn btn-small btn-saawree'>
-                            //     Login
-                            //   </button>
-                            // </a>
-                            ''
-                          )}
+                              </>
+                            ) : (
+                              // <a href='#'>
+                              //   <button className='btn btn-small btn-saawree'>
+                              //     Login
+                              //   </button>
+                              // </a>
+                              ""
+                            )}
+                          </div>
                         </div>
                       </div>
-                    </div>
+                    </Link>
                   ))}
-
                 </Slider>
-
-
 
                 {/* <Carousel
                   value={newArraival?.prods}
@@ -300,8 +294,9 @@ export default function Home() {
                 /> */}
               </div>
               <div
-                className={`col-md-6 col-lg-6  ${index / 2 == 0 ? "order-2" : "order-1"
-                  }`}
+                className={`col-md-6 col-lg-6  ${
+                  index / 2 == 0 ? "order-2" : "order-1"
+                }`}
               >
                 <div className='shine h-100 mb-2 md-pb-0'>
                   <Image
@@ -309,7 +304,7 @@ export default function Home() {
                     height={500}
                     src={`${process.env.NEXT_PUBLIC_APP_IMAGE_API_URL}/${newArraival?.ip}`}
                     className='product-banner'
-                    alt=''
+                    alt={`product-banner ${index + 1}`}
                   />
                 </div>
               </div>
@@ -317,7 +312,6 @@ export default function Home() {
           ))}
         </div>
       </section>
-
 
       {/* <!----------- Middle Banner Section ----------> */}
       <section className='banner-slider'>
@@ -372,62 +366,58 @@ export default function Home() {
             </div>
 
             <div className='kada-collections'>
-
               {/* {JSON.stringify(collection?.prods)} */}
 
-
-
-              <Slider {...collectionSettings}
-              >
+              <Slider {...collectionSettings}>
                 {collection?.prods?.map((prodData) => (
-                  <div className="products-box">
-                    <div className="inner-box-wraper">
-                      <div className="prod-img1">
-                        <Image
-                          width={500}
-                          height={500}
-                          src={`${process.env.NEXT_PUBLIC_APP_IMAGE_API_URL}/${prodData?.ip}`}
-                          className='auto-fit'
-                          alt=''
-                        />
-                        {/* <img src={`${process.env.NEXT_PUBLIC_APP_IMAGE_API_URL}/${prodData?.ip}`} className='auto-fit'/> */}
-                      </div>
-                      <div className="prod-name1">
-                        {prodData?.pn} <br /> <small>Design Number: {prodData?.pgn}</small>
-                      </div>
-                      <div className="prod-rate1 d-flex justify-content-between align-items-center">
-                        {!!session?.user ? (
-                          <>
-                            <div className="value">
-                              <span className='seling'>
-                                {formatCurrency(prodData?.pp)}
-                              </span>
-                            </div>
-                            <div className="cart-link">
-                              <Link
-                                href='#'
-                                className='act-btn'
-                              >
-                                <BsCart fontSize={20}/>
-                              </Link>
-                            </div>
-
-                          </>
-                        ) : (
-                          // <a href='#'>
-                          //   <button className='btn btn-small btn-saawree mt-2'>
-                          //     Login
-                          //   </button>
-                          // </a>
-                          ''
-                        )}
+                  <Link href={`/readystock/details?productId=${prodData?.pi}`}>
+                    <div className='products-box'>
+                      <div className='inner-box-wraper'>
+                        <div className='prod-img1'>
+                          <Image
+                            width={500}
+                            height={500}
+                            src={`${process.env.NEXT_PUBLIC_APP_IMAGE_API_URL}/${prodData?.ip}`}
+                            className='auto-fit'
+                            alt=''
+                          />
+                          {/* <img src={`${process.env.NEXT_PUBLIC_APP_IMAGE_API_URL}/${prodData?.ip}`} className='auto-fit'/> */}
+                        </div>
+                        <div className='prod-name1'>
+                          {prodData?.pn} <br />{" "}
+                          <small>Design Number: {prodData?.pgn}</small>
+                        </div>
+                        <div className='prod-rate1 d-flex justify-content-between align-items-center'>
+                          {!!session?.user ? (
+                            <>
+                              <div className='value'>
+                                <span className='seling'>
+                                  {formatCurrency(prodData?.pp)}
+                                </span>
+                              </div>
+                              <div className='cart-link'>
+                                <Link
+                                  href={`/readystock/details?productId=${prodData?.pi}`}
+                                  className='act-btn'
+                                >
+                                  <BsCart fontSize={20} />
+                                </Link>
+                              </div>
+                            </>
+                          ) : (
+                            // <a href='#'>
+                            //   <button className='btn btn-small btn-saawree mt-2'>
+                            //     Login
+                            //   </button>
+                            // </a>
+                            ""
+                          )}
+                        </div>
                       </div>
                     </div>
-                  </div>
+                  </Link>
                 ))}
-
               </Slider>
-
 
               {/* <Carousel
                 value={collection?.prods}
@@ -467,20 +457,13 @@ export default function Home() {
                   </div>
                 )}
               /> */}
-
-
-
-
             </div>
           </div>
         </section>
       ))}
 
-
       <section>
-        <div className="container">
-
-        </div>
+        <div className='container'></div>
       </section>
 
       {/* <!----------- Testimonials Section ----------> */}
@@ -514,8 +497,6 @@ export default function Home() {
           </div>
         </div>
       </section>
-
-
     </>
   );
 }

@@ -1028,6 +1028,12 @@ ul.sub-menu {
     margin-top: 10px;
 }
 
+.action-btn-wrapper {
+    display: flex;
+    gap: 10px;
+    margin-top: 10px;
+}
+
 .act-btn:hover {
     background-color: #fff;
     color: #aa7c5b;
@@ -2137,6 +2143,15 @@ label .span {
     display: inline-table;
 }
 
+.iiz__img {
+    max-width: 100%;
+    height: auto;
+    display: block;
+    pointer-events: none;
+    visibility: visible;
+    opacity: 1;
+    width: 100% !important;
+}
 /*---------------(Login Page)-------*/
 
 .login-form {
@@ -3493,6 +3508,7 @@ label .span {
     border: 1px solid #ccc;
     border-radius: 7px;
     overflow: hidden;
+    margin-top: 10px;
 }
 
 .sticky-layer {
@@ -4271,3 +4287,4 @@ select {
         max-width: 1400px;
     }
 }
+

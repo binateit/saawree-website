@@ -185,7 +185,7 @@ const Header = () => {
                             <React.Fragment key={cat.id}>
                               <li className='has_dropdown'>
                                 <Link
-                                  href={`/maketoorder/products?category=${cat.n}&categoryId=${cat?.id}`}
+                                  href={`/maketoorder/products?subCategoryId=${cat.n}&categoryId=${cat?.id}`}
                                   onClick={() => setCloseSubMenu(!closeSubMenu)}
                                 >
                                   {cat.n}
@@ -201,7 +201,7 @@ const Header = () => {
                                     .map((subCat, index) => (
                                       <li key={index} className='has_dropdown'>
                                         <Link
-                                          href={`/maketoorder/products?categoryId=${subCat.n}&categoryId=${cat?.id}`}
+                                          href={`/maketoorder/products?subCategoryId=${subCat.n}&categoryId=${subCat?.id}`}
                                           onClick={() => {
                                             setIsHamburgerClicked(false);
                                             setCloseSubMenu(!closeSubMenu);
@@ -228,7 +228,7 @@ const Header = () => {
                                                 className='sub-menu-col'
                                               >
                                                 <Link
-                                                  href={`/maketoorder/products?categoryId=${ssubCat.n}&categoryId=${cat?.id}`}
+                                                  href={`/maketoorder/products?subCategoryId=${ssubCat.n}&categoryId=${ssubCat?.id}`}
                                                   onClick={() => {
                                                     setIsHamburgerClicked(
                                                       false

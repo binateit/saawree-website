@@ -25,10 +25,10 @@ const ProductListCard = ({ product, session, type }: ProductsProps) => {
         <div className='products-list-image'>
           <img
             src={`${process.env.NEXT_PUBLIC_APP_IMAGE_API_URL}/${product?.imagePath}`}
-            alt=''
+            alt={`${product?.productName}`}
           />
         </div>
-        <div className="pt-3">
+        <div className='pt-3'>
           <span>{product?.categoryName}</span>
           <div className='list-view-product-name'>
             <a href='product-details.html'>{product?.productName}</a>
@@ -37,19 +37,16 @@ const ProductListCard = ({ product, session, type }: ProductsProps) => {
             <div className='prc'>
               {session?.user ? (
                 <>
-                <div className="">
-                  <span className='seling'>
-                    {formatCurrency(product?.productPrice || 0)}
-                  </span>{" "}
+                  <div className=''>
+                    <span className='seling'>
+                      {formatCurrency(product?.productPrice as number)}
+                    </span>{" "}
                   </div>
                   <div className='cart-link'>
-                      <Link
-                        href='#'
-                        className='act-btn'
-                      >
-                        <BsCart /> Add to cart
-                      </Link>
-                    </div>
+                    <Link href='#' className='act-btn'>
+                      <BsCart /> Add to cart
+                    </Link>
+                  </div>
                 </>
               ) : (
                 // <a href='#'>
@@ -57,7 +54,7 @@ const ProductListCard = ({ product, session, type }: ProductsProps) => {
                 //     Login to view price
                 //   </button>
                 // </a>
-                ''
+                ""
               )}
             </div>
             <div className='disc'>

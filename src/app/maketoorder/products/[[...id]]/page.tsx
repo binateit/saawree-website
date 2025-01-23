@@ -78,7 +78,7 @@ const page = () => {
         categoryIds:
           selectedFilters.categoryIds.length >= 1
             ? selectedFilters?.categoryIds
-            : undefined,
+            : [Number(categoryId)],
         orderBy:
           paginationFilters.orderBy.length >= 1 &&
           paginationFilters.orderBy[0] !== undefined
@@ -178,7 +178,7 @@ const page = () => {
                 </div>
                 <div className='d-flex'>
                   <div className='right-side-bar'>
-                    <label className="mr-2">Sort by </label>
+                    <label className='mr-2'>Sort by </label>
                     <Dropdown
                       value={paginationFilters?.orderBy?.[0]}
                       onChange={(e) => onSort(e.value)}
@@ -186,7 +186,7 @@ const page = () => {
                       optionLabel='name'
                       placeholder='Select options'
                       // className='form-control'
-                      panelClassName="custom-dropDown-panel"
+                      panelClassName='custom-dropDown-panel'
                     />
                   </div>
                   <div className='list-grid d-flex'>
