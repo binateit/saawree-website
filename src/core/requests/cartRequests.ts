@@ -5,6 +5,7 @@ import {
   AddCart,
   CartDetails,
   PlaceOrderPayload,
+  PlaceOrderRSPayload,
   RazorPay,
   UpdateCartPayload,
 } from "../models/cartModel";
@@ -17,6 +18,7 @@ const Cart_REMOVE_ITEM_URL = `${API_URL}/cart/removecartitem`;
 const Cart_UPDATE_CART_ITEMS_URL = `${API_URL}/cart/update-cart`;
 const RAZORPAY_URL = `${API_URL}/saleorders/razorpay-payment-response`;
 const Checkout_MakeToOrder_URL = `${API_URL}/saleorders/place-make-to-order`;
+const Checkout_ReadyStock_URL = `${API_URL}/saleorders/place-ready-stock-order`;
 
 const createCart = async (cart: AddCart): Promise<Result> => {
   return await axiosInstance
@@ -88,6 +90,16 @@ const placeOrderMTO = async (result: PlaceOrderPayload): Promise<Result> => {
     });
 };
 
+const placeOrderRS = async (result: PlaceOrderRSPayload): Promise<Result> => {
+  return await axiosInstance
+    .post(`${Checkout_ReadyStock_URL}`, result)
+    .then((response: AxiosResponse<Result>) => response.data)
+    .then((response: Result) => response)
+    .catch((err: Result) => {
+      return err;
+    });
+};
+
 //Razor Pay
 const createRazorPay = async (razor: RazorPay): Promise<Result> => {
   return await axiosInstance
@@ -113,4 +125,5 @@ export {
   removeCartItem,
   placeOrderMTO,
   createRazorPay,
+  placeOrderRS,
 };

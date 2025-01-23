@@ -1,14 +1,12 @@
-import NextAuth, { User } from "next-auth";
+import NextAuth from "next-auth";
 import CredentialsProvider from "next-auth/providers/credentials";
 import { signOut } from "next-auth/react";
 import jwt from "jsonwebtoken";
 import { RefreshToken } from "@/core/models/authModel";
 import {
   agentLogin,
-  getAgentByToken,
   getAgentRefreshToken,
   getRefreshToken,
-  getUserByToken,
   login,
 } from "@/core/requests/authRequests";
 import router from "next/navigation";
@@ -35,10 +33,8 @@ const handler = NextAuth({
             credentials?.username as string,
             credentials?.password as string
           );
-
           if (loginResponse.succeeded && loginResponse.data.token) {
             // const customerData = await getUserByToken(loginResponse.data.token);
-            // console.log("customerData", customerData);
             let user = {
               token: loginResponse.data.token,
               refreshToken: loginResponse.data.refreshToken,
@@ -128,19 +124,18 @@ const handler = NextAuth({
       console.log("Session Callback - Token:", token);
       if (token.user) {
         session.user = {
-          token: token?.user?.token as unknown as string,
-          refreshToken: token?.user?.refreshToken as unknown as string,
-          refreshTokenExpiryTime: token?.user
-            ?.refreshTokenExpiryTime as unknown as Date,
-          firstName: token?.user?.firstName as unknown as string,
-          lastName: token?.user?.lastName as unknown as string,
-          emailAddress: token?.user?.emailAddress as unknown as string,
-          userType: token?.user?.userType as unknown as boolean,
-          printName: token?.user?.printName as unknown as string,
+          token: token.user.token as string,
+          refreshToken: token.user.refreshToken as string,
+          refreshTokenExpiryTime: token.user.refreshTokenExpiryTime as Date,
+          firstName: token.user.firstName as string,
+          lastName: token.user.lastName as string,
+          emailAddress: token.user.emailAddress as string,
+          userType: token.user.userType as boolean,
+          printName: token.user.printName as string,
         };
       }
 
-      return session;
+      return await session;
     },
     async jwt({ token, user }: any) {
       console.log("JWT Callback - Incoming Token:", token);
@@ -190,7 +185,7 @@ const handler = NextAuth({
         }
       }
 
-      return token;
+      return await token;
     },
   },
 });

@@ -18,14 +18,14 @@ import { useCartCount } from "@/core/context/useCartCount";
 import Link from "next/link";
 
 const page = () => {
-  const { data: session } = useSession();
+  const { data: session, status: authStatus } = useSession();
   const router = useRouter();
   const { setCartCount, cartCount, cartData } = useCartCount();
   const queryClient = useQueryClient();
   const [cartDetails, setCartDetails] = useState<CartDetails | undefined>(
     undefined
   );
-  if (session?.user?.token === undefined) {
+  if (authStatus === "unauthenticated") {
     router.push("/auth/login");
     toast.error("Please login to view your cart.");
   }
@@ -343,7 +343,7 @@ const page = () => {
                     </tbody>
                   </table>
                   <div className='proceed-to-checkout'>
-                    <Link href='/processorder' className='btn btn-saawree'>
+                    <Link href='/checkout' className='btn btn-saawree'>
                       Proceed to Checkout
                     </Link>
                   </div>

@@ -22,7 +22,7 @@ import { getMenuCategories } from "@/core/requests/homeRequests";
 import { useCartCount } from "@/core/context/useCartCount";
 
 const Header = () => {
-  const { data: session } = useSession();
+  const { data: session, status: authStatus } = useSession();
   const [show, setShow] = useState(false);
   const { cartCount } = useCartCount();
 
@@ -50,7 +50,7 @@ const Header = () => {
     <>
       <div className='top-header-bar'>
         <div className='container header-container text-right'>
-          {session?.user ? (
+          {authStatus === "authenticated" ? (
             <div className='d-flex justify-content-end'>
               Welcome {session?.user?.firstName} -{" "}
               <Link href={`/${session.user.userType}`} className='pl-2'>

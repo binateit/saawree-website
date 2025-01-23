@@ -6,7 +6,7 @@ import {
   getReadyStockRecomendedProducts,
   getRSProductDetails,
 } from "@/core/requests/productsRequests";
-import { useQuery } from "@tanstack/react-query";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { useSession } from "next-auth/react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { Dropdown } from "primereact/dropdown";
@@ -24,7 +24,7 @@ import { toast } from "react-toastify";
 import { useCartCount } from "@/core/context/useCartCount";
 
 const page = () => {
-  const { data: session } = useSession();
+  const { data: session, status: authStatus } = useSession();
   const router = useRouter();
   const searchParams = useSearchParams();
   const productId = searchParams.get("productId");
@@ -93,12 +93,18 @@ const page = () => {
       }
     });
   };
+  const queryClient = useQueryClient();
+
   const handleAddToCart = async (isBuyNow: boolean) => {
     try {
-      if (session?.user?.token === undefined) {
-        router.push("/login");
+      if (authStatus === "unauthenticated") {
+        router.push("/auth/login");
       } else {
-        if (session?.user?.token && response && selectedColors.length > 0) {
+        if (
+          authStatus === "authenticated" &&
+          response &&
+          selectedColors.length > 0
+        ) {
           let updatedItems: Items[] = selectedColors.map((color) => ({
             productId: color.productId as number,
             quantity: color.quantity as number,
@@ -113,8 +119,9 @@ const page = () => {
           if (result.succeeded) {
             setCartCount((cartCount as number) + 1);
             toast.success("Items added to cart successfully");
-            router.push(isBuyNow ? "/processorder" : "/cart");
             setIsBuyNow(isBuyNow);
+            router.push(isBuyNow ? "/checkout" : "/cart");
+            queryClient.invalidateQueries({ queryKey: ["cartDetails"] });
             return true;
           } else {
             toast.error("Failed to add items to cart");
@@ -239,7 +246,7 @@ const page = () => {
                       </div>
                     </div>
                     <div className='row'>
-                      {response?.colorList?.map((color) => (
+                      {response?.colorList?.map((color, index) => (
                         <div
                           className='col-xl-6 col-lg-6 col-md-12 col-sm-6 mb-2'
                           key={color?.colorId}
@@ -256,7 +263,28 @@ const page = () => {
                             </div>
                             <div className='stock'></div>
                             <div className='color-quntity'>
-                              <input type='text' className='quntity-input' />
+                              <input
+                                type='text'
+                                className='quntity-input'
+                                id={index.toString()}
+                                defaultValue={0}
+                                min={1}
+                                max={99999}
+                                onChange={(e) => {
+                                  let qty = parseInt(e.target.value);
+                                  if (qty < 0) {
+                                    e.target.value = "";
+                                  } else if (qty > 99999) {
+                                    e.target.value = "";
+                                  } else {
+                                    handleQuantityChange(
+                                      color.productId as number,
+                                      color.colorId as number,
+                                      qty
+                                    );
+                                  }
+                                }}
+                              />
                             </div>
                           </div>
                         </div>
@@ -299,7 +327,7 @@ const page = () => {
                           </div>
                         </div>
 
-                        {response?.colorList?.map((color) => (
+                        {response?.colorList?.map((color, index) => (
                           <div className='d-flex' key={color?.colorId}>
                             <div className='moti-color'>
                               <img
@@ -313,9 +341,28 @@ const page = () => {
                             <div className='stock'></div>
 
                             <div className='color-quntity'>
-                              <div className='color-quntity'>
-                                <input type='text' className='quntity-input' />
-                              </div>
+                              <input
+                                type='text'
+                                className='quntity-input'
+                                id={index.toString()}
+                                defaultValue={0}
+                                min={1}
+                                max={99999}
+                                onChange={(e) => {
+                                  let qty = parseInt(e.target.value);
+                                  if (qty < 0) {
+                                    e.target.value = "";
+                                  } else if (qty > 99999) {
+                                    e.target.value = "";
+                                  } else {
+                                    handleQuantityChange(
+                                      color.productId as number,
+                                      color.colorId as number,
+                                      qty
+                                    );
+                                  }
+                                }}
+                              />
                             </div>
                           </div>
                         ))}

@@ -6,7 +6,7 @@ import {
   getMaketoOrderProductDetails,
   getRecomendedMaketoOrderProducts,
 } from "@/core/requests/productsRequests";
-import { useQuery } from "@tanstack/react-query";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { useSession } from "next-auth/react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { Dropdown } from "primereact/dropdown";
@@ -46,7 +46,7 @@ const page = () => {
     queryKey: ["getMTOProductDetails"],
     queryFn: () => getMaketoOrderProductDetails(Number(productId)),
   });
-
+  const queryClient = useQueryClient();
   useEffect(() => {
     let polishTypes: any = [];
     response?.polishingTypeList.map((ptype) => {
@@ -133,8 +133,9 @@ const page = () => {
           if (result.succeeded) {
             setCartCount((cartCount as number) + updatedItems.length);
             toast.success("Items added to cart successfully");
-            router.push(isBuyNow ? "/processorder" : "/cart");
+            router.push(isBuyNow ? "/checkout" : "/cart");
             setIsBuyNow(isBuyNow);
+            queryClient.invalidateQueries({ queryKey: ["cartDetails"] });
             return true;
           } else {
             toast.error("Failed to add items to cart");
@@ -334,7 +335,7 @@ const page = () => {
                           </div>
                         </div>
 
-                        {response?.colorList?.map((color) => (
+                        {response?.colorList?.map((color, index) => (
                           <div className='d-flex' key={color?.colorId}>
                             <div className='moti-color'>
                               <img
@@ -349,7 +350,28 @@ const page = () => {
 
                             <div className='color-quntity'>
                               <div className='color-quntity'>
-                                <input type='text' className='quntity-input' />
+                                <input
+                                  type='text'
+                                  className='quntity-input'
+                                  id={index.toString()}
+                                  defaultValue={0}
+                                  min={1}
+                                  max={99999}
+                                  onChange={(e) => {
+                                    let qty = parseInt(e.target.value);
+                                    if (qty < 0) {
+                                      e.target.value = "";
+                                    } else if (qty > 99999) {
+                                      e.target.value = "";
+                                    } else {
+                                      handleQuantityChange(
+                                        color.productId as number,
+                                        color.colorId as number,
+                                        qty
+                                      );
+                                    }
+                                  }}
+                                />
                               </div>
                             </div>
                           </div>

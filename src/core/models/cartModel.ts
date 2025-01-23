@@ -54,7 +54,11 @@ export type PlaceOrderPayload = {
   shipAddressId: number;
   paymentModeId: number;
 };
-
+export type PlaceOrderRSPayload = {
+  isFromBuyNow: boolean;
+  shippingAddressId: number;
+  paymentModeId: number;
+};
 export type RazorPay = {
   razorPayPaymentId?: string;
   razorPayOrderId?: string;

@@ -4,23 +4,26 @@ import { getSalesOrderById } from "@/core/requests/saleOrderRequests";
 import { useQuery } from "@tanstack/react-query";
 import { useSession } from "next-auth/react";
 import Link from "next/link";
-import { useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import React, { FC } from "react";
-interface Props {
-  orderData?: {
-    saleOrderId: number;
-    orderId?: any;
-  };
-}
-const ThankYouPage: FC<Props> = ({ orderData }) => {
-  const { data: session } = useSession();
-  const navigate = useRouter();
+import { toast } from "react-toastify";
 
+const ThankYouPage = () => {
+  const navigate = useRouter();
+  const { data: session, status: authStatus } = useSession();
+  const searchParams = useSearchParams();
+  const orderData = JSON.parse(searchParams.get("orderData") as string);
   const { data: orderDetails } = useQuery({
     queryKey: ["orderDetails", orderData?.saleOrderId],
+
     queryFn: () => getSalesOrderById(orderData?.saleOrderId as number),
     enabled: !!orderData?.saleOrderId,
   });
+
+  if (authStatus === "unauthenticated") {
+    navigate.push("/auth/login");
+    toast.error("Please login to view your cart.");
+  }
   return (
     <section className='thankyou-page'>
       <div className='container'>
@@ -67,7 +70,7 @@ const ThankYouPage: FC<Props> = ({ orderData }) => {
                 <h5 className='th-ttl'>Order Date</h5>
                 <p className='th-dt'>
                   {" "}
-                  {formatDate(orderDetails?.orderDate, "MMMM dd, yyyy")}
+                  {/* {formatDate(orderDetails?.orderDate, "MMMM dd, yyyy")} */}
                 </p>
               </div>
             </div>

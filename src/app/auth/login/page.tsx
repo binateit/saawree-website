@@ -42,20 +42,7 @@ const page = () => {
             </div>
           )}
           <div className='d-flex align-items-center justify-content-center'>
-            <div className='form-group d-flex align-items-center mr-3'>
-              <input
-                type='radio'
-                id='agent'
-                name='role'
-                value={"agent"}
-                checked={userType === "agent"}
-                onChange={() => setUserType("agent")}
-              />
-              <label htmlFor='agent' className='mb-0 ml-1 cursor-pointer'>
-                Agent
-              </label>
-            </div>
-            <div className='form-group d-flex align-items-center'>
+            <div className='form-group d-flex align-items-center  mr-3'>
               <input
                 type='radio'
                 id='customer'
@@ -66,6 +53,19 @@ const page = () => {
               />
               <label htmlFor='customer' className='mb-0 ml-1 cursor-pointer'>
                 Customer
+              </label>
+            </div>
+            <div className='form-group d-flex align-items-center'>
+              <input
+                type='radio'
+                id='agent'
+                name='role'
+                value={"agent"}
+                checked={userType === "agent"}
+                onChange={() => setUserType("agent")}
+              />
+              <label htmlFor='agent' className='mb-0 ml-1 cursor-pointer'>
+                Agent
               </label>
             </div>
           </div>
