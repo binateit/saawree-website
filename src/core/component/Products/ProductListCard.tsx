@@ -2,6 +2,7 @@ import { formatCurrency } from "@/core/helpers/helperFunctions";
 import { MakeToOrderProduct, ProductList } from "@/core/models/productModel";
 import Link from "next/link";
 import React from "react";
+import { BsCart } from "react-icons/bs";
 
 interface ProductsProps {
   product: ProductList | MakeToOrderProduct;
@@ -17,17 +18,17 @@ const ProductListCard = ({ product, session, type }: ProductsProps) => {
           ? `/maketoorder/details?productId=${product?.productId}`
           : `/readystock/details?productId=${product?.productId}`
       }
-      className='mb-2'
+      className='mb-3 border d-block'
       key={product?.productId}
     >
-      <div className='category-prod-box d-flex'>
+      <div className='category-prod-box mb-0 d-flex'>
         <div className='products-list-image'>
           <img
             src={`${process.env.NEXT_PUBLIC_APP_IMAGE_API_URL}/${product?.imagePath}`}
             alt=''
           />
         </div>
-        <div>
+        <div className="pt-3">
           <span>{product?.categoryName}</span>
           <div className='list-view-product-name'>
             <a href='product-details.html'>{product?.productName}</a>
@@ -36,16 +37,27 @@ const ProductListCard = ({ product, session, type }: ProductsProps) => {
             <div className='prc'>
               {session?.user ? (
                 <>
-                  <span className='seling-price'>
+                <div className="">
+                  <span className='seling'>
                     {formatCurrency(product?.productPrice || 0)}
                   </span>{" "}
+                  </div>
+                  <div className='cart-link'>
+                      <Link
+                        href='#'
+                        className='act-btn'
+                      >
+                        <BsCart /> Add to cart
+                      </Link>
+                    </div>
                 </>
               ) : (
-                <a href='#'>
-                  <button className='btn btn-saawree'>
-                    Login to view price
-                  </button>
-                </a>
+                // <a href='#'>
+                //   <button className='btn btn-saawree'>
+                //     Login to view price
+                //   </button>
+                // </a>
+                ''
               )}
             </div>
             <div className='disc'>

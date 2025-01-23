@@ -75,28 +75,28 @@ const page = () => {
                             <td>8888782613</td>
                             <td>jitendra@binateit.com</td>
                             <td>Active</td>
-                            <td><List href="/agent/transactions/customers/details" className="btn btn-saawree">View</List></td>
+                            <td><Link href="/agent/transactions/customers/details" className="btn btn-saawree">View</Link></td>
                         </tr>
                         <tr>
                             <th>Jitendra Bhargava</th>
                             <td>8888782613</td>
                             <td>jitendra@binateit.com</td>
                             <td>Active</td>
-                            <td><List href="/agent/transactions/customers/details" className="btn btn-saawree">View</List></td>
+                            <td><Link href="/agent/transactions/customers/details" className="btn btn-saawree">View</Link></td>
                         </tr>
                         <tr>
                             <th>Jitendra Bhargava</th>
                             <td>8888782613</td>
                             <td>jitendra@binateit.com</td>
                             <td>Active</td>
-                            <td><List href="/agent/transactions/customers/details" className="btn btn-saawree">View</List></td>
+                            <td><Link href="/agent/transactions/customers/details" className="btn btn-saawree">View</Link></td>
                         </tr>
                         <tr>
                             <th>Jitendra Bhargava</th>
                             <td>8888782613</td>
                             <td>jitendra@binateit.com</td>
                             <td>Active</td>
-                            <td><List href="/agent/transactions/customers/details" className="btn btn-saawree">View</List></td>
+                            <td><Link href="/agent/transactions/customers/details" className="btn btn-saawree">View</Link></td>
                         </tr>
                         </tbody>
                     </table>

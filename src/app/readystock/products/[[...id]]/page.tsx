@@ -281,7 +281,7 @@ const page = () => {
                       options={sortList}
                       optionLabel='name'
                       placeholder='Select options'
-                      className='w-full md:w-14rem'
+                      panelClassName="custom-dropDown-panel"
                     />
                   </div>
                   <div className='list-grid d-flex'>
