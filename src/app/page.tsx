@@ -6,7 +6,7 @@ import { useMutation, useQuery } from "@tanstack/react-query";
 import { getHomePage } from "@/core/requests/homeRequests";
 import Image from "next/image";
 import { Carousel } from "primereact/carousel";
-import { BsHeart } from "react-icons/bs";
+import { BsBoxArrowInUpRight, BsCart, BsHeart } from "react-icons/bs";
 import { Galleria } from "primereact/galleria";
 import { createCart } from "@/core/requests/cartRequests";
 import { toast } from "react-toastify";
@@ -82,7 +82,7 @@ export default function Home() {
     dots: false,
     swipeToSlide: true,
     draggable: true,
-    arrows: true,
+    arrows: false,
     infinite: false,
     speed: 500,
     slidesToShow: 3,
@@ -197,7 +197,7 @@ export default function Home() {
           {homePageData?.nal?.map((newArraival, index) => (
             <div className='row mt-2' key={index}>
               <div
-                className={`col-md-6 col-lg-6  ${index / 2 == 0 ? "order-1" : "order-2"
+                className={`col-md-6 col-lg-6 mb-2 mt-2 mt-md-0 mb-md-0 p-0  ${index / 2 == 0 ? "order-1" : "order-2"
                   }`}
               >
 
@@ -206,35 +206,53 @@ export default function Home() {
                 >
                   {newArraival?.prods?.map((prodData) => (
                     <div className='products-box h-100'>
-                    <div className='inner-box-wraper h-100'>
-                      <div className='prod-img1'>
-                        <Image
-                          src={`${process.env.NEXT_PUBLIC_APP_IMAGE_API_URL}/${prodData?.ip}`}
-                          width={500}
-                          height={500}
-                          className='auto-fit'
-                          alt=''
-                        />
-                      </div>
-                      <div className='prod-name1'>{prodData?.pn}</div>
-                      <div className='prod-rate1'>
-                        {!!session?.user ? (
-                          <>
-                            <span className='mrp'>
-                              <s>Rs. 200.00</s>
-                            </span>
-                            <span className='seling'>Rs. 150.00</span>{" "}
-                          </>
-                        ) : (
-                          <a href='#'>
-                            <button className='btn btn-small btn-saawree-outline mt-2 w-100'>
-                              Login
-                            </button>
-                          </a>
-                        )}
+                      <div className='inner-box-wraper new-arrival-box h-100'>
+                        <div className='prod-img1'>
+                          <Image
+                            src={`${process.env.NEXT_PUBLIC_APP_IMAGE_API_URL}/${prodData?.ip}`}
+                            width={500}
+                            height={500}
+                            className='auto-fit'
+                            alt=''
+                          />
+
+
+                        </div>
+                        <div className='prod-name1'>{prodData?.pn} <br /> <small>Design Number :{prodData?.pgn}</small></div>
+                        {/* <p>{JSON.stringify(prodData)}</p> */}
+                        <div className='prod-rate1 '>
+                          {!!session?.user ? (
+                            <>
+                              <div className="d-flex justify-content-between align-items-center">
+                                <div className="">
+                                  <span className='mrp'>
+                                    <s>₹200.00</s>
+                                  </span>
+                                  <span className='seling'>₹150.00</span>
+                                </div>
+
+
+                                <div className='cart-link'>
+                                  <Link
+                                    href='#'
+                                    className='act-btn'
+                                  >
+                                    <BsCart fontSize={20}/>
+                                  </Link>
+                                </div>
+                              </div>
+                            </>
+                          ) : (
+                            // <a href='#'>
+                            //   <button className='btn btn-small btn-saawree'>
+                            //     Login
+                            //   </button>
+                            // </a>
+                            ''
+                          )}
+                        </div>
                       </div>
                     </div>
-                  </div>
                   ))}
 
                 </Slider>
@@ -270,7 +288,7 @@ export default function Home() {
                             </>
                           ) : (
                             <a href='#'>
-                              <button className='btn btn-small btn-saawree-outline mt-2 w-100'>
+                              <button className='btn btn-small btn-saawree mt-2 w-100'>
                                 Login
                               </button>
                             </a>
@@ -285,7 +303,7 @@ export default function Home() {
                 className={`col-md-6 col-lg-6  ${index / 2 == 0 ? "order-2" : "order-1"
                   }`}
               >
-                <div className='shine h-100'>
+                <div className='shine h-100 mb-2 md-pb-0'>
                   <Image
                     width={500}
                     height={500}
@@ -372,23 +390,36 @@ export default function Home() {
                           className='auto-fit'
                           alt=''
                         />
+                        {/* <img src={`${process.env.NEXT_PUBLIC_APP_IMAGE_API_URL}/${prodData?.ip}`} className='auto-fit'/> */}
                       </div>
                       <div className="prod-name1">
-                        {prodData?.pn}
+                        {prodData?.pn} <br /> <small>Design Number: {prodData?.pgn}</small>
                       </div>
-                      <div className="prod-rate1">
+                      <div className="prod-rate1 d-flex justify-content-between align-items-center">
                         {!!session?.user ? (
                           <>
-                            <span className='seling'>
-                              {formatCurrency(prodData?.pp)}
-                            </span>{" "}
+                            <div className="value">
+                              <span className='seling'>
+                                {formatCurrency(prodData?.pp)}
+                              </span>
+                            </div>
+                            <div className="cart-link">
+                              <Link
+                                href='#'
+                                className='act-btn'
+                              >
+                                <BsCart fontSize={20}/>
+                              </Link>
+                            </div>
+
                           </>
                         ) : (
-                          <a href='#'>
-                            <button className='btn btn-small btn-saawree-outline mt-2 w-100'>
-                              Login
-                            </button>
-                          </a>
+                          // <a href='#'>
+                          //   <button className='btn btn-small btn-saawree mt-2'>
+                          //     Login
+                          //   </button>
+                          // </a>
+                          ''
                         )}
                       </div>
                     </div>
@@ -426,7 +457,7 @@ export default function Home() {
                           </>
                         ) : (
                           <a href='#'>
-                            <button className='btn btn-small btn-saawree-outline mt-2 w-100'>
+                            <button className='btn btn-small btn-saawree mt-2 w-100'>
                               Login
                             </button>
                           </a>
