@@ -57,7 +57,7 @@ const page = () => {
                 <div className="card shadow">
                     <div className="card-header bg-white justify-content-between">
                         <h5 className="mb-0">Payment</h5>
-                        <button className="btn btn-saawree open-edit-form">Add Payment</button>
+                        <Link href='/agent/transactions/sales-order/add-payment' className="btn btn-saawree">Add Payment</Link>
                     </div>
                     <div className="card-body">
                         <div className="table-responsive">
