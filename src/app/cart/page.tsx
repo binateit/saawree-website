@@ -19,7 +19,7 @@ import { useCartCount } from "@/core/context/useCartCount";
 import Link from "next/link";
 
 const page = () => {
-  const { data: session, status:authStatus } = useSession();
+  const { data: session, status: authStatus } = useSession();
   const router = useRouter();
   const { setCartCount, cartCount, cartData } = useCartCount();
   const queryClient = useQueryClient();
@@ -344,7 +344,7 @@ const page = () => {
                     </tbody>
                   </table>
                   <div className='proceed-to-checkout'>
-                    <Link href='/processorder' className='btn btn-saawree'>
+                    <Link href='/checkout' className='btn btn-saawree'>
                       Proceed to Checkout
                     </Link>
                   </div>

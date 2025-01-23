@@ -23,7 +23,7 @@ interface CartCountProviderProps {
 export const CartCountProvider: React.FC<CartCountProviderProps> = ({
   children,
 }) => {
-  const { data: session } = useSession();
+  const { data: session, status: authStatus } = useSession();
 
   const [cartCount, setCount] = useState<number | null>(null);
   const [isBuyNow, setIsBuy] = useState<boolean>(false);
@@ -31,7 +31,7 @@ export const CartCountProvider: React.FC<CartCountProviderProps> = ({
   const { data: cartData, isLoading: cartDetailsLoading } = useQuery({
     queryKey: ["cartDetails", session, isBuyNow],
     queryFn: () => getCartDetails(isBuyNow),
-    enabled: !!session?.user,
+    enabled: authStatus === "authenticated",
   });
 
   useEffect(() => {
