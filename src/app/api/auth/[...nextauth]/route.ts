@@ -125,6 +125,7 @@ const handler = NextAuth({
     },
 
     async session({ session, token }: any) {
+      console.log("Session Callback - Token:", token);
       if (token.user) {
         session.user = {
           token: token?.user?.token as unknown as string,
@@ -142,6 +143,8 @@ const handler = NextAuth({
       return session;
     },
     async jwt({ token, user }: any) {
+      console.log("JWT Callback - Incoming Token:", token);
+
       if (user) {
         token.user = {
           token: user.token,

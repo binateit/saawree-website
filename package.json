@@ -15,6 +15,7 @@
     "date-fns": "^4.1.0",
     "file-saver": "^2.0.5",
     "formik": "^2.4.6",
+    "jose": "^5.9.6",
     "jquery": "^3.7.1",
     "jsonwebtoken": "^9.0.2",
     "next": "15.1.4",
