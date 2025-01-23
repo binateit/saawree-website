@@ -208,7 +208,7 @@ const page = () => {
                 </tr>
               </thead>
               <tbody>
-                {cartDetails?.items?.map((item, index) => (
+                {cartDetails?.items?.map((item) => (
                   <tr key={item?.cartId}>
                     <td>
                       <div className='selected-prod-img'>
@@ -343,7 +343,7 @@ const page = () => {
                     </tbody>
                   </table>
                   <div className='proceed-to-checkout'>
-                    <Link href='/checkout' className='btn btn-saawree'>
+                    <Link href='/processorder' className='btn btn-saawree'>
                       Proceed to Checkout
                     </Link>
                   </div>

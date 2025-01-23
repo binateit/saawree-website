@@ -7,7 +7,13 @@ import React, { FC, useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { toast } from "react-toastify";
 import { useQuery } from "@tanstack/react-query";
-import { Country, Result, SelectOptionProps, State } from "@/core/models/model";
+import {
+  Country,
+  PaginationFilter,
+  Result,
+  SelectOptionProps,
+  State,
+} from "@/core/models/model";
 import { camelize } from "@/core/helpers/helperFunctions";
 import { getCountryList, getStateList } from "@/core/requests/requests";
 import { registerCustomer } from "@/core/requests/authRequests";
@@ -17,6 +23,20 @@ interface Props {
   updateStep: (step: number) => void;
   setUserId: (userId: string) => void;
 }
+const paginationFilter: PaginationFilter = {
+  pageNumber: 1,
+  pageSize: 500,
+  advancedFilter: {
+    logic: "and",
+    filters: [
+      {
+        field: "isActive",
+        operator: "eq",
+        value: true,
+      },
+    ],
+  },
+};
 const Registration: FC<Props> = ({ updateStep, setUserId }) => {
   const [stateList, setStateList] = useState<SelectOptionProps[]>([]);
   const [countryList, setCountryList] = useState<SelectOptionProps[]>([]);

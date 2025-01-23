@@ -130,10 +130,11 @@ const page = () => {
           };
 
           const result = await createCart(carts);
-          debugger;
           if (result.succeeded) {
             setCartCount((cartCount as number) + updatedItems.length);
             toast.success("Items added to cart successfully");
+            router.push(isBuyNow ? "/processorder" : "/cart");
+            setIsBuyNow(isBuyNow);
             return true;
           } else {
             toast.error("Failed to add items to cart");
@@ -368,9 +369,14 @@ const page = () => {
                     >
                       Add to cart
                     </button>
-                    <a href='cart.html' className='btn btn-saawree'>
+                    <div
+                      onClick={() => {
+                        handleAddToCart(true);
+                      }}
+                      className='btn btn-saawree'
+                    >
                       Buy now
-                    </a>
+                    </div>
                     {/* <button className="btn btn-saawree-outline"><i className="bi bi-heart"></i></button>  */}
                     <a href='#' className='whatsapp'>
                       <img src='img/whats-aap.png' alt='' />

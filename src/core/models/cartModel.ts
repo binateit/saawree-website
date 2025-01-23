@@ -48,3 +48,15 @@ export type UpdateCartPayload = {
   cartId: number;
   quantity: number;
 }[];
+
+export type PlaceOrderPayload = {
+  isFromBuyNow: boolean;
+  shipAddressId: number;
+  paymentModeId: number;
+};
+
+export type RazorPay = {
+  razorPayPaymentId?: string;
+  razorPayOrderId?: string;
+  razorPaySignature?: string;
+};
