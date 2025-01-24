@@ -188,7 +188,7 @@
 
   @media (min-width:1200px){
     .sub-menu-col{
-      width:25%;
+      width:124px;
       padding-right:15px!important;
     }
   }
@@ -199,7 +199,7 @@
       width: 940px;
     }
     .sub-menu-col{
-      width:33.33%;
+      width:105px;
       padding-right:10px!important;
     }
     .main_menu ul li a{

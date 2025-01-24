@@ -623,7 +623,7 @@ ul.sub-menu {
 } */
 
 .new-arrival-box .mrp, .new-arrival-box .seling{
-    font-size: calc(12px + 2*(100vw - 320px) / 1600);
+    font-size: calc(14px + 2*(100vw - 320px) / 1600);
 }
 
 .mrp {
@@ -3398,8 +3398,9 @@ label .span {
 }
 
 .btn-saawree:hover {
-    background-color: #8f674a;
-    color: #fff;
+    background-color: #fff;
+    color: #aa7c5b;
+    border-color:#aa7c5b;
 }
 
 .btn-saawree-outline {
@@ -4110,6 +4111,10 @@ select {
     font-size: 13px;
 }
 
+.contact-wraper a:hover{
+    color: #aa7c5b;
+}
+
 .contact-us-icons {
     font-size: 30px;
     color: #aa7c5b;
@@ -4287,6 +4292,16 @@ select {
 
 .p-galleria-item-nav{
     transform: translateY(-50%);
+}
+
+/*-----Prime React Accordion-------*/
+.text-dark.p-accordion-header>a{
+    background-color: rgba(0,0,0,.03);
+    color: #303030;
+    display: block;
+    text-decoration: none;
+    font-weight: 600;
+    font-size: 13px;
 }
 
 
