@@ -4313,3 +4313,23 @@ select {
     }
 }
 
+.empty-list{
+    margin-top:150px;
+}
+
+.empty-list img{
+    opacity: 0.4;
+    max-width: 150px;
+    width: 100%;
+}
+
+.empty-list h4{
+    font-weight: 600;
+}
+
+.empty-list p{
+    font-size: 18px;
+    margin-bottom: 0px;
+    color:#6c757d;
+}
+
