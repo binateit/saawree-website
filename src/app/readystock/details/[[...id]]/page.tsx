@@ -12,7 +12,7 @@ import { useRouter, useSearchParams } from "next/navigation";
 import { Dropdown } from "primereact/dropdown";
 import React, { useEffect, useState } from "react";
 import Image from "next/image";
-import { BsHeart } from "react-icons/bs";
+import { BsCart, BsHeart } from "react-icons/bs";
 import { Carousel } from "primereact/carousel";
 import InnerImageZoom from "react-inner-image-zoom";
 import "react-inner-image-zoom/lib/InnerImageZoom/styles.css";
@@ -22,6 +22,12 @@ import { Items } from "@/core/models/cartModel";
 import { ProductColor } from "@/core/models/productModel";
 import { toast } from "react-toastify";
 import { useCartCount } from "@/core/context/useCartCount";
+import Slider from "react-slick";
+import "slick-carousel/slick/slick.css";
+import "slick-carousel/slick/slick-theme.css"
+import productImagePlaceholder from "@/assets/images/productImagePlaceHolder.jpg";
+import ProductImage from "@/core/component/Products/ProductImage";
+import Link from "next/link";
 
 const page = () => {
   const { data: session, status: authStatus } = useSession();
@@ -136,6 +142,82 @@ const page = () => {
       toast.error("An error occurred while adding item to cart");
     }
   };
+
+
+  var collectionSettings = {
+    dots: false,
+    swipeToSlide: true,
+    draggable: true,
+    arrows: false,
+    infinite: false,
+    speed: 500,
+    slidesToShow: 4,
+    slidesToScroll: 1,
+    initialSlide: 0,
+    responsive: [
+      {
+        breakpoint: 1199,
+        settings: {
+          slidesToShow: 4,
+          slidesToScroll: 1,
+        },
+      },
+      {
+        breakpoint: 991,
+        settings: {
+          slidesToShow: 3,
+          slidesToScroll: 1,
+          initialSlide: 3,
+        },
+      },
+      {
+        breakpoint: 767,
+        settings: {
+          slidesToShow: 2,
+          slidesToScroll: 1,
+        },
+      },
+    ],
+  };
+
+
+  var productImagesThumbnails = {
+    dots: false,
+    swipeToSlide: true,
+    draggable: true,
+    arrows: true,
+    infinite: false,
+    speed: 500,
+    slidesToShow: 4,
+    slidesToScroll: 1,
+    initialSlide: 0,
+    responsive: [
+      {
+        breakpoint: 1199,
+        settings: {
+          slidesToShow: 4,
+          slidesToScroll: 1,
+        },
+      },
+      {
+        breakpoint: 991,
+        settings: {
+          slidesToShow: 3,
+          slidesToScroll: 1,
+          initialSlide: 3,
+        },
+      },
+      {
+        breakpoint: 767,
+        settings: {
+          slidesToShow: 3,
+          slidesToScroll: 1,
+        },
+      },
+    ],
+  };
+
+
   return (
     <section className='product-details'>
       <div className='container'>
@@ -144,7 +226,16 @@ const page = () => {
             <div id='js-gallery' className='gallery sticky-layer'>
               <div className='gallery__hero'>
                 <div onClick={() => setVisible(true)}>
-                  <InnerImageZoom
+                {mainProductImage?.mainImage === undefined ? (
+                    <Image
+                      src={productImagePlaceholder?.src}
+                      width={600}
+                      height={600}
+                      alt='product image'
+                      className="w-100 h-100"
+                    />
+                  ) : (
+                   <InnerImageZoom
                     src={`${process.env.NEXT_PUBLIC_APP_IMAGE_API_URL}/${mainProductImage?.mainImage}`}
                     zoomSrc={`${process.env.NEXT_PUBLIC_APP_IMAGE_API_URL}/${mainProductImage?.zoomedImge}`}
                     zoomType='hover'
@@ -153,10 +244,33 @@ const page = () => {
                     zoomScale={2}
                     hasSpacer={true}
                     zoomPreload={true}
-                  />
+                  /> 
+                )}
                 </div>
               </div>
-              <div className='gallery__thumbs'>
+              <Slider {...productImagesThumbnails}>
+                {response?.productImages?.map((pi, index) => (
+                  <div
+                    data-gallery='thumb'
+                    className='is-active'
+                    onClick={() => {
+                      setMainProductImage({
+                        mainImage: pi?.mediumImagePath,
+                        zoomedImage: pi?.zoomImagePath,
+                      });
+                    }}
+                    key={index}
+                  >
+                    <ProductImage
+                      url={`${process.env.NEXT_PUBLIC_APP_IMAGE_API_URL}/${pi?.thumbnailImagePath}`}
+                      className={"img-responsive"}
+                    />
+
+                  </div>
+                ))}
+
+              </Slider>
+              {/* <div className='gallery__thumbs'>
                 {response?.productImages?.map((pi, index) => (
                   <div
                     data-gallery='thumb'
@@ -176,7 +290,7 @@ const page = () => {
                     />
                   </div>
                 ))}
-              </div>
+              </div> */}
             </div>
           </div>
           <div className='col-md-6'>
@@ -423,9 +537,8 @@ const page = () => {
                   onClick={() => setVisibleTab("description")}
                 >
                   <button
-                    className={`nav-link ${
-                      visibleTab == "description" ? "active" : ""
-                    }`}
+                    className={`nav-link ${visibleTab == "description" ? "active" : ""
+                      }`}
                     id='description-tab'
                     data-toggle='tab'
                     data-target='#description'
@@ -445,9 +558,8 @@ const page = () => {
                   onClick={() => setVisibleTab("policy")}
                 >
                   <button
-                    className={`nav-link ${
-                      visibleTab == "policy" ? "active" : ""
-                    }`}
+                    className={`nav-link ${visibleTab == "policy" ? "active" : ""
+                      }`}
                     id='policy-tab'
                     data-toggle='tab'
                     data-target='#policy'
@@ -462,9 +574,8 @@ const page = () => {
               </ul>
               <div className='tab-content' id='myTabContent'>
                 <div
-                  className={`tab-pane fade ${
-                    visibleTab == "description" ? "show active" : ""
-                  } `}
+                  className={`tab-pane fade ${visibleTab == "description" ? "show active" : ""
+                    } `}
                   id='description'
                   role='tabpanel'
                   aria-labelledby='description-tab'
@@ -472,9 +583,8 @@ const page = () => {
                   {response?.description}
                 </div>
                 <div
-                  className={`tab-pane fade ${
-                    visibleTab == "policy" ? "show active" : ""
-                  } `}
+                  className={`tab-pane fade ${visibleTab == "policy" ? "show active" : ""
+                    } `}
                   id='policy'
                   role='tabpanel'
                   aria-labelledby='policy-tab'
@@ -527,7 +637,62 @@ const page = () => {
               <img src={underlineIcon.src} alt='' />
             </div>
             <div className='kada-collections'>
-              <Carousel
+              <Slider {...collectionSettings}>
+                {recomendedProducts?.data?.map((prodData) => (
+                  <Link
+                    href={`/readystock/details?productId=${prodData?.id}`}
+                    key={prodData?.id}
+                  >
+                    <div className='products-box'>
+                      <div className='inner-box-wraper'>
+                        <div className='prod-img1'>
+                          <ProductImage
+                            url={`${process.env.NEXT_PUBLIC_APP_IMAGE_API_URL}/${prodData?.id}`}
+                            className={"auto-fit"}
+                          />
+                        </div>
+                        <div className='prod-name1 text-dark'>
+                          {prodData?.productName} <br />{" "}
+                          <small className='text-dark'>
+                            Design Number: {prodData?.productGroupName}
+                          </small>
+                        </div>
+                        <div className='prod-rate1 d-flex justify-content-between align-items-center'>
+                          {!!session?.user ? (
+                            <>
+                              <div className='value'>
+                                <span className='seling'>
+                                  {formatCurrency(prodData?.productPrice as number)}
+                                </span>
+                              </div>
+                              <div
+                                className='cart-link'
+                                onClick={() =>
+                                  router.push(
+                                    `/readystock/details?productId=${prodData?.id}`
+                                  )
+                                }
+                              >
+                                <div className='act-btn'>
+                                  <BsCart fontSize={20} />
+                                </div>
+                              </div>
+                            </>
+                          ) : (
+                            // <a href='#'>
+                            //   <button className='btn btn-small btn-saawree mt-2'>
+                            //     Login
+                            //   </button>
+                            // </a>
+                            ""
+                          )}
+                        </div>
+                      </div>
+                    </div>
+                  </Link>
+                ))}
+              </Slider>
+              {/* <Carousel
                 value={recomendedProducts?.data || []}
                 numVisible={5}
                 numScroll={5}
@@ -549,9 +714,6 @@ const page = () => {
                       <div className='prod-rate1'>
                         {!!session?.user ? (
                           <>
-                            {/* <span className='mrp'>
-                              <s></s>
-                            </span> */}
                             <span className='seling'>
                               {formatCurrency(prodData?.productPrice)}
                             </span>{" "}
@@ -567,7 +729,7 @@ const page = () => {
                     </div>
                   </div>
                 )}
-              />
+              /> */}
             </div>
           </div>
         </div>

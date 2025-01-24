@@ -194,7 +194,7 @@ export default function Home() {
           {homePageData?.nal?.map((newArraival, index) => (
             <div className='row mt-2' key={index}>
               <div
-                className={`col-md-6 col-lg-6 mb-2 mt-2 mt-md-0 mb-md-0 p-0  ${
+                className={`col-md-6 col-lg-6 mb-2 mt-2 mt-md-0 mb-md-0 ${
                   index / 2 == 0 ? "order-1" : "order-2"
                 }`}
               >

@@ -4259,7 +4259,8 @@ select {
 }
 
 .slick-list {
-    margin: 0 5px!important;
+    margin: 0 -10px!important;
+    /* margin: 0 5px!important; */
     padding-bottom: 1px!important;
 }
 
