@@ -635,7 +635,7 @@ ul.sub-menu {
 }
 
 .seling {
-    color: #ad7d57;
+    color: #303030;
     font-weight: 500;
     font-size: calc(16px + 2*(100vw - 320px) / 1600);
     white-space: nowrap;

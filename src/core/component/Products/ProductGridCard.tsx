@@ -58,7 +58,7 @@ const ProductGridCard = ({ product, session, type }: ProductsProps) => {
                           }
                           className='act-btn'
                         >
-                          <BsCart />
+                          <BsCart fontSize={20}/>
                         </Link>
                       </div>
                     </div>
