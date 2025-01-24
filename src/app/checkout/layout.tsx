@@ -1,4 +1,5 @@
 "use client";
+import ProductImage from "@/core/component/Products/ProductImage";
 import { useCartCount } from "@/core/context/useCartCount";
 import { formatCurrency } from "@/core/helpers/helperFunctions";
 import React from "react";
@@ -32,13 +33,11 @@ const layout = ({
                     >
                       <div className='order-prod-img'>
                         <div className='ord-prd-wrp'>
-                          <img
-                            src={`${process.env.NEXT_PUBLIC_APP_IMAGE_API_URL}/${item?.imagePath}`}
+                          <ProductImage
+                            url={`${process.env.NEXT_PUBLIC_APP_IMAGE_API_URL}/${item?.imagePath}`}
                             className='img-responsive'
-                            alt={`product ${index + 1}`}
                           />
                         </div>
-                        {/* <span className="badge badge-secondary">1</span>  */}
                       </div>
                       <div className='ord-prd-name'>
                         <p>{item?.productName}</p>

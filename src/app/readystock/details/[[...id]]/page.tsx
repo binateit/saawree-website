@@ -193,17 +193,14 @@ const page = () => {
 
               <ul className='list-unstyled'>
                 <li className='product-dimension'>
-                  <b>Group:</b> <span>{response?.productGroupName}</span>
+                  <b>Design number:</b>{" "}
+                  <span>{response?.productGroupName}</span>
                 </li>
                 <li className='product-upc'>
-                  <b>Plating:</b> <span>{response?.polishingTypeName}</span>
+                  <b>Polish type:</b> <span>{response?.polishingTypeName}</span>
                 </li>
                 <li className='product-ean'>
                   <b>Category:</b> <span>{response?.categoryName}</span>
-                </li>
-                <li className='product-jan'>
-                  <b>Design Number:</b>{" "}
-                  <span>{response?.designNumberName}</span>
                 </li>
                 <li className='product-isbn'>
                   <b>Color:</b> <span>{response?.colorName}</span>
@@ -261,7 +258,9 @@ const page = () => {
                                 {color.colorName}{" "}
                               </span>
                             </div>
-                            <div className='stock'></div>
+                            <div className='stock'>
+                              {color.avaliableQuantity}
+                            </div>
                             <div className='color-quntity'>
                               <input
                                 type='text'
@@ -274,8 +273,13 @@ const page = () => {
                                   let qty = parseInt(e.target.value);
                                   if (qty < 0) {
                                     e.target.value = "";
-                                  } else if (qty > 99999) {
+                                  } else if (
+                                    qty > (color?.avaliableQuantity || 0)
+                                  ) {
                                     e.target.value = "";
+                                    toast.error(
+                                      "Quantity should be less than available quantity"
+                                    );
                                   } else {
                                     handleQuantityChange(
                                       color.productId as number,
@@ -338,7 +342,9 @@ const page = () => {
                                 {color.colorName}{" "}
                               </span>
                             </div>
-                            <div className='stock'></div>
+                            <div className='stock'>
+                              {color.avaliableQuantity || 0}
+                            </div>
 
                             <div className='color-quntity'>
                               <input
@@ -352,8 +358,13 @@ const page = () => {
                                   let qty = parseInt(e.target.value);
                                   if (qty < 0) {
                                     e.target.value = "";
-                                  } else if (qty > 99999) {
+                                  } else if (
+                                    qty > (color?.avaliableQuantity || 0)
+                                  ) {
                                     e.target.value = "";
+                                    toast.error(
+                                      "Quantity should be less than available quantity"
+                                    );
                                   } else {
                                     handleQuantityChange(
                                       color.productId as number,

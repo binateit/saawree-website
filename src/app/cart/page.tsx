@@ -2,7 +2,7 @@
 import { formatCurrency } from "@/core/helpers/helperFunctions";
 import { CartDetails, Item, UpdateCartPayload } from "@/core/models/cartModel";
 import underlineIcon from "@/assets/images/underlineIcon.png";
-import emptyCart from '@/assets/images/empty-cart.png';
+import emptyCart from "@/assets/images/empty-cart.png";
 import {
   clearCart,
   getCartDetails,
@@ -17,6 +17,7 @@ import { useSession } from "next-auth/react";
 import { useRouter } from "next/navigation";
 import { useCartCount } from "@/core/context/useCartCount";
 import Link from "next/link";
+import ProductImage from "@/core/component/Products/ProductImage";
 
 const page = () => {
   const { data: session, status: authStatus } = useSession();
@@ -213,10 +214,14 @@ const page = () => {
                   <tr key={item?.cartId}>
                     <td>
                       <div className='selected-prod-img'>
-                        <img
+                        <ProductImage
+                          url={`${process.env.NEXT_PUBLIC_APP_IMAGE_API_URL}/${item?.imagePath}`}
+                          // className={"auto-fit"}
+                        />
+                        {/* <img
                           src={`${process.env.NEXT_PUBLIC_APP_IMAGE_API_URL}/${item?.imagePath}`}
                           alt='image '
-                        />
+                        /> */}
                       </div>
                     </td>
                     <td>
@@ -354,10 +359,12 @@ const page = () => {
           </div>
         ) : (
           <div className='titlehome'>
-            <div className="empty-cart text-center py-5">
-              <img src={emptyCart.src} width={100} className="img-fluid"/>
-              <h4 className="mt-2">Your cart is currently empty.</h4>
-              <Link href="/" className="btn btn-saawree mt-2">Continue Shopping</Link>
+            <div className='empty-cart text-center py-5'>
+              <img src={emptyCart.src} width={100} className='img-fluid' />
+              <h4 className='mt-2'>Your cart is currently empty.</h4>
+              <Link href='/' className='btn btn-saawree mt-2'>
+                Continue Shopping
+              </Link>
             </div>
           </div>
         )}

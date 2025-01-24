@@ -11,10 +11,16 @@ import {
 } from "@/core/requests/productsRequests";
 import { useQuery } from "@tanstack/react-query";
 import { useSession } from "next-auth/react";
+import Link from "next/link";
 import { useSearchParams } from "next/navigation";
 import { Dropdown } from "primereact/dropdown";
 import React, { useEffect, useState } from "react";
-import { BsFilter, BsGrid, BsListUl } from "react-icons/bs";
+import {
+  BsFilter,
+  BsGrid,
+  BsListUl,
+  BsPatchExclamationFill,
+} from "react-icons/bs";
 import { useImmer } from "use-immer";
 
 const page = () => {
@@ -23,7 +29,6 @@ const page = () => {
   const { data: session } = useSession();
 
   const [viewType, setViewType] = useState<string>("grid");
-  const [sortField, setSortField] = useState();
 
   const [categoryFilterList, setCategoryFilterList] = useState<CategoryList[]>(
     []
@@ -50,6 +55,7 @@ const page = () => {
   });
 
   const categoryId = searchParams.get("categoryId");
+  const categoryName = searchParams.get("categoryName");
 
   const sortOptions = [
     { name: "Alphabetically A-Z", value: "Name asc", show: "always" },
@@ -70,11 +76,7 @@ const page = () => {
     session?.user !== undefined
       ? sortOptions
       : sortOptions.filter((item) => item.show === "always");
-  const {
-    data: response,
-    refetch,
-    isLoading,
-  } = useQuery({
+  const { data: response, isLoading } = useQuery({
     queryKey: [
       "getReadyStockProductRecords",
       paginationFilters,
@@ -85,19 +87,19 @@ const page = () => {
         ...selectedFilters,
         ...paginationFilters,
         colorIds:
-          selectedFilters.colorIds.length >= 1
+          selectedFilters.colorIds?.length >= 1
             ? selectedFilters?.colorIds
             : undefined,
         polishingTypeIds:
-          selectedFilters.polishingTypeIds.length >= 1
+          selectedFilters.polishingTypeIds?.length >= 1
             ? selectedFilters?.polishingTypeIds
             : undefined,
         categoryIds:
-          selectedFilters.categoryIds.length >= 1
+          selectedFilters.categoryIds?.length >= 1
             ? selectedFilters?.categoryIds
-            : undefined,
+            : [categoryId ? Number(categoryId) : undefined],
         orderBy:
-          paginationFilters.orderBy.length >= 1 &&
+          paginationFilters.orderBy?.length >= 1 &&
           paginationFilters.orderBy[0] !== undefined
             ? paginationFilters?.orderBy
             : undefined,
@@ -206,10 +208,9 @@ const page = () => {
 
   const onLoadMore = () => {
     setPaginationFilters((draft) => {
-      (draft.pageNumber = 1),
-        (draft.pageSize = paginationFilters?.pageSize + 12);
+      draft.pageNumber = paginationFilters?.pageNumber + 1;
+      draft.pageSize = 12;
     });
-    refetch();
   };
 
   const onSort = (value: string) => {
@@ -222,15 +223,32 @@ const page = () => {
   if (
     isCategoryListLoading ||
     isPolishTypeListLoading ||
-    isColorTypeListLoading
+    isColorTypeListLoading ||
+    isLoading
   )
-    return <p>Loading...</p>;
+    return (
+      <div className='full-page-loader'>
+        <div className='loader_box'>
+          <div className='loader-logo'>
+            <img
+              src='https://saawree.com/images/logo4.png'
+              alt='Loader Logo'
+              width='100%'
+            />
+          </div>
+          {/* <p className="loding-content text-center">Loading...</p> */}
+          <div className='progress mt-5'>
+            <div className='progress-value'></div>
+          </div>
+        </div>
+      </div>
+    );
 
   return (
     <>
       <section className='page-title-box'>
         <div className='container'>
-          <h1 className='page-title'>Pendants</h1>
+          <h1 className='page-title'>{categoryName}</h1>
         </div>
       </section>
       <section className='category-page'>
@@ -274,14 +292,16 @@ const page = () => {
                 </div>
                 <div className='d-flex'>
                   <div className='right-side-bar'>
-                    <label className="mr-2">Sort by </label>
+                    <label className='mr-2'>Sort by </label>
                     <Dropdown
-                      value={paginationFilters?.orderBy?.[0]}
+                      value={
+                        paginationFilters?.orderBy?.[0] || sortList[0]?.value
+                      }
                       onChange={(e) => onSort(e.value)}
                       options={sortList}
                       optionLabel='name'
                       placeholder='Select options'
-                      panelClassName="custom-dropDown-panel"
+                      panelClassName='custom-dropDown-panel'
                     />
                   </div>
                   <div className='list-grid d-flex'>
@@ -300,43 +320,58 @@ const page = () => {
                   </div>
                 </div>
               </div>
-              {viewType === "grid" && (
-                <div className='row'>
-                  {response?.data?.map((product) => (
-                    <div
-                      className='col-6 col-sm-6 col-md-4 col-lg-4'
-                      key={product?.productId}
-                    >
-                      <ProductGridCard
-                        product={product}
-                        session={session}
-                        type={"rds"}
-                      />
+
+              {response?.data?.length === 0 ? (
+                <div className='titlehome'>
+                  <div className='empty-cart text-center py-5'>
+                    <BsPatchExclamationFill size={30} className='img-fluid' />
+                    <h4 className='mt-2'>No products available.</h4>
+                    <Link href='/' className='btn btn-saawree mt-2'>
+                      Back to home
+                    </Link>
+                  </div>
+                </div>
+              ) : (
+                <>
+                  {viewType === "grid" && (
+                    <div className='row'>
+                      {response?.data?.map((product) => (
+                        <div
+                          className='col-6 col-sm-6 col-md-4 col-lg-4'
+                          key={product?.productId}
+                        >
+                          <ProductGridCard
+                            product={product}
+                            session={session}
+                            type={"rds"}
+                          />
+                        </div>
+                      ))}
                     </div>
-                  ))}
-                </div>
+                  )}
+                  {viewType === "list" && (
+                    <div className='products-list-wrap'>
+                      {response?.data?.map((product) => (
+                        <>
+                          <ProductListCard
+                            product={product}
+                            session={session}
+                            type={"rds"}
+                          />
+                        </>
+                      ))}
+                    </div>
+                  )}
+                  <div className='load-more w-100 text-center mt-5'>
+                    <button
+                      className='btn btn-saawree-outline'
+                      onClick={onLoadMore}
+                    >
+                      Load More
+                    </button>
+                  </div>
+                </>
               )}
-              {viewType === "list" && (
-                <div className='products-list-wrap'>
-                  {response?.data?.map((product) => (
-                    <>
-                      <ProductListCard
-                        product={product}
-                        session={session}
-                        type={"rds"}
-                      />
-                    </>
-                  ))}
-                </div>
-              )}
-              <div className='load-more w-100 text-center mt-5'>
-                <button
-                  className='btn btn-saawree-outline'
-                  onClick={onLoadMore}
-                >
-                  Load More
-                </button>
-              </div>
             </div>
           </div>
         </div>

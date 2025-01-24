@@ -1,5 +1,5 @@
 "use client";
-import { formatCurrency } from "@/core/helpers/helperFunctions";
+import { formatCurrency, urlExists } from "@/core/helpers/helperFunctions";
 import { SelectOptionProps } from "@/core/models/model";
 import underlineIcon from "@/assets/images/underlineIcon.png";
 import {
@@ -24,6 +24,8 @@ import { createCart } from "@/core/requests/cartRequests";
 import { toast } from "react-toastify";
 import { useCartCount } from "@/core/context/useCartCount";
 import { set } from "date-fns";
+import productImagePlaceholder from "@/assets/images/productImagePlaceHolder.jpg";
+import ProductImage from "@/core/component/Products/ProductImage";
 
 const page = () => {
   const { data: session } = useSession();
@@ -34,9 +36,12 @@ const page = () => {
   const [selectedProductId, setSelectedProductId] = useState<number>();
   const [selectedColors, setSelectedColors] = useState<ProductColor[]>([]);
   const productId = searchParams.get("productId");
-  const [mainProductImage, setMainProductImage] = useState({
-    mainImage: "",
-    zoomedImge: "",
+  const [mainProductImage, setMainProductImage] = useState<{
+    mainImage: string | undefined;
+    zoomedImage: string | undefined;
+  }>({
+    mainImage: undefined,
+    zoomedImage: "",
   });
   const [polishType, setPolishType] = useState<string>("");
   const [polishTypeList, setPolishTypeList] = useState<SelectOptionProps[]>([]);
@@ -49,7 +54,7 @@ const page = () => {
   const queryClient = useQueryClient();
   useEffect(() => {
     let polishTypes: any = [];
-    response?.polishingTypeList.map((ptype) => {
+    response?.polishingTypeList?.map((ptype) => {
       return polishTypes.push({
         name: ptype?.polishingTypeName,
         value: ptype?.polishingTypeId,
@@ -64,8 +69,19 @@ const page = () => {
 
     setMainProductImage({
       mainImage: response?.productImages?.[0]?.mediumImagePath || "",
-      zoomedImge: response?.productImages?.[0]?.zoomImagePath || "",
+      zoomedImage: response?.productImages?.[0]?.zoomImagePath || "",
     });
+
+    urlExists(
+      `${process.env.NEXT_PUBLIC_APP_IMAGE_API_URL}/${response?.productImages?.[0]?.mediumImagePath}`,
+      function (status: any) {
+        if (status === 200) {
+          console.log("image found");
+        } else {
+          setMainProductImage({ mainImage: undefined, zoomedImage: undefined });
+        }
+      }
+    );
   }, [response]);
 
   const { data: recomendedProducts } = useQuery({
@@ -158,17 +174,32 @@ const page = () => {
             <div id='js-gallery' className='gallery sticky-layer'>
               <div className='gallery__hero'>
                 <div onClick={() => setVisible(true)}>
-                  <InnerImageZoom
-                    src={`${process.env.NEXT_PUBLIC_APP_IMAGE_API_URL}/${mainProductImage?.mainImage}`}
-                    zoomSrc={`${process.env.NEXT_PUBLIC_APP_IMAGE_API_URL}/${mainProductImage?.zoomedImge}`}
-                    zoomType='hover'
-                    hideHint
-                    width={600}
-                    zoomScale={2}
-                    hasSpacer={true}
-                    zoomPreload={true}
-                    // className='w-100 h-100'
-                  />
+                  {mainProductImage?.mainImage === undefined ? (
+                    <Image
+                      src={productImagePlaceholder?.src}
+                      width={600}
+                      height={600}
+                      alt='product image'
+                    />
+                  ) : (
+                    <InnerImageZoom
+                      src={
+                        `${process.env.NEXT_PUBLIC_APP_IMAGE_API_URL}/${mainProductImage?.mainImage}` ||
+                        productImagePlaceholder?.src
+                      }
+                      zoomSrc={
+                        `${process.env.NEXT_PUBLIC_APP_IMAGE_API_URL}/${mainProductImage?.zoomedImage}` ||
+                        productImagePlaceholder?.src
+                      }
+                      zoomType='hover'
+                      hideHint
+                      width={600}
+                      zoomScale={2}
+                      hasSpacer={true}
+                      zoomPreload={true}
+                      // className='w-100 h-100'
+                    />
+                  )}
                 </div>
                 <div className='icons-wrap'>
                   <div className='icon-1 down-btn'>
@@ -184,16 +215,20 @@ const page = () => {
                     onClick={() => {
                       setMainProductImage({
                         mainImage: pi?.mediumImagePath,
-                        zoomedImge: pi?.zoomImagePath,
+                        zoomedImage: pi?.zoomImagePath,
                       });
                     }}
                     key={index}
                   >
-                    <img
+                    <ProductImage
+                      url={`${process.env.NEXT_PUBLIC_APP_IMAGE_API_URL}/${pi?.thumbnailImagePath}`}
+                      className={"img-responsive"}
+                    />
+                    {/* <img
                       src={`${process.env.NEXT_PUBLIC_APP_IMAGE_API_URL}/${pi?.thumbnailImagePath}`}
                       className='img-responsive'
                       alt={`thumbnail ${index + 1}`}
-                    />
+                    /> */}
                   </div>
                 ))}
               </div>
@@ -213,17 +248,14 @@ const page = () => {
 
               <ul className='list-unstyled'>
                 <li className='product-dimension'>
-                  <b>Group:</b> <span>{response?.productGroupName}</span>
+                  <b>Design number:</b>{" "}
+                  <span>{response?.productGroupName}</span>
                 </li>
                 <li className='product-upc'>
-                  <b>Plating:</b> <span>{response?.polishingTypeName}</span>
+                  <b>Polish type:</b> <span>{response?.polishingTypeName}</span>
                 </li>
                 <li className='product-ean'>
                   <b>Category:</b> <span>{response?.categoryName}</span>
-                </li>
-                <li className='product-jan'>
-                  <b>Design Number:</b>{" "}
-                  <span>{response?.designNumberName}</span>
                 </li>
                 <li className='product-isbn'>
                   <b>Color:</b> <span>{response?.colorName}</span>
@@ -287,7 +319,9 @@ const page = () => {
                                 {color.colorName}{" "}
                               </span>
                             </div>
-                            <div className='stock'></div>
+                            <div className='stock'>
+                              {/* <span>{color.avaliableQuantity}</span> */}
+                            </div>
 
                             <div className='color-quntity'>
                               <input
@@ -347,8 +381,9 @@ const page = () => {
                                 {color.colorName}{" "}
                               </span>
                             </div>
-                            <div className='stock'></div>
-
+                            <div className='stock'>
+                              {/* <span>{color.avaliableQuantity}</span> */}
+                            </div>
                             <div className='color-quntity'>
                               <div className='color-quntity'>
                                 <input
