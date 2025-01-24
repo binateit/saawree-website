@@ -182,17 +182,14 @@ const page = () => {
                 <div className='close-filter'>
                   <i className='bi bi-x-circle'></i>
                 </div>
-                {categoryList?.length === 0 ? (
-                  <p>No filters options available</p>
-                ) : (
-                  <FilterSection
-                    title='Filter by Category'
-                    type='multi'
-                    multiFilter={categoryFilterList}
-                    onChange={handleCategoryChange}
-                    selectedFilter={selectedFilters?.categoryIds || []}
-                  />
-                )}
+
+                <FilterSection
+                  title='Filter by Category'
+                  type='multi'
+                  multiFilter={categoryFilterList}
+                  onChange={handleCategoryChange}
+                  selectedFilter={selectedFilters?.categoryIds || []}
+                />
               </div>
             </div>
             <div className='products-bar col-xl-8 col-lg-8 col-md-12 mt-4 mb-4'>

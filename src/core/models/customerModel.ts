@@ -73,3 +73,9 @@ export type Address = {
   phoneNumber: string;
   displayAddress?: string;
 };
+
+export type ChangePassword = {
+  password?: string;
+  newPassword?: string;
+  confirmNewPassword?: string;
+};
