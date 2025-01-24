@@ -29,11 +29,6 @@ const ProductGridCard = ({ product, session, type }: ProductsProps) => {
               url={`${process.env.NEXT_PUBLIC_APP_IMAGE_API_URL}/${product?.imagePath}`}
               className={"auto-fit"}
             />
-            {/* <img
-              src={`${process.env.NEXT_PUBLIC_APP_IMAGE_API_URL}/${product?.product}`}
-              className='auto-fit'
-              alt={product?.productName || "Product"}
-            /> */}
           </div>
           <div className='p-2'>
             <div className='prod-name2'>
@@ -46,9 +41,6 @@ const ProductGridCard = ({ product, session, type }: ProductsProps) => {
               <div className='prc'>
                 {session?.user ? (
                   <>
-                    {/* <span className='seling-price'>
-                    {formatCurrency(product?.productPrice)}
-                  </span>{" "} */}
                     <div className='d-flex justify-content-between align-items-center'>
                       <div className=''>
                         <span className='seling'>
@@ -67,7 +59,7 @@ const ProductGridCard = ({ product, session, type }: ProductsProps) => {
                         }
                       >
                         <div className='act-btn'>
-                          <BsCart  fontSize={20}/>
+                          <BsCart fontSize={20} />
                         </div>
                       </div>
                     </div>

@@ -4,6 +4,7 @@ import Link from "next/link";
 import React from "react";
 import { BsCart } from "react-icons/bs";
 import ProductImage from "./ProductImage";
+import { useRouter } from "next/navigation";
 
 interface ProductsProps {
   product: ProductList | MakeToOrderProduct;
@@ -12,6 +13,7 @@ interface ProductsProps {
 }
 
 const ProductListCard = ({ product, session, type }: ProductsProps) => {
+  const router = useRouter();
   return (
     <Link
       href={
@@ -26,12 +28,7 @@ const ProductListCard = ({ product, session, type }: ProductsProps) => {
         <div className='products-list-image'>
           <ProductImage
             url={`${process.env.NEXT_PUBLIC_APP_IMAGE_API_URL}/${product?.imagePath}`}
-            // className={"auto-fit"}
           />
-          {/* <img
-            src={`${process.env.NEXT_PUBLIC_APP_IMAGE_API_URL}/${product?.imagePath}`}
-            alt={`${product?.productName}`}
-          /> */}
         </div>
         <div className='pt-3'>
           <span className='text-dark'>{product?.categoryName}</span>
@@ -51,15 +48,21 @@ const ProductListCard = ({ product, session, type }: ProductsProps) => {
                     </span>{" "}
                   </div>
                   <div className='cart-link'>
-                    <Link
-                      href='#'
+                    <div
+                      onClick={() =>
+                        router.push(
+                          type === "mto"
+                            ? `/maketoorder/details?productId=${product?.productId}`
+                            : `/readystock/details?productId=${product?.productId}`
+                        )
+                      }
                       className='act-btn d-inline-block w-auto px-2'
                     >
                       <div className='d-flex align-items-center'>
                         <BsCart fontSize={20} className='mr-2' />{" "}
                         <small>Add to Cart</small>
                       </div>
-                    </Link>
+                    </div>
                   </div>
                 </>
               ) : (

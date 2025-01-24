@@ -202,6 +202,7 @@ export default function Home() {
                   {newArraival?.prods?.map((prodData) => (
                     <Link
                       href={`/readystock/details?productId=${prodData?.pi}`}
+                      key={prodData?.pi}
                     >
                       <div className='products-box h-100'>
                         <div className='inner-box-wraper new-arrival-box h-100'>
@@ -210,13 +211,6 @@ export default function Home() {
                               url={`${process.env.NEXT_PUBLIC_APP_IMAGE_API_URL}/${prodData?.ip}`}
                               className={"auto-fit"}
                             />
-                            {/* <Image
-                              src={`${process.env.NEXT_PUBLIC_APP_IMAGE_API_URL}/${prodData?.ip}`}
-                              width={500}
-                              height={500}
-                              className='auto-fit'
-                              alt=''
-                            /> */}
                           </div>
                           <div className='prod-name1 text-dark'>
                             {prodData?.pn} <br />{" "}

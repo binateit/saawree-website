@@ -150,23 +150,24 @@ const page = () => {
                 </div>
 
                 <div className='btn-group' role='group'>
-                  <button
-                    type='button'
+                  <div
                     className='btn btn-saawree-outline dropdown-toggle'
-                    data-toggle='dropdown'
-                    aria-haspopup='true'
+                    // data-toggle='dropdown'
+                    // aria-haspopup='true'
                     onClick={() => setShowDropDown("status")}
-                    aria-expanded={showDropDown == "status" ? true : false}
+                    // aria-expanded={showDropDown == "status" ? true : false}
                   >
                     Status
-                  </button>
-                  {showDropDown === "status" && (
-                    <div>
-                      {statusList?.map((status) => (
-                        <div>{status.name}</div>
-                      ))}
-                    </div>
-                  )}
+                  </div>
+                  <div className='dropdown-menu'>
+                    {showDropDown === "status" && (
+                      <>
+                        {statusList?.map((status) => (
+                          <div>{status.name}</div>
+                        ))}
+                      </>
+                    )}
+                  </div>
                 </div>
 
                 <div className='btn-group' role='group'>
