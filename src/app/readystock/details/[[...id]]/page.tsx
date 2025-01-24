@@ -24,7 +24,7 @@ import { toast } from "react-toastify";
 import { useCartCount } from "@/core/context/useCartCount";
 import Slider from "react-slick";
 import "slick-carousel/slick/slick.css";
-import "slick-carousel/slick/slick-theme.css"
+import "slick-carousel/slick/slick-theme.css";
 import productImagePlaceholder from "@/assets/images/productImagePlaceHolder.jpg";
 import ProductImage from "@/core/component/Products/ProductImage";
 import Link from "next/link";
@@ -156,7 +156,6 @@ const page = () => {
     }
   };
 
-
   var collectionSettings = {
     dots: false,
     swipeToSlide: true,
@@ -192,7 +191,6 @@ const page = () => {
       },
     ],
   };
-
 
   var productImagesThumbnails = {
     dots: false,
@@ -230,7 +228,6 @@ const page = () => {
     ],
   };
 
-
   return (
     <section className='product-details'>
       <div className='container'>
@@ -238,27 +235,31 @@ const page = () => {
           <div className='col-md-6'>
             <div id='js-gallery' className='gallery sticky-layer'>
               <div className='gallery__hero'>
-                <div onClick={() => setVisible(true)}>
-                {mainProductImage?.mainImage === undefined ? (
+                <div
+                  onClick={() =>
+                    mainProductImage?.mainImage && setVisible(true)
+                  }
+                >
+                  {mainProductImage?.mainImage === undefined ? (
                     <Image
                       src={productImagePlaceholder?.src}
                       width={600}
                       height={600}
                       alt='product image'
-                      className="w-100 h-100"
+                      className='w-100 h-100'
                     />
                   ) : (
-                   <InnerImageZoom
-                    src={`${process.env.NEXT_PUBLIC_APP_IMAGE_API_URL}/${mainProductImage?.mainImage}`}
-                    zoomSrc={`${process.env.NEXT_PUBLIC_APP_IMAGE_API_URL}/${mainProductImage?.zoomedImge}`}
-                    zoomType='hover'
-                    hideHint
-                    width={600}
-                    zoomScale={2}
-                    hasSpacer={true}
-                    zoomPreload={true}
-                  /> 
-                )}
+                    <InnerImageZoom
+                      src={`${process.env.NEXT_PUBLIC_APP_IMAGE_API_URL}/${mainProductImage?.mainImage}`}
+                      zoomSrc={`${process.env.NEXT_PUBLIC_APP_IMAGE_API_URL}/${mainProductImage?.zoomedImage}`}
+                      zoomType='hover'
+                      hideHint
+                      width={600}
+                      zoomScale={2}
+                      hasSpacer={true}
+                      zoomPreload={true}
+                    />
+                  )}
                 </div>
               </div>
               <Slider {...productImagesThumbnails}>
@@ -267,10 +268,11 @@ const page = () => {
                     data-gallery='thumb'
                     className='is-active'
                     onClick={() => {
-                      setMainProductImage({
-                        mainImage: pi?.mediumImagePath,
-                        zoomedImage: pi?.zoomImagePath,
-                      });
+                      mainProductImage?.mainImage &&
+                        setMainProductImage({
+                          mainImage: pi?.mediumImagePath,
+                          zoomedImage: pi?.zoomImagePath,
+                        });
                     }}
                     key={index}
                   >
@@ -278,10 +280,8 @@ const page = () => {
                       url={`${process.env.NEXT_PUBLIC_APP_IMAGE_API_URL}/${pi?.thumbnailImagePath}`}
                       className={"img-responsive"}
                     />
-
                   </div>
                 ))}
-
               </Slider>
               {/* <div className='gallery__thumbs'>
                 {response?.productImages?.map((pi, index) => (
@@ -550,8 +550,9 @@ const page = () => {
                   onClick={() => setVisibleTab("description")}
                 >
                   <button
-                    className={`nav-link ${visibleTab == "description" ? "active" : ""
-                      }`}
+                    className={`nav-link ${
+                      visibleTab == "description" ? "active" : ""
+                    }`}
                     id='description-tab'
                     data-toggle='tab'
                     data-target='#description'
@@ -571,8 +572,9 @@ const page = () => {
                   onClick={() => setVisibleTab("policy")}
                 >
                   <button
-                    className={`nav-link ${visibleTab == "policy" ? "active" : ""
-                      }`}
+                    className={`nav-link ${
+                      visibleTab == "policy" ? "active" : ""
+                    }`}
                     id='policy-tab'
                     data-toggle='tab'
                     data-target='#policy'
@@ -587,8 +589,9 @@ const page = () => {
               </ul>
               <div className='tab-content' id='myTabContent'>
                 <div
-                  className={`tab-pane fade ${visibleTab == "description" ? "show active" : ""
-                    } `}
+                  className={`tab-pane fade ${
+                    visibleTab == "description" ? "show active" : ""
+                  } `}
                   id='description'
                   role='tabpanel'
                   aria-labelledby='description-tab'
@@ -596,8 +599,9 @@ const page = () => {
                   {response?.description}
                 </div>
                 <div
-                  className={`tab-pane fade ${visibleTab == "policy" ? "show active" : ""
-                    } `}
+                  className={`tab-pane fade ${
+                    visibleTab == "policy" ? "show active" : ""
+                  } `}
                   id='policy'
                   role='tabpanel'
                   aria-labelledby='policy-tab'
@@ -653,14 +657,14 @@ const page = () => {
               <Slider {...collectionSettings}>
                 {recomendedProducts?.data?.map((prodData) => (
                   <Link
-                    href={`/readystock/details?productId=${prodData?.id}`}
-                    key={prodData?.id}
+                    href={`/readystock/details?productId=${prodData?.productId}`}
+                    key={prodData?.productId}
                   >
                     <div className='products-box'>
                       <div className='inner-box-wraper'>
                         <div className='prod-img1'>
                           <ProductImage
-                            url={`${process.env.NEXT_PUBLIC_APP_IMAGE_API_URL}/${prodData?.id}`}
+                            url={`${process.env.NEXT_PUBLIC_APP_IMAGE_API_URL}/${prodData?.productId}`}
                             className={"auto-fit"}
                           />
                         </div>
@@ -675,14 +679,16 @@ const page = () => {
                             <>
                               <div className='value'>
                                 <span className='seling'>
-                                  {formatCurrency(prodData?.productPrice as number)}
+                                  {formatCurrency(
+                                    prodData?.productPrice as number
+                                  )}
                                 </span>
                               </div>
                               <div
                                 className='cart-link'
                                 onClick={() =>
                                   router.push(
-                                    `/readystock/details?productId=${prodData?.id}`
+                                    `/readystock/details?productId=${prodData?.productId}`
                                   )
                                 }
                               >

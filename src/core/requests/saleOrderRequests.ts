@@ -64,4 +64,30 @@ const GenerateChallanPdf = async (id: number): Promise<any | FileResult> => {
       return err;
     });
 };
-export { getSalesOrderById, getSaleOrdersOfCustomer, GenerateChallanPdf };
+
+const getSaleOrderStatus = async (): Promise<StatusList[]> => {
+  return await axios
+    .get(SaleOrder_Status_LISt)
+    .then((response: AxiosResponse<StatusList[]>) => response.data)
+    .then((response: StatusList[]) => response)
+    .catch((err) => {
+      return err;
+    });
+};
+
+const getPaymentStatus = async (): Promise<StatusList[]> => {
+  return await axios
+    .get(SaleOrderPayment_Status_List)
+    .then((response: AxiosResponse<StatusList[]>) => response.data)
+    .then((response: StatusList[]) => response)
+    .catch((err) => {
+      return err;
+    });
+};
+export {
+  getSalesOrderById,
+  getSaleOrdersOfCustomer,
+  GenerateChallanPdf,
+  getSaleOrderStatus,
+  getPaymentStatus,
+};

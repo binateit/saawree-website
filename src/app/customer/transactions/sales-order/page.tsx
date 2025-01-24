@@ -2,7 +2,11 @@
 import { formatCurrency } from "@/core/helpers/helperFunctions";
 import { PaginationFilter } from "@/core/models/model";
 import { SaleOrderDto } from "@/core/models/saleOrderModel";
-import { getSaleOrdersOfCustomer } from "@/core/requests/saleOrderRequests";
+import {
+  getPaymentStatus,
+  getSaleOrdersOfCustomer,
+  getSaleOrderStatus,
+} from "@/core/requests/saleOrderRequests";
 import { useQuery } from "@tanstack/react-query";
 import { formatDate } from "date-fns";
 import Link from "next/link";
@@ -13,10 +17,12 @@ import {
   SortOrder,
 } from "primereact/datatable";
 import React, { useState } from "react";
+import { ButtonGroup, Dropdown, DropdownButton } from "react-bootstrap";
 import { useImmer } from "use-immer";
 
 const page = () => {
   const [globalFilterValue, setGlobalFilterValue] = useState<string>("");
+  const [showDropDown, setShowDropDown] = useState("");
 
   const [paginationModel, setPaginationModel] = useImmer<PaginationFilter>({
     first: 0,
@@ -36,6 +42,17 @@ const page = () => {
     queryFn: () => {
       return getSaleOrdersOfCustomer({ ...paginationModel });
     },
+  });
+
+  const { data: statusList } = useQuery({
+    queryKey: ["statusList"],
+    queryFn: () => getSaleOrderStatus(),
+    refetchOnWindowFocus: false,
+  });
+  const { data: paymentStatusList } = useQuery({
+    queryKey: ["paymentStatusList"],
+    queryFn: () => getPaymentStatus(),
+    refetchOnWindowFocus: false,
   });
 
   const onPageOrSortChange = (event: DataTableStateEvent) => {
@@ -79,6 +96,7 @@ const page = () => {
 
   return (
     <>
+      {showDropDown}
       <div className='card mb-2'>
         <div className='card-body'>
           <div className='row justify-content-between'>
@@ -137,18 +155,18 @@ const page = () => {
                     className='btn btn-saawree-outline dropdown-toggle'
                     data-toggle='dropdown'
                     aria-haspopup='true'
-                    aria-expanded='false'
+                    onClick={() => setShowDropDown("status")}
+                    aria-expanded={showDropDown == "status" ? true : false}
                   >
                     Status
                   </button>
-                  <div className='dropdown-menu'>
-                    <a className='dropdown-item' href='#'>
-                      Confirmed
-                    </a>
-                    <a className='dropdown-item' href='#'>
-                      Pending
-                    </a>
-                  </div>
+                  {showDropDown === "status" && (
+                    <div>
+                      {statusList?.map((status) => (
+                        <div>{status.name}</div>
+                      ))}
+                    </div>
+                  )}
                 </div>
 
                 <div className='btn-group' role='group'>
@@ -158,16 +176,14 @@ const page = () => {
                     data-toggle='dropdown'
                     aria-haspopup='true'
                     aria-expanded='false'
+                    // onClick={() => setShowDropDown("payment-status")}
                   >
                     Payment Status
                   </button>
                   <div className='dropdown-menu'>
-                    <a className='dropdown-item' href='#'>
-                      Done
-                    </a>
-                    <a className='dropdown-item' href='#'>
-                      Pending
-                    </a>
+                    {paymentStatusList?.map((paymentStatus) => (
+                      <div className='dropdown-item'>{paymentStatus.name}</div>
+                    ))}
                   </div>
                 </div>
               </div>
@@ -181,52 +197,6 @@ const page = () => {
           <h5>Sale Order</h5>
         </div>
         <div className='card-body'>
-          {/* <div className="table-responsive">
-                                <table className="table table-bordered table-striped mb-0">
-                                    <thead>
-                                        <tr>
-                                            <th scope="col">SO Number</th>
-                                            <th scope="col">Date</th>
-                                            <th scope="col">Amount</th>
-                                            <th scope="col">Status</th>
-                                            <th scope="col">Action</th>
-                                        </tr>
-                                    </thead>
-                                    <tbody>
-                                        <tr>
-                                            <th>SOT15</th>
-                                            <td>30 Nov 2024</td>
-                                            <td>₹1,19,591.00</td>
-                                            <td>Confirmed</td>
-                                            <td><Link href="/customer/transactions/sales-order/details" className="btn btn-saawree">View</Link></td>
-                                        </tr>
-                                    </tbody>
-                                </table>
-                                <div className="paginator mt-3 d-flex align-items-center justify-content-between">
-                                    <div className="paginaton-showing">
-                                        Showing 10 Out of 100
-                                    </div>
-                                    <nav aria-label="Page navigation example">
-                                        <ul className="pagination mb-0">
-                                            <li className="page-item">
-                                                <a className="page-link" href="#" aria-label="Previous">
-                                                    <span aria-hidden="true">«</span>
-                                                    <span className="sr-only">Previous</span>
-                                                </a>
-                                            </li>
-                                            <li className="page-item active"><a className="page-link" href="#">1</a></li>
-                                            <li className="page-item"><a className="page-link" href="#">2</a></li>
-                                            <li className="page-item"><a className="page-link" href="#">3</a></li>
-                                            <li className="page-item">
-                                                <a className="page-link" href="#" aria-label="Next">
-                                                    <span aria-hidden="true">»</span>
-                                                    <span className="sr-only">Next</span>
-                                                </a>
-                                            </li>
-                                        </ul>
-                                    </nav>
-                                </div>
-                            </div> */}
           <DataTable
             value={filteredData}
             stripedRows
@@ -247,7 +217,6 @@ const page = () => {
             onPage={onPageOrSortChange}
             first={paginationModel.first}
             totalRecords={saleOrderResponse?.pagination?.totalCount}
-            // rowsPerPageOptions={pageSizeOption}
             sortField={paginationModel.sortField}
             sortOrder={paginationModel.sortOrder as SortOrder}
           >
@@ -292,11 +261,9 @@ const page = () => {
             />
             <Column
               header='Action'
-              sortable
-              sortField='paymentStatusId'
               body={(rowData) => (
                 <Link
-                  href={`/customer/transactions/sales-order/details?saleOrderId=${rowData.id}`}
+                  href={`/customer/transactions/sales-order/details?saleOrderId=${rowData?.id}`}
                   className='btn btn-saawree'
                 >
                   View

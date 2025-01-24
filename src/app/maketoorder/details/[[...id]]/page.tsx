@@ -23,7 +23,6 @@ import { Items } from "@/core/models/cartModel";
 import { createCart } from "@/core/requests/cartRequests";
 import { toast } from "react-toastify";
 import { useCartCount } from "@/core/context/useCartCount";
-import { set } from "date-fns";
 import productImagePlaceholder from "@/assets/images/productImagePlaceHolder.jpg";
 import ProductImage from "@/core/component/Products/ProductImage";
 import Slider from "react-slick";
@@ -171,7 +170,6 @@ const page = () => {
     }
   };
 
-
   var collectionSettings = {
     dots: false,
     swipeToSlide: true,
@@ -207,7 +205,6 @@ const page = () => {
       },
     ],
   };
-
 
   var productImagesThumbnails = {
     dots: false,
@@ -245,8 +242,6 @@ const page = () => {
     ],
   };
 
-
-
   return (
     <section className='product-details'>
       <div className='container'>
@@ -265,7 +260,7 @@ const page = () => {
                       width={600}
                       height={600}
                       alt='product image'
-                      className="w-100 h-100"
+                      className='w-100 h-100'
                     />
                   ) : (
                     <InnerImageZoom
@@ -283,7 +278,7 @@ const page = () => {
                       zoomScale={2}
                       hasSpacer={true}
                       zoomPreload={true}
-                    className='w-100 h-100'
+                      className='w-100 h-100'
                     />
                   )}
                 </div>
@@ -295,27 +290,25 @@ const page = () => {
               </div>
               <div>
                 <Slider {...productImagesThumbnails}>
-                {response?.productImages?.map((pi, index) => (
-                  <div
-                    data-gallery='thumb'
-                    className='is-active'
-                    onClick={() => {
-                      mainProductImage?.mainImage &&
-                        setMainProductImage({
-                          mainImage: pi?.mediumImagePath,
-                          zoomedImage: pi?.zoomImagePath,
-                        });
-                    }}
-                    key={index}
-                  >
-                    <ProductImage
-                      url={`${process.env.NEXT_PUBLIC_APP_IMAGE_API_URL}/${pi?.thumbnailImagePath}`}
-                      className={"img-responsive"}
-                    />
-
-                  </div>
-                ))}
-
+                  {response?.productImages?.map((pi, index) => (
+                    <div
+                      data-gallery='thumb'
+                      className='is-active'
+                      onClick={() => {
+                        mainProductImage?.mainImage &&
+                          setMainProductImage({
+                            mainImage: pi?.mediumImagePath,
+                            zoomedImage: pi?.zoomImagePath,
+                          });
+                      }}
+                      key={index}
+                    >
+                      <ProductImage
+                        url={`${process.env.NEXT_PUBLIC_APP_IMAGE_API_URL}/${pi?.thumbnailImagePath}`}
+                        className={"img-responsive"}
+                      />
+                    </div>
+                  ))}
                 </Slider>
               </div>
               {/* <div className='gallery__thumbs'>
@@ -568,8 +561,9 @@ const page = () => {
                   onClick={() => setVisibleTab("description")}
                 >
                   <button
-                    className={`nav-link ${visibleTab == "description" ? "active" : ""
-                      }`}
+                    className={`nav-link ${
+                      visibleTab == "description" ? "active" : ""
+                    }`}
                     id='description-tab'
                     data-toggle='tab'
                     data-target='#description'
@@ -589,8 +583,9 @@ const page = () => {
                   onClick={() => setVisibleTab("policy")}
                 >
                   <button
-                    className={`nav-link ${visibleTab == "policy" ? "active" : ""
-                      }`}
+                    className={`nav-link ${
+                      visibleTab == "policy" ? "active" : ""
+                    }`}
                     id='policy-tab'
                     data-toggle='tab'
                     data-target='#policy'
@@ -605,8 +600,9 @@ const page = () => {
               </ul>
               <div className='tab-content' id='myTabContent'>
                 <div
-                  className={`tab-pane fade ${visibleTab == "description" ? "show active" : ""
-                    } `}
+                  className={`tab-pane fade ${
+                    visibleTab == "description" ? "show active" : ""
+                  } `}
                   id='description'
                   role='tabpanel'
                   aria-labelledby='description-tab'
@@ -614,8 +610,9 @@ const page = () => {
                   {response?.description}
                 </div>
                 <div
-                  className={`tab-pane fade ${visibleTab == "policy" ? "show active" : ""
-                    } `}
+                  className={`tab-pane fade ${
+                    visibleTab == "policy" ? "show active" : ""
+                  } `}
                   id='policy'
                   role='tabpanel'
                   aria-labelledby='policy-tab'
@@ -707,7 +704,6 @@ const page = () => {
                 )}
               /> */}
 
-
               <Slider {...collectionSettings}>
                 {recomendedProducts?.data?.map((prodData) => (
                   <Link
@@ -733,7 +729,9 @@ const page = () => {
                             <>
                               <div className='value'>
                                 <span className='seling'>
-                                  {formatCurrency(prodData?.productPrice as number)}
+                                  {formatCurrency(
+                                    prodData?.productPrice as number
+                                  )}
                                 </span>
                               </div>
                               <div
@@ -763,8 +761,6 @@ const page = () => {
                   </Link>
                 ))}
               </Slider>
-
-
             </div>
           </div>
         </div>
@@ -778,7 +774,7 @@ const page = () => {
       >
         <InnerImageZoom
           src={`${process.env.NEXT_PUBLIC_APP_IMAGE_API_URL}/${mainProductImage?.mainImage}`}
-          zoomSrc={`${process.env.NEXT_PUBLIC_APP_IMAGE_API_URL}/${mainProductImage?.zoomedImge}`}
+          zoomSrc={`${process.env.NEXT_PUBLIC_APP_IMAGE_API_URL}/${mainProductImage?.zoomedImage}`}
           zoomType='hover'
           hideHint
           width={650}

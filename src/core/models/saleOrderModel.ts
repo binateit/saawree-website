@@ -1,3 +1,4 @@
+import { Nullable } from "primereact/ts-helpers";
 import { Response } from "./model";
 
 export interface ISalesOrder {
@@ -125,3 +126,14 @@ export type FileResult = {
   data: Blob;
   name: string;
 };
+
+export interface StatusList {
+  id: number;
+  name: string;
+}
+
+export interface FilterOption {
+  filterOrderStatus?: { id: number; name: string }[];
+  filterPaymentStatus?: { id: number; name: string }[];
+  filterDates?: Nullable<Date>[];
+}
