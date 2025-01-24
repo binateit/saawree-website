@@ -1,6 +1,7 @@
 import axios, { AxiosResponse } from "axios";
 import { ID, PaginationFilter, Result } from "../models/model";
 import {
+  ChangePassword,
   CreateCustomerAddress,
   CustomerAddress,
   CustomerAddressByIdQueryResponse,
@@ -16,6 +17,7 @@ const Customer_Profile_URL = `${API_URL}/customers/profile`;
 const Customer_Address_URL = `${API_URL}/customeraddress/search/web-customer`;
 const Customer_Address_By_Id_URL = `${API_URL}/customeraddress`;
 const Update_Customer_Address_URL = `${Customer_Address_By_Id_URL}/web-customer`;
+const CHANGE_PASSWORD_URL = `${API_URL}/customers/change-password`;
 
 const getRecordById = async (): Promise<CustomerRecord> => {
   return await axiosInstance
@@ -81,6 +83,20 @@ const createCustomerAddress = (
     createCustomerAddress
   );
 };
+
+const changePassword = (cp: ChangePassword): Promise<Result> => {
+  return axiosInstance
+    .put(`${CHANGE_PASSWORD_URL}`, {
+      password: cp.password,
+      newPassword: cp.newPassword,
+      confirmNewPassword: cp.confirmNewPassword,
+    })
+    .then((response: AxiosResponse<Result>) => response.data)
+    .then((response: Result) => response)
+    .catch((err: Result) => {
+      return err;
+    });
+};
 export {
   getRecordById,
   updateCustomerProfile,
@@ -88,4 +104,5 @@ export {
   getCutsomerAddressById,
   updateCustomerAddress,
   createCustomerAddress,
+  changePassword,
 };

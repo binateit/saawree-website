@@ -16,6 +16,8 @@ export interface ISalesOrder {
   orderTotal: number;
   itemList: ISaleOrderItem[];
   paymentList: paymentList[];
+  otherCharges?: ISaleOrderOtherCharges[];
+  outStandingAmount?: number;
   billAddressLine1?: string;
   billAddressLine2?: string;
   billCityName?: string;
@@ -23,6 +25,8 @@ export interface ISalesOrder {
   billStateName?: string;
   billCountryId?: number;
   billCountryName?: string;
+  billZipCode?: string;
+  saleOrderStatusName?: string;
   shipAddressLine1?: string;
   shipAddressLine2?: string;
   shipCityName?: string;
@@ -39,7 +43,12 @@ export interface ISalesOrder {
   totalTaxAmount?: number;
   saleOrderStatusHistory?: SaleOrderStatusHistory[];
 }
-
+export interface ISaleOrderOtherCharges {
+  id: number;
+  label: string;
+  amount: number;
+  isDeleted: boolean;
+}
 export interface ISaleOrderItem {
   rowNumber: number;
   saleOrderItemId?: number;
@@ -98,3 +107,21 @@ export interface paymentList {
   paymentModeName?: string;
 }
 export type SalesOrderQueryResponse = Response<Array<ISalesOrder>>;
+
+export type SaleOrderDto = {
+  id: number;
+  orderNumber: string;
+  orderDate: string;
+  expectedShipmentDate?: any;
+  saleOrderStatusName: string;
+  paymentStatusName: string;
+  orderTotal: number;
+  totalAmountReceived: number;
+  outstandingAmount: number;
+};
+export type SalesOrderQueryListResponse = Response<Array<SaleOrderDto>>;
+
+export type FileResult = {
+  data: Blob;
+  name: string;
+};

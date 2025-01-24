@@ -19,7 +19,7 @@ const ProductImage = ({
         setMainProductImage(productImagePlaceholder?.src);
       }
     });
-  }, [mainProductImage]);
+  }, [mainProductImage, url]);
 
   return <img src={mainProductImage} className={className} alt={`Product`} />;
 };

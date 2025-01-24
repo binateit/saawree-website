@@ -1,5 +1,5 @@
 "use client";
-import { formatCurrency } from "@/core/helpers/helperFunctions";
+import { formatCurrency, urlExists } from "@/core/helpers/helperFunctions";
 import { SelectOptionProps } from "@/core/models/model";
 import underlineIcon from "@/assets/images/underlineIcon.png";
 import {
@@ -22,15 +22,19 @@ import { Items } from "@/core/models/cartModel";
 import { ProductColor } from "@/core/models/productModel";
 import { toast } from "react-toastify";
 import { useCartCount } from "@/core/context/useCartCount";
-
+import ProductImage from "@/core/component/Products/ProductImage";
+import productImagePlaceholder from "@/assets/images/productImagePlaceHolder.jpg";
 const page = () => {
   const { data: session, status: authStatus } = useSession();
   const router = useRouter();
   const searchParams = useSearchParams();
   const productId = searchParams.get("productId");
-  const [mainProductImage, setMainProductImage] = useState({
-    mainImage: "",
-    zoomedImge: "",
+  const [mainProductImage, setMainProductImage] = useState<{
+    mainImage: string | undefined;
+    zoomedImage: string | undefined;
+  }>({
+    mainImage: undefined,
+    zoomedImage: undefined,
   });
   const [polishType, setPolishType] = useState<string>("");
   const [visible, setVisible] = useState(false);
@@ -61,8 +65,18 @@ const page = () => {
 
     setMainProductImage({
       mainImage: response?.productImages?.[0]?.mediumImagePath || "",
-      zoomedImge: response?.productImages?.[0]?.zoomImagePath || "",
+      zoomedImage: response?.productImages?.[0]?.zoomImagePath || "",
     });
+    urlExists(
+      `${process.env.NEXT_PUBLIC_APP_IMAGE_API_URL}/${response?.productImages?.[0]?.mediumImagePath}`,
+      function (status: any) {
+        if (status === 200) {
+          console.log("image found");
+        } else {
+          setMainProductImage({ mainImage: undefined, zoomedImage: undefined });
+        }
+      }
+    );
   }, [response]);
 
   const { data: recomendedProducts } = useQuery({
@@ -143,17 +157,37 @@ const page = () => {
           <div className='col-md-6'>
             <div id='js-gallery' className='gallery sticky-layer'>
               <div className='gallery__hero'>
-                <div onClick={() => setVisible(true)}>
-                  <InnerImageZoom
-                    src={`${process.env.NEXT_PUBLIC_APP_IMAGE_API_URL}/${mainProductImage?.mainImage}`}
-                    zoomSrc={`${process.env.NEXT_PUBLIC_APP_IMAGE_API_URL}/${mainProductImage?.zoomedImge}`}
-                    zoomType='hover'
-                    hideHint
-                    width={600}
-                    zoomScale={2}
-                    hasSpacer={true}
-                    zoomPreload={true}
-                  />
+                <div
+                  onClick={() =>
+                    mainProductImage?.mainImage && setVisible(true)
+                  }
+                >
+                  {mainProductImage?.mainImage === undefined ? (
+                    <Image
+                      src={productImagePlaceholder?.src}
+                      width={600}
+                      height={600}
+                      alt='product image'
+                    />
+                  ) : (
+                    <InnerImageZoom
+                      src={
+                        `${process.env.NEXT_PUBLIC_APP_IMAGE_API_URL}/${mainProductImage?.mainImage}` ||
+                        productImagePlaceholder?.src
+                      }
+                      zoomSrc={
+                        `${process.env.NEXT_PUBLIC_APP_IMAGE_API_URL}/${mainProductImage?.zoomedImage}` ||
+                        productImagePlaceholder?.src
+                      }
+                      zoomType='hover'
+                      hideHint
+                      width={600}
+                      zoomScale={2}
+                      hasSpacer={true}
+                      zoomPreload={true}
+                      // className='w-100 h-100'
+                    />
+                  )}
                 </div>
               </div>
               <div className='gallery__thumbs'>
@@ -162,17 +196,17 @@ const page = () => {
                     data-gallery='thumb'
                     className='is-active'
                     onClick={() =>
+                      mainProductImage?.mainImage &&
                       setMainProductImage({
                         mainImage: pi?.mediumImagePath,
-                        zoomedImge: pi?.zoomImagePath,
+                        zoomedImage: pi?.zoomImagePath,
                       })
                     }
                     key={index}
                   >
-                    <img
-                      src={`${process.env.NEXT_PUBLIC_APP_IMAGE_API_URL}/${pi?.thumbnailImagePath}`}
-                      className='img-responsive'
-                      alt={`thumbnail ${index + 1}`}
+                    <ProductImage
+                      url={`${process.env.NEXT_PUBLIC_APP_IMAGE_API_URL}/${pi?.thumbnailImagePath}`}
+                      className={"img-responsive"}
                     />
                   </div>
                 ))}
@@ -581,7 +615,7 @@ const page = () => {
       >
         <InnerImageZoom
           src={`${process.env.NEXT_PUBLIC_APP_IMAGE_API_URL}/${mainProductImage?.mainImage}`}
-          zoomSrc={`${process.env.NEXT_PUBLIC_APP_IMAGE_API_URL}/${mainProductImage?.zoomedImge}`}
+          zoomSrc={`${process.env.NEXT_PUBLIC_APP_IMAGE_API_URL}/${mainProductImage?.zoomedImage}`}
           zoomType='hover'
           hideHint
           width={650}

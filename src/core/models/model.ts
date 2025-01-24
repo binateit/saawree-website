@@ -69,6 +69,7 @@ export type PaginationResponse = {
 };
 export type Response<T> = PaginationResponse & {
   data?: T;
+  pagination?: PaginationResponse;
 };
 //State Model
 
@@ -146,6 +147,8 @@ export type PaginationFilter = BaseFilter & {
   pageNumber?: number;
   pageSize?: number;
   orderBy?: Array<string>;
+  sortOrder?: number | null;
+  sortField?: string;
 };
 
 export type RecomendedProductsFilter = {

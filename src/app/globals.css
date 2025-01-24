@@ -3669,8 +3669,7 @@ table>tbody>tr>th {
 }
 
 .common-seacrch-box>.form-control {
-    border-right: 0px;
-    border-radius: .25rem 0 0 .25rem;
+    border-radius: .25rem;
 }
 
 .common-seacrch-box>.btn {

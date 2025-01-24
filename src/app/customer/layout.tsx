@@ -97,12 +97,12 @@ const layout = ({
                           role='tablist'
                           aria-orientation='vertical'
                         >
-                          <a
+                          <Link
                             className='nav-link py-2 px-3'
-                            href='sale-order.html'
+                            href='/customer/transactions/sales-order'
                           >
                             Sales Order
-                          </a>
+                          </Link>
                           <a className='nav-link py-2 px-3' href='invoice.html'>
                             Invoice
                           </a>

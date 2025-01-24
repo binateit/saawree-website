@@ -41,7 +41,7 @@ const page = () => {
     zoomedImage: string | undefined;
   }>({
     mainImage: undefined,
-    zoomedImage: "",
+    zoomedImage: undefined,
   });
   const [polishType, setPolishType] = useState<string>("");
   const [polishTypeList, setPolishTypeList] = useState<SelectOptionProps[]>([]);
@@ -173,7 +173,11 @@ const page = () => {
           <div className='col-md-6'>
             <div id='js-gallery' className='gallery sticky-layer'>
               <div className='gallery__hero'>
-                <div onClick={() => setVisible(true)}>
+                <div
+                  onClick={() =>
+                    mainProductImage?.mainImage && setVisible(true)
+                  }
+                >
                   {mainProductImage?.mainImage === undefined ? (
                     <Image
                       src={productImagePlaceholder?.src}
@@ -213,10 +217,11 @@ const page = () => {
                     data-gallery='thumb'
                     className='is-active'
                     onClick={() => {
-                      setMainProductImage({
-                        mainImage: pi?.mediumImagePath,
-                        zoomedImage: pi?.zoomImagePath,
-                      });
+                      mainProductImage?.mainImage &&
+                        setMainProductImage({
+                          mainImage: pi?.mediumImagePath,
+                          zoomedImage: pi?.zoomImagePath,
+                        });
                     }}
                     key={index}
                   >
@@ -291,7 +296,7 @@ const page = () => {
                       <div className='col-xl-6 col-lg-6 col-md-12 col-sm-6 d-none d-sm-block d-md-none d-lg-block'>
                         <div className='d-flex'>
                           <div className='moti-color options-title'>Colors</div>
-                          <div className='stock options-title'>Stock</div>
+
                           <div className='color-quntity  options-title text-center'>
                             Qty
                           </div>
@@ -318,9 +323,6 @@ const page = () => {
                               >
                                 {color.colorName}{" "}
                               </span>
-                            </div>
-                            <div className='stock'>
-                              {/* <span>{color.avaliableQuantity}</span> */}
                             </div>
 
                             <div className='color-quntity'>
@@ -362,7 +364,7 @@ const page = () => {
                               <div className='moti-color options-title'>
                                 Colors
                               </div>
-                              <div className='stock options-title'>Stock</div>
+
                               <div className='color-quntity  options-title text-center'>
                                 Qty
                               </div>
@@ -381,9 +383,7 @@ const page = () => {
                                 {color.colorName}{" "}
                               </span>
                             </div>
-                            <div className='stock'>
-                              {/* <span>{color.avaliableQuantity}</span> */}
-                            </div>
+
                             <div className='color-quntity'>
                               <div className='color-quntity'>
                                 <input
