@@ -1,8 +1,10 @@
 import { formatCurrency } from "@/core/helpers/helperFunctions";
 import { MakeToOrderProduct, ProductList } from "@/core/models/productModel";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 import React from "react";
 import { BsCart } from "react-icons/bs";
+import ProductImage from "./ProductImage";
 
 interface ProductsProps {
   product: ProductList | MakeToOrderProduct;
@@ -11,6 +13,7 @@ interface ProductsProps {
 }
 
 const ProductGridCard = ({ product, session, type }: ProductsProps) => {
+  const router = useRouter();
   return (
     <>
       <Link
@@ -22,11 +25,15 @@ const ProductGridCard = ({ product, session, type }: ProductsProps) => {
       >
         <div className='category-prod-box border'>
           <div className='prod-img-bx1'>
-            <img
-              src={`${process.env.NEXT_PUBLIC_APP_IMAGE_API_URL}/${product?.imagePath}`}
+            <ProductImage
+              url={`${process.env.NEXT_PUBLIC_APP_IMAGE_API_URL}/${product?.imagePath}`}
+              className={"auto-fit"}
+            />
+            {/* <img
+              src={`${process.env.NEXT_PUBLIC_APP_IMAGE_API_URL}/${product?.product}`}
               className='auto-fit'
               alt={product?.productName || "Product"}
-            />
+            /> */}
           </div>
           <div className='p-2'>
             <div className='prod-name2'>
@@ -49,17 +56,19 @@ const ProductGridCard = ({ product, session, type }: ProductsProps) => {
                         </span>
                       </div>
 
-                      <div className='cart-link'>
-                        <Link
-                          href={
+                      <div
+                        className='cart-link'
+                        onClick={() =>
+                          router.push(
                             type === "mto"
                               ? `/maketoorder/details?productId=${product?.productId}`
                               : `/readystock/details?productId=${product?.productId}`
-                          }
-                          className='act-btn'
-                        >
-                          <BsCart fontSize={20}/>
-                        </Link>
+                          )
+                        }
+                      >
+                        <div className='act-btn'>
+                          <BsCart  fontSize={20}/>
+                        </div>
                       </div>
                     </div>
                   </>

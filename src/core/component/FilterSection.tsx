@@ -22,6 +22,7 @@ const FilterSection = ({
   //   anonymous,
   type,
 }: FilterProps) => {
+  console.log(multiFilter);
   return (
     <div className='card mb-3'>
       <div className='card-header'>

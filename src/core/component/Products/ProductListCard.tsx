@@ -3,6 +3,7 @@ import { MakeToOrderProduct, ProductList } from "@/core/models/productModel";
 import Link from "next/link";
 import React from "react";
 import { BsCart } from "react-icons/bs";
+import ProductImage from "./ProductImage";
 
 interface ProductsProps {
   product: ProductList | MakeToOrderProduct;
@@ -23,10 +24,14 @@ const ProductListCard = ({ product, session, type }: ProductsProps) => {
     >
       <div className='category-prod-box mb-0 d-flex'>
         <div className='products-list-image'>
-          <img
+          <ProductImage
+            url={`${process.env.NEXT_PUBLIC_APP_IMAGE_API_URL}/${product?.imagePath}`}
+            // className={"auto-fit"}
+          />
+          {/* <img
             src={`${process.env.NEXT_PUBLIC_APP_IMAGE_API_URL}/${product?.imagePath}`}
             alt={`${product?.productName}`}
-          />
+          /> */}
         </div>
         <div className='pt-3'>
           <span className='text-dark'>{product?.categoryName}</span>

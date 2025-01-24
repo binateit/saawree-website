@@ -145,6 +145,7 @@ export type ColorDropdownDto = {
   colorName: string;
   colorCode: string;
   imagePath?: string;
+  avaliableQuantity?: number;
 };
 export type PolishingTypeDropdownDto = {
   productId: number;

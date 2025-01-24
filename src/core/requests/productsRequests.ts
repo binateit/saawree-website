@@ -18,6 +18,7 @@ import {
 const API_URL = process.env.NEXT_PUBLIC_APP_STORE_API_URL;
 const ADMIN_API_URL = process.env.NEXT_PUBLIC_APP_ADMIN_API_URL;
 const CATEGORY_LIST_URL = `${API_URL}/category/ready-stock-category-list`;
+const MAKE_TO_ORDER_CATEGORY_LIST_URL = `${API_URL}/category/category-list`;
 const PolishingType_LIST_URL = `${ADMIN_API_URL}/polishingtypes/list`;
 const Color_LIST_URL = `${ADMIN_API_URL}/colors/list`;
 const READY_STOCK_PRODUCTS = `${API_URL}/products/search-ready-stock`;
@@ -28,6 +29,21 @@ const RS_PRODUCTS_DETAILS = `${API_URL}/products/ready-stock-product-detail`;
 const getCategoryList = async (): Promise<Category[]> => {
   return await axiosInstance
     .get(`${CATEGORY_LIST_URL}`)
+    .then((d: AxiosResponse<Category[]>) => {
+      return d.data;
+    })
+    .catch((err) => {
+      return err;
+    });
+};
+
+const getMTOCategoryList = async (
+  parentCategoryId: number
+): Promise<Category[]> => {
+  return await axiosInstance
+    .post(`${MAKE_TO_ORDER_CATEGORY_LIST_URL}`, {
+      parentCategoryId: parentCategoryId,
+    })
     .then((d: AxiosResponse<Category[]>) => {
       return d.data;
     })
@@ -145,4 +161,5 @@ export {
   getRecomendedMaketoOrderProducts,
   getRSProductDetails,
   getReadyStockRecomendedProducts,
+  getMTOCategoryList,
 };

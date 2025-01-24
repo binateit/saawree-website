@@ -11,9 +11,12 @@ import { formatCurrency } from "@/core/helpers/helperFunctions";
 import Slider from "react-slick";
 import "slick-carousel/slick/slick.css";
 import "slick-carousel/slick/slick-theme.css";
+import { useRouter } from "next/navigation";
+import ProductImage from "@/core/component/Products/ProductImage";
 
 export default function Home() {
   const { data: session, status } = useSession();
+  const router = useRouter();
   const { data: homePageData, isLoading: homePageLoading } = useQuery({
     queryKey: ["homePageData"],
     queryFn: () => getHomePage(),
@@ -132,15 +135,13 @@ export default function Home() {
           circular
           item={(prodData) => (
             <>
-              <img
-                className='w-100 desk'
-                src={`${process.env.NEXT_PUBLIC_APP_IMAGE_API_URL}/${prodData?.wip}`}
-                alt='First slide'
+              <ProductImage
+                url={`${process.env.NEXT_PUBLIC_APP_IMAGE_API_URL}/${prodData?.wip}`}
+                className={"w-100 desk"}
               />
-              <img
-                className='w-100 mob'
-                src={`${process.env.NEXT_PUBLIC_APP_IMAGE_API_URL}/${prodData?.mip}`}
-                alt='First slide'
+              <ProductImage
+                url={`${process.env.NEXT_PUBLIC_APP_IMAGE_API_URL}/${prodData?.mip}`}
+                className={"w-100 mob"}
               />
               <div className='carousel-caption center-content'>
                 <h2>{prodData?.t}</h2>
@@ -164,12 +165,13 @@ export default function Home() {
           <div className='categ-bar d-flex flex-wrap justify-content-center'>
             {homePageData?.fc?.map((cat) => (
               <div className='categ-items' key={cat?.id}>
-                <Link href={`readystock/products?categoryId=${cat?.id}`}>
+                <Link
+                  href={`readystock/products?categoryId=${cat?.id}&categoryName=${cat?.n}`}
+                >
                   <div className='catg-img'>
-                    <img
-                      src={`${process.env.NEXT_PUBLIC_APP_IMAGE_API_URL}/${cat?.cip}`}
-                      className='auto-fit'
-                      alt=''
+                    <ProductImage
+                      url={`${process.env.NEXT_PUBLIC_APP_IMAGE_API_URL}/${cat?.cip}`}
+                      className={"auto-fit"}
                     />
                   </div>
                   <div className='cat-name'>{cat?.n}</div>
@@ -204,13 +206,17 @@ export default function Home() {
                       <div className='products-box h-100'>
                         <div className='inner-box-wraper new-arrival-box h-100'>
                           <div className='prod-img1'>
-                            <Image
+                            <ProductImage
+                              url={`${process.env.NEXT_PUBLIC_APP_IMAGE_API_URL}/${prodData?.ip}`}
+                              className={"auto-fit"}
+                            />
+                            {/* <Image
                               src={`${process.env.NEXT_PUBLIC_APP_IMAGE_API_URL}/${prodData?.ip}`}
                               width={500}
                               height={500}
                               className='auto-fit'
                               alt=''
-                            />
+                            /> */}
                           </div>
                           <div className='prod-name1 text-dark'>
                             {prodData?.pn} <br />{" "}
@@ -230,13 +236,15 @@ export default function Home() {
                                     <span className='seling'>₹150.00</span>
                                   </div>
 
-                                  <div className='cart-link'>
-                                    <Link
-                                      href={`/readystock/details?productId=${prodData?.pi}`}
-                                      className='act-btn'
-                                    >
+                                  <div
+                                    className='cart-link'
+                                    onClick={() =>
+                                      `/readystock/details?productId=${prodData?.pi}`
+                                    }
+                                  >
+                                    <div className='act-btn'>
                                       <BsCart fontSize={20} />
-                                    </Link>
+                                    </div>
                                   </div>
                                 </div>
                               </>
@@ -301,13 +309,17 @@ export default function Home() {
                 }`}
               >
                 <div className='shine h-100 mb-2 md-pb-0'>
-                  <Image
+                  <ProductImage
+                    url={`${process.env.NEXT_PUBLIC_APP_IMAGE_API_URL}/${newArraival?.ip}`}
+                    className={"product-banner"}
+                  />
+                  {/* <Image
                     width={500}
                     height={500}
                     src={`${process.env.NEXT_PUBLIC_APP_IMAGE_API_URL}/${newArraival?.ip}`}
                     className='product-banner'
                     alt={`product-banner ${index + 1}`}
-                  />
+                  /> */}
                 </div>
               </div>
             </div>
@@ -336,15 +348,13 @@ export default function Home() {
           circular
           item={(prodData) => (
             <>
-              <img
-                className='w-100 desk'
-                src={`${process.env.NEXT_PUBLIC_APP_IMAGE_API_URL}/${prodData?.wip}`}
-                alt='First slide'
+              <ProductImage
+                url={`${process.env.NEXT_PUBLIC_APP_IMAGE_API_URL}/${prodData?.wip}`}
+                className={"w-100 desk"}
               />
-              <img
-                className='w-100 mob'
-                src={`${process.env.NEXT_PUBLIC_APP_IMAGE_API_URL}/${prodData?.mip}`}
-                alt='First slide'
+              <ProductImage
+                url={`${process.env.NEXT_PUBLIC_APP_IMAGE_API_URL}/${prodData?.mip}`}
+                className={"w-100 mob"}
               />
               <div className='carousel-caption center-content'>
                 <h2>{prodData?.t}</h2>
@@ -372,18 +382,17 @@ export default function Home() {
 
               <Slider {...collectionSettings}>
                 {collection?.prods?.map((prodData) => (
-                  <Link href={`/readystock/details?productId=${prodData?.pi}`}>
+                  <Link
+                    href={`/readystock/details?productId=${prodData?.pi}`}
+                    key={prodData?.pi}
+                  >
                     <div className='products-box'>
                       <div className='inner-box-wraper'>
                         <div className='prod-img1'>
-                          <Image
-                            width={500}
-                            height={500}
-                            src={`${process.env.NEXT_PUBLIC_APP_IMAGE_API_URL}/${prodData?.ip}`}
-                            className='auto-fit'
-                            alt=''
+                          <ProductImage
+                            url={`${process.env.NEXT_PUBLIC_APP_IMAGE_API_URL}/${prodData?.ip}`}
+                            className={"auto-fit"}
                           />
-                          {/* <img src={`${process.env.NEXT_PUBLIC_APP_IMAGE_API_URL}/${prodData?.ip}`} className='auto-fit'/> */}
                         </div>
                         <div className='prod-name1 text-dark'>
                           {prodData?.pn} <br />{" "}
@@ -399,13 +408,17 @@ export default function Home() {
                                   {formatCurrency(prodData?.pp)}
                                 </span>
                               </div>
-                              <div className='cart-link'>
-                                <Link
-                                  href={`/readystock/details?productId=${prodData?.pi}`}
-                                  className='act-btn'
-                                >
+                              <div
+                                className='cart-link'
+                                onClick={() =>
+                                  router.push(
+                                    `/readystock/details?productId=${prodData?.pi}`
+                                  )
+                                }
+                              >
+                                <div className='act-btn'>
                                   <BsCart fontSize={20} />
-                                </Link>
+                                </div>
                               </div>
                             </>
                           ) : (

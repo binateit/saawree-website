@@ -20,4 +20,10 @@ const isNotEmpty = (obj: unknown) => {
   return obj !== undefined && obj !== null && obj !== "";
 };
 
-export { camelize, formatCurrency, formatDate, isNotEmpty };
+function urlExists(url: string, callback: (status: boolean) => void) {
+  fetch(url, { method: "head" }).then(function (status) {
+    callback(status.ok);
+  });
+}
+
+export { camelize, formatCurrency, formatDate, isNotEmpty, urlExists };
