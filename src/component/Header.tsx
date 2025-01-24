@@ -277,7 +277,7 @@ const Header = () => {
                       <Link href='/contact-us'>Contact</Link>
                     </li>
                     <li>
-                      <a href='ordering-process.html'>Order Process</a>
+                      <Link href='/order-process'>Order Process</Link>
                     </li>
                   </ul>
                 </div>
