@@ -387,7 +387,7 @@ const page = () => {
                       <div className='col-xl-6 col-lg-6 col-md-12 col-sm-6'>
                         <div className='d-flex'>
                           <div className='moti-color options-title'>Colors</div>
-                          <div className='stock options-title'>Stock</div>
+                          {/* <div className='stock options-title'>Stock</div> */}
                           <div className='color-quntity  options-title text-center'>
                             Qty
                           </div>
