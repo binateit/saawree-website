@@ -4,7 +4,6 @@ import ProductGridCard from "@/core/component/Products/ProductGridCard";
 import ProductListCard from "@/core/component/Products/ProductListCard";
 import { CategoryList } from "@/core/models/productModel";
 import {
-  getCategoryList,
   getMaketoOrderProducts,
   getMTOCategoryList,
 } from "@/core/requests/productsRequests";
@@ -14,12 +13,8 @@ import Link from "next/link";
 import { useSearchParams } from "next/navigation";
 import { Dropdown } from "primereact/dropdown";
 import React, { useEffect, useState } from "react";
-import {
-  BsFilter,
-  BsGrid,
-  BsListUl,
-  BsPatchExclamationFill,
-} from "react-icons/bs";
+import { BsFilter, BsGrid, BsListUl } from "react-icons/bs";
+import noProductImage from "@/assets/images/no-products-available.png";
 import { useImmer } from "use-immer";
 
 const page = () => {
@@ -102,7 +97,14 @@ const page = () => {
   });
 
   useEffect(() => {
-    let mulitiFilter: any = [];
+    let mulitiFilter: any = [
+      {
+        id: Number(categoryId),
+        name: subCategoryName,
+        isParent: true,
+        hasChild: true,
+      },
+    ];
     categoryList?.map((t) =>
       mulitiFilter.push({
         id: t?.id,
@@ -231,14 +233,15 @@ const page = () => {
                 </div>
               </div>
               {response?.data?.length === 0 ? (
-                <div className='titlehome'>
-                  <div className='empty-cart text-center py-5'>
-                    <BsPatchExclamationFill size={30} className='img-fluid' />
-                    <h4 className='mt-2'>No products available.</h4>
-                    <Link href='/' className='btn btn-saawree mt-2'>
-                      Back to home
-                    </Link>
-                  </div>
+                <div className='empty-list text-center py-10'>
+                  {/* <BsPatchExclamationFill size={60} className='img-fluid text-muted' /> */}
+                  <img src={noProductImage.src} width={300} />
+                  <h4 className='mt-2 text-muted'>No Products Found.</h4>
+                  <p>Your search did not match any products</p>
+                  <p>Please ty again.</p>
+                  <Link href='' className='btn btn-saawree mt-2'>
+                    Clear Filter
+                  </Link>
                 </div>
               ) : (
                 <>
@@ -276,16 +279,16 @@ const page = () => {
                       ))}
                     </div>
                   )}
+                  <div className='load-more w-100 text-center mt-5'>
+                    <button
+                      className='btn btn-saawree-outline'
+                      onClick={onLoadMore}
+                    >
+                      Load More
+                    </button>
+                  </div>
                 </>
               )}
-              <div className='load-more w-100 text-center mt-5'>
-                <button
-                  className='btn btn-saawree-outline'
-                  onClick={onLoadMore}
-                >
-                  Load More
-                </button>
-              </div>
             </div>
           </div>
         </div>
