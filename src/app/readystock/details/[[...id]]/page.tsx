@@ -60,8 +60,8 @@ const page = () => {
     );
 
     setMainProductImage({
-      mainImage: response?.productImages[0]?.mediumImagePath || "",
-      zoomedImge: response?.productImages[0]?.zoomImagePath || "",
+      mainImage: response?.productImages?.[0]?.mediumImagePath || "",
+      zoomedImge: response?.productImages?.[0]?.zoomImagePath || "",
     });
   }, [response]);
 
