@@ -56,7 +56,7 @@ const ProductListCard = ({ product, session, type }: ProductsProps) => {
                       className='act-btn d-inline-block w-auto px-2'
                     >
                       <div className='d-flex align-items-center'>
-                        <BsCart fontSize={18} className='mr-2' />{" "}
+                        <BsCart fontSize={20} className='mr-2' />{" "}
                         <small>Add to Cart</small>
                       </div>
                     </Link>
