@@ -1101,7 +1101,7 @@ ul.sub-menu {
 }
 
 .filters-inner {
-    padding: .75rem 1.25rem .25rem 1.25rem;
+    padding: .75rem 1.25rem .25rem 2.25rem;
 }
 
 .number-of-items {
@@ -1115,6 +1115,16 @@ ul.sub-menu {
     margin-bottom: 0;
     display: none;
     cursor: pointer;
+}
+
+.button-group-dropdown {
+    
+    position: absolute;
+    top: 38px;
+    z-index: 1;
+    background-color: white;
+    border: 1px solid;
+
 }
 
 .form-group label.filter-label {

@@ -9,19 +9,19 @@ const ProductImage = ({
   url: string;
   className?: string;
 }) => {
-  const [mainProductImage, setMainProductImage] = React.useState(url);
+  const [image, setImage] = React.useState(url);
 
   useEffect(() => {
     urlExists(url, function (status: any) {
       if (status === 200) {
-        setMainProductImage(url);
+        setImage(url);
       } else {
-        setMainProductImage(productImagePlaceholder?.src);
+        setImage(productImagePlaceholder?.src);
       }
     });
-  }, [mainProductImage, url]);
+  }, [url]);
 
-  return <img src={mainProductImage} className={className} alt={`Product`} />;
+  return <img src={image} className={className} alt={`Product`} />;
 };
 
 export default ProductImage;

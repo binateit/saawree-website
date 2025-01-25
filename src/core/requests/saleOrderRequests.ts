@@ -4,6 +4,7 @@ import {
   FileResult,
   ISalesOrder,
   SalesOrderQueryListResponse,
+  StatusList,
 } from "../models/saleOrderModel";
 import { PaginationFilter } from "../models/model";
 
@@ -11,6 +12,8 @@ const API_URL = process.env.NEXT_PUBLIC_APP_STORE_API_URL;
 const SalesOrder_BYID_URL = `${API_URL}/saleorders`;
 const SalesOrder_FOR_CUSTOMER = `${API_URL}/saleorders/search-for-customer`;
 const CHALLAN_PDF_URL = `${API_URL}/saleorders/downloadpdf`;
+const SaleOrder_Status_LIST = `${API_URL}/status/get-sale-order-status`;
+const SaleOrderPayment_Status_List = `${API_URL}/status/get-payment-status`;
 
 const getSalesOrderById = async (id: number): Promise<ISalesOrder> => {
   return await axiosInstance
@@ -66,8 +69,8 @@ const GenerateChallanPdf = async (id: number): Promise<any | FileResult> => {
 };
 
 const getSaleOrderStatus = async (): Promise<StatusList[]> => {
-  return await axios
-    .get(SaleOrder_Status_LISt)
+  return await axiosInstance
+    .get(SaleOrder_Status_LIST)
     .then((response: AxiosResponse<StatusList[]>) => response.data)
     .then((response: StatusList[]) => response)
     .catch((err) => {
@@ -76,7 +79,7 @@ const getSaleOrderStatus = async (): Promise<StatusList[]> => {
 };
 
 const getPaymentStatus = async (): Promise<StatusList[]> => {
-  return await axios
+  return await axiosInstance
     .get(SaleOrderPayment_Status_List)
     .then((response: AxiosResponse<StatusList[]>) => response.data)
     .then((response: StatusList[]) => response)
