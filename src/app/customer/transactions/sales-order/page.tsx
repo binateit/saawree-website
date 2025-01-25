@@ -37,9 +37,9 @@ const page = () => {
     first: 0,
     pageNumber: 1,
     pageSize: 3,
-    sortField: "orderDate",
+    sortField: "",
     sortOrder: -1,
-    orderBy: ["orderDate desc"],
+    orderBy: [],
   });
 
   const {
@@ -257,21 +257,6 @@ const page = () => {
     }
   };
 
-  const handleCustomDateChange = (dates: any) => {
-    // if (dates.length !== 2) return;
-
-    const startDate = toZonedTime(dates.from, "Asia/Kolkata");
-    const endDate = toZonedTime(dates.end, "Asia/Kolkata");
-    updateFilterOption({
-      ...filterOption,
-      filterDates: [
-        format(startDate, "yyyy-MM-dd"),
-        format(endDate, "yyyy-MM-dd"),
-      ],
-    });
-    setShowDropDown("");
-  };
-
   return (
     <>
       <div className='card mb-2'>
@@ -361,12 +346,11 @@ const page = () => {
         </div>
       </div>
 
-      <CustomDateSelectModal
+      {/* <CustomDateSelectModal
         isModalOpen={isModalOpen}
         closeModal={closeModal}
-        handleCustomDateChange={handleCustomDateChange}
         updateSearchFilters={updateSearchFilters}
-      />
+      /> */}
     </>
   );
 };
