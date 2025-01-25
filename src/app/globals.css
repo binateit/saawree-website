@@ -1117,14 +1117,18 @@ ul.sub-menu {
     cursor: pointer;
 }
 
-.button-group-dropdown {
-    
+.button-group-dropdown {    
     position: absolute;
     top: 38px;
     z-index: 1;
     background-color: white;
-    border: 1px solid;
+    border: 1px solid #ccc;
+}
 
+.button-group-dropdown>.dropdown-item{
+    cursor: pointer;
+    text-align: left;
+    padding: .25rem 0.8rem;
 }
 
 .form-group label.filter-label {
@@ -4406,5 +4410,8 @@ select {
 }
 .p-column-header-content span svg{
     height:10px;
+}
+.p-calendar-wraper>.p-calendar{
+    width: 100%;
 }
 

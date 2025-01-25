@@ -220,13 +220,14 @@ const ProfileDetails = () => {
           <div className='card-header bg-white'>
             <h5>Update Profile</h5>
           </div>
-          <div className='card-body'>
-            <FormikProvider value={formik}>
-              <form
-                onSubmit={formik.handleSubmit}
-                className='account-dtls'
-                noValidate
-              >
+          <FormikProvider value={formik}>
+            <form
+              onSubmit={formik.handleSubmit}
+              className='account-dtls'
+              noValidate
+            >
+              <div className='card-body'>
+
                 <div className='form-group'>
                   <div className='row'>
                     <div className='col-xl-6 col-lg-6 col-md-6 mb-3'>
@@ -332,18 +333,18 @@ const ProfileDetails = () => {
                     </div>
                     <div className='col-xl-6 col-lg-6 col-md-6 mb-3'>
                       <label htmlFor=''>Date of Birth</label>
-                      <div className='w-100'>
+                      <div className='w-100 p-calendar-wraper'>
                         <CalendarInput
                           name='dateOfBirth'
                           placeholder='Date of Birth'
                           className='form-control'
                           value={
                             formik.values.dateOfBirth &&
-                            !isNaN(
-                              Date.parse(
-                                formik.values.dateOfBirth as unknown as string
+                              !isNaN(
+                                Date.parse(
+                                  formik.values.dateOfBirth as unknown as string
+                                )
                               )
-                            )
                               ? new Date(formik.values.dateOfBirth)
                               : null
                           }
@@ -353,19 +354,20 @@ const ProfileDetails = () => {
                     </div>
                     <div className='col-xl-6 col-lg-6 col-md-6 mb-3'>
                       <label htmlFor=''>Date of Anniversary</label>
-                      <div className='w-100'>
+                      <div className='w-100 p-calendar-wraper'>
                         <CalendarInput
                           name='dateOfAnniversary'
                           placeholder='Date of Anniversary'
                           className='form-control'
+
                           value={
                             formik.values.dateOfAnniversary &&
-                            !isNaN(
-                              Date.parse(
-                                formik.values
-                                  .dateOfAnniversary as unknown as string
+                              !isNaN(
+                                Date.parse(
+                                  formik.values
+                                    .dateOfAnniversary as unknown as string
+                                )
                               )
-                            )
                               ? new Date(formik.values.dateOfAnniversary)
                               : null
                           }
@@ -374,37 +376,37 @@ const ProfileDetails = () => {
                       </div>
                     </div>
                   </div>
-                  <div className='row'>
-                    <div className='col-12 text-right'>
-                      <button
-                        className='btn btn-saawree close-edit-form mr-3'
-                        onClick={() => setEditMode(false)}
-                      >
-                        <span className='indicator-label'>Cancel</span>
-                      </button>
-                      <button
-                        type='submit'
-                        className='btn btn-saawree close-edit-form'
-                        disabled={
-                          formik.isSubmitting ||
-                          !formik.isValid ||
-                          !formik.touched
-                        }
-                      >
-                        <span className='indicator-label'>Update</span>
-                        {formik.isSubmitting && (
-                          <span className='indicator-progress'>
-                            Please wait...{" "}
-                            <span className='spinner-border spinner-border-sm align-middle ms-2'></span>
-                          </span>
-                        )}
-                      </button>
-                    </div>
-                  </div>
+
                 </div>
-              </form>
-            </FormikProvider>
-          </div>
+
+              </div>
+              <div className="card-footer text-right">
+                <button
+                  className='btn btn-saawree close-edit-form mr-3'
+                  onClick={() => setEditMode(false)}
+                >
+                  <span className='indicator-label'>Cancel</span>
+                </button>
+                <button
+                  type='submit'
+                  className='btn btn-saawree close-edit-form'
+                  disabled={
+                    formik.isSubmitting ||
+                    !formik.isValid ||
+                    !formik.touched
+                  }
+                >
+                  <span className='indicator-label'>Update</span>
+                  {formik.isSubmitting && (
+                    <span className='indicator-progress'>
+                      Please wait...{" "}
+                      <span className='spinner-border spinner-border-sm align-middle ms-2'></span>
+                    </span>
+                  )}
+                </button>
+              </div>
+            </form>
+          </FormikProvider>
         </div>
       )}
     </>
