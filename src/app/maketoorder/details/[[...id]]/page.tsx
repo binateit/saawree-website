@@ -562,9 +562,8 @@ const page = () => {
                   onClick={() => setVisibleTab("description")}
                 >
                   <button
-                    className={`nav-link ${
-                      visibleTab == "description" ? "active" : ""
-                    }`}
+                    className={`nav-link ${visibleTab == "description" ? "active" : ""
+                      }`}
                     id='description-tab'
                     data-toggle='tab'
                     data-target='#description'
@@ -584,9 +583,8 @@ const page = () => {
                   onClick={() => setVisibleTab("policy")}
                 >
                   <button
-                    className={`nav-link ${
-                      visibleTab == "policy" ? "active" : ""
-                    }`}
+                    className={`nav-link ${visibleTab == "policy" ? "active" : ""
+                      }`}
                     id='policy-tab'
                     data-toggle='tab'
                     data-target='#policy'
@@ -601,9 +599,8 @@ const page = () => {
               </ul>
               <div className='tab-content' id='myTabContent'>
                 <div
-                  className={`tab-pane fade ${
-                    visibleTab == "description" ? "show active" : ""
-                  } `}
+                  className={`tab-pane fade ${visibleTab == "description" ? "show active" : ""
+                    } `}
                   id='description'
                   role='tabpanel'
                   aria-labelledby='description-tab'
@@ -611,9 +608,8 @@ const page = () => {
                   {response?.description}
                 </div>
                 <div
-                  className={`tab-pane fade ${
-                    visibleTab == "policy" ? "show active" : ""
-                  } `}
+                  className={`tab-pane fade ${visibleTab == "policy" ? "show active" : ""
+                    } `}
                   id='policy'
                   role='tabpanel'
                   aria-labelledby='policy-tab'

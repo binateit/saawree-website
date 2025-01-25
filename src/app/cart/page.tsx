@@ -117,16 +117,16 @@ const page = () => {
       const updatedCartDetails = cartDetails?.items?.map((cartItem) =>
         cartItem.cartId === item.cartId
           ? {
-              ...cartItem,
-              quantity: (cartItem?.quantity ?? 0) - 1,
-              subTotal:
-                (cartItem.productPrice ?? 0) * ((cartItem.quantity ?? 0) - 1),
-              discountAmount:
-                ((cartItem?.subTotal ?? 0) * (cartItem?.discountPercent ?? 0)) /
-                100,
-              taxAmount:
-                ((cartItem?.subTotal ?? 0) * (cartItem?.taxPercent ?? 0)) / 100,
-            }
+            ...cartItem,
+            quantity: (cartItem?.quantity ?? 0) - 1,
+            subTotal:
+              (cartItem.productPrice ?? 0) * ((cartItem.quantity ?? 0) - 1),
+            discountAmount:
+              ((cartItem?.subTotal ?? 0) * (cartItem?.discountPercent ?? 0)) /
+              100,
+            taxAmount:
+              ((cartItem?.subTotal ?? 0) * (cartItem?.taxPercent ?? 0)) / 100,
+          }
           : cartItem
       );
       setCartDetails((prevCartDetails: any) => ({
@@ -152,16 +152,16 @@ const page = () => {
     const updatedCartDetails = cartDetails?.items?.map((cartItem) =>
       cartItem.cartId === item.cartId
         ? {
-            ...cartItem,
-            quantity: (cartItem.quantity ?? 0) + 1,
-            subTotal:
-              (cartItem.productPrice ?? 0) * ((cartItem?.quantity ?? 0) + 1),
-            discountAmount:
-              ((cartItem?.subTotal ?? 0) * (cartItem?.discountPercent ?? 0)) /
-              100,
-            taxAmount:
-              ((cartItem?.subTotal ?? 0) * (cartItem?.taxPercent ?? 0)) / 100,
-          }
+          ...cartItem,
+          quantity: (cartItem.quantity ?? 0) + 1,
+          subTotal:
+            (cartItem.productPrice ?? 0) * ((cartItem?.quantity ?? 0) + 1),
+          discountAmount:
+            ((cartItem?.subTotal ?? 0) * (cartItem?.discountPercent ?? 0)) /
+            100,
+          taxAmount:
+            ((cartItem?.subTotal ?? 0) * (cartItem?.taxPercent ?? 0)) / 100,
+        }
         : cartItem
     );
     setCartDetails((prevCartDetails: any) => ({
@@ -197,40 +197,27 @@ const page = () => {
         </div>
 
         {(cartDetails?.items?.length as number) > 0 ? (
-          <div className='cart-wraper'>
-            <table className='table table-bordered cart-btn'>
-              <thead>
-                <tr>
-                  <th scope='col'>Image</th>
-                  <th scope='col'>Product</th>
-                  <th scope='col'>Price</th>
-                  <th scope='col'>Quantity</th>
-                  <th scope='col'>Total</th>
-                  <th scope='col'>Remove</th>
-                </tr>
-              </thead>
-              <tbody>
+          <>
+            <div className='cart-wraper'>
+              <div className="cart-wrapper-for-mobile d-md-none">
                 {cartDetails?.items?.map((item) => (
-                  <tr key={item?.cartId}>
-                    <td>
-                      <div className='selected-prod-img'>
+                  <div className="cart-item-mobile border mb-2" key={item?.cartId}>
+                    <div className="d-flex border">
+                      <div className="cart-product-image-mobile" style={{ flex: '0 0 100px' }}>
                         <ProductImage
                           url={`${process.env.NEXT_PUBLIC_APP_IMAGE_API_URL}/${item?.imagePath}`}
-                          // className={"auto-fit"}
+                          className="fit-cover"
                         />
-                        {/* <img
-                          src={`${process.env.NEXT_PUBLIC_APP_IMAGE_API_URL}/${item?.imagePath}`}
-                          alt='image '
-                        /> */}
                       </div>
-                    </td>
-                    <td>
-                      <div className='selected-product'>
-                        <a href='#'>{item?.productName}</a>
+                      <div className="cart-product-details-mobile p-2">
+                        <h6 className="mb-2">{item?.productName}</h6>
+                        <p className="mb-0">Unit : {formatCurrency(item?.productPrice)}</p>
+                        <p className="mb-0 font-weight-bold">Total : {formatCurrency(item?.subTotal)}</p>
+
                       </div>
-                    </td>
-                    <td>{formatCurrency(item?.productPrice)}</td>
-                    <td>
+                    </div>
+                    <div className="d-flex p-2 align-items-center justify-content-between">
+                      <button className="btn btn-saawree" onClick={() => handleRemoveCartItem(item?.cartId)}>Remove</button>
                       <div className='quantity'>
                         <button
                           type='button'
@@ -262,101 +249,174 @@ const page = () => {
                           aria-label='Increase'
                           onClick={() => {
                             increaseQuantity(item);
-                            // handleQtyUpdate(item, item?.quantity);
                           }}
                         >
                           <BsPlus />
                         </button>
                       </div>
-                    </td>
-                    <td>{formatCurrency(item?.subTotal)}</td>
-                    <td className='trash-box'>
-                      <BsTrash
-                        cursor={"pointer"}
-                        onClick={() => handleRemoveCartItem(item?.cartId)}
-                      />
-                    </td>
-                  </tr>
+                    </div>
+                  </div>
                 ))}
-              </tbody>
-            </table>
 
-            <div className='row'>
-              <div className='col-md-6'>
-                <div className='cart-pg-btn'>
-                  <button className='btn btn-saawree'>Continue Shopping</button>
-                  <button
-                    className='btn btn-saawree'
-                    onClick={() => handleCartItemsUpdate()}
-                  >
-                    Update Cart
-                  </button>
-                  <button
-                    className='btn btn-saawree'
-                    onClick={() => handleClearCart()}
-                  >
-                    Clear Cart
-                  </button>
+
+              </div>
+              <div className="cart-wraper-for-desktop d-none d-md-block">
+                <table className='table table-bordered cart-btn'>
+                  <thead>
+                    <tr>
+                      <th scope='col'>Image</th>
+                      <th scope='col'>Product</th>
+                      <th scope='col'>Price</th>
+                      <th scope='col'>Quantity</th>
+                      <th scope='col'>Total</th>
+                      <th scope='col'>Remove</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {cartDetails?.items?.map((item) => (
+                      <tr key={item?.cartId}>
+                        <td>
+                          <div className='selected-prod-img'>
+                            <ProductImage
+                              url={`${process.env.NEXT_PUBLIC_APP_IMAGE_API_URL}/${item?.imagePath}`}
+                            />
+                          </div>
+                        </td>
+                        <td>
+                          <div className='selected-product'>
+                            <a href='#'>{item?.productName}</a>
+                          </div>
+                        </td>
+                        <td>{formatCurrency(item?.productPrice)}</td>
+                        <td>
+                          <div className='quantity'>
+                            <button
+                              type='button'
+                              className='minus'
+                              aria-label='Decrease'
+                              onClick={() => decreaseQuantity(item)}
+                            >
+                              <BsDash />
+                            </button>
+                            <input
+                              type='number'
+                              className='input-box'
+                              value={item?.quantity}
+                              min='1'
+                              max='10'
+                              onChange={(e) => {
+                                const data = parseInt(e.target.value);
+                                if (data < 10000) {
+                                  const value =
+                                    e.target.value === undefined
+                                      ? 0
+                                      : parseInt(e.target.value);
+                                  handleQtyUpdate(item, value);
+                                }
+                              }}
+                            />
+                            <button
+                              className='plus'
+                              aria-label='Increase'
+                              onClick={() => {
+                                increaseQuantity(item);
+                              }}
+                            >
+                              <BsPlus />
+                            </button>
+                          </div>
+                        </td>
+                        <td>{formatCurrency(item?.subTotal)}</td>
+                        <td className='trash-box'>
+                          <BsTrash
+                            cursor={"pointer"}
+                            onClick={() => handleRemoveCartItem(item?.cartId)}
+                          />
+                        </td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+              <div className='row'>
+                <div className='col-md-12'>
+                  <div className='cart-pg-btn'>
+                    <Link href={'/'} className='btn btn-saawree'>Continue Shopping</Link>
+                    <button
+                      className='btn btn-saawree'
+                      onClick={() => handleCartItemsUpdate()}
+                    >
+                      Update Cart
+                    </button>
+                    <button
+                      className='btn btn-saawree'
+                      onClick={() => handleClearCart()}
+                    >
+                      Clear Cart
+                    </button>
+                  </div>
                 </div>
               </div>
-              <div className='col-md-6'>
-                <div className='cart-total'>
-                  <h4>Cart Totals</h4>
-                  <table className='table table-bordered cart-btn2'>
-                    <tbody>
-                      <tr className='cart-subtotal'>
-                        <th>Subtotal</th>
-                        <td>
-                          <span className='amount'>
-                            <span id='bk-cart-subtotal-price'>
-                              <span className='money'>
-                                {formatCurrency(cartDetails?.orderSubTotal)}
-                              </span>
-                            </span>
-                          </span>
-                        </td>
-                      </tr>
-                      <tr className='cart-subtotal'>
-                        <th>Discount</th>
-                        <td>
-                          <span className='amount'>
-                            <span id='bk-cart-subtotal-price'>
-                              <span className='money'>
-                                {` - ${formatCurrency(
-                                  cartDetails?.totalDiscountedPrice
-                                )}`}
-                              </span>
-                            </span>
-                          </span>
-                        </td>
-                      </tr>
-                      <tr className='order-total'>
-                        <th>Grand Total</th>
-                        <td>
-                          <strong>
+              <div className="row justify-content-end mt-4">
+                <div className='col-md-6'>
+                  <div className='cart-total'>
+                    <h4>Cart Totals</h4>
+                    <table className='table table-bordered cart-btn2'>
+                      <tbody>
+                        <tr className='cart-subtotal'>
+                          <th>Subtotal</th>
+                          <td>
                             <span className='amount'>
                               <span id='bk-cart-subtotal-price'>
                                 <span className='money'>
-                                  {formatCurrency(
-                                    cartDetails?.orderTotalTaxInclusive
-                                  )}
+                                  {formatCurrency(cartDetails?.orderSubTotal)}
                                 </span>
                               </span>
                             </span>
-                          </strong>
-                        </td>
-                      </tr>
-                    </tbody>
-                  </table>
-                  <div className='proceed-to-checkout'>
-                    <Link href='/checkout' className='btn btn-saawree'>
-                      Proceed to Checkout
-                    </Link>
+                          </td>
+                        </tr>
+                        <tr className='cart-subtotal'>
+                          <th>Discount</th>
+                          <td>
+                            <span className='amount'>
+                              <span id='bk-cart-subtotal-price'>
+                                <span className='money'>
+                                  {` - ${formatCurrency(
+                                    cartDetails?.totalDiscountedPrice
+                                  )}`}
+                                </span>
+                              </span>
+                            </span>
+                          </td>
+                        </tr>
+                        <tr className='order-total'>
+                          <th>Grand Total</th>
+                          <td>
+                            <strong>
+                              <span className='amount'>
+                                <span id='bk-cart-subtotal-price'>
+                                  <span className='money'>
+                                    {formatCurrency(
+                                      cartDetails?.orderTotalTaxInclusive
+                                    )}
+                                  </span>
+                                </span>
+                              </span>
+                            </strong>
+                          </td>
+                        </tr>
+                      </tbody>
+                    </table>
+                    <div className='proceed-to-checkout'>
+                      <Link href='/checkout' className='btn btn-saawree'>
+                        Proceed to Checkout
+                      </Link>
+                    </div>
                   </div>
                 </div>
               </div>
             </div>
-          </div>
+          </>
         ) : (
           <div className='titlehome'>
             <div className='empty-cart text-center py-5'>

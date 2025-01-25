@@ -210,8 +210,8 @@ const AddressModal: React.FC<Props> = ({
               id='kt_modal_new_address_scroll'
             >
               <div className='d-flex flex-column mb-2 fv-row fv-plugins-icon-container '>
-                <label className='required fs-5 fw-semibold mb-2'>
-                  Address Line 1
+                <label className='fs-5 fw-semibold mb-2'>
+                  Address Line 1<span className="required">*</span>
                 </label>
 
                 <Field
@@ -246,8 +246,8 @@ const AddressModal: React.FC<Props> = ({
                 <div className='fv-plugins-message-container fv-plugins-message-container--enabled invalid-feedback' />
               </div>
               <div className='d-flex flex-column mb-2 fv-row fv-plugins-icon-container'>
-                <label className='required fs-5 fw-semibold mb-2'>
-                  Country
+                <label className='fs-5 fw-semibold mb-2'>
+                  Country<span className="required">*</span>
                 </label>
 
                 <Field
@@ -275,7 +275,7 @@ const AddressModal: React.FC<Props> = ({
               </div>
 
               <div className='d-flex flex-column mb-2 fv-row fv-plugins-icon-container'>
-                <label className='required fs-5 fw-semibold mb-2'>State</label>
+                <label className='fs-5 fw-semibold mb-2'>State<span className="required">*</span></label>
 
                 <Field
                   className='form-select-solid'
@@ -299,7 +299,7 @@ const AddressModal: React.FC<Props> = ({
 
               <div className='row g-9 mb-2'>
                 <div className='col-md-6 fv-row fv-plugins-icon-container'>
-                  <label className='required fs-5 fw-semibold mb-2'>City</label>
+                  <label className='fs-5 fw-semibold mb-2'>City<span className="required">*</span></label>
 
                   <Field
                     type={"text"}
@@ -345,8 +345,8 @@ const AddressModal: React.FC<Props> = ({
 
               <div className='row g-9 mb-2'>
                 <div className='col-md-6 fv-row fv-plugins-icon-container'>
-                  <label className='required fs-5 fw-semibold mb-2'>
-                    Phone Number
+                  <label className='fs-5 fw-semibold mb-2'>
+                    Phone Number<span className="required">*</span>
                   </label>
 
                   <Field
@@ -372,15 +372,15 @@ const AddressModal: React.FC<Props> = ({
           </Modal.Body>
           <Modal.Footer>
             <Button
-              variant='secondary'
+              className="btn btn-saawree-outline"
               //data-bs-dismiss="modal"
               onClick={closeModal}
             >
               Discard
             </Button>
             <Button
-              variant='primary'
               type='submit'
+              className="btn btn-saawree"
               disabled={
                 formik.isSubmitting || !formik.isValid || !formik.touched
               }
