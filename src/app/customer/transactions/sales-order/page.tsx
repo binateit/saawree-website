@@ -253,8 +253,6 @@ const page = () => {
         format(endDate, "yyyy-MM-dd"),
       ],
     });
-
-    updateSearchFilters();
     setShowDropDown("");
   };
 

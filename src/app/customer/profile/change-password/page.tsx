@@ -32,13 +32,13 @@ const page = () => {
       try {
         // let result: Result;
         let result: any = await changePassword(formValues);
-
-        if (result) {
+        if (result === "Your password has been changed.") {
           toast.success("Password changed successfully.");
           signOut();
           navigate.push("/auth/login");
         } else {
-          toast.error("Invalid old password");
+          // toast.error("Invalid old password");
+          formik.setFieldError("password", "Invalid old password");
         }
       } catch (ex) {
         console.error(ex);
