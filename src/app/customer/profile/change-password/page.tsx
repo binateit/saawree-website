@@ -121,8 +121,10 @@ const page = () => {
                   </div>
                 </div>
               </div>
-              <div className='text-right'>
-                <button
+            </form>
+          </div>
+          <div className="card-footer text-right">
+          <button
                   className='btn btn-saawree'
                   disabled={
                     formik.isSubmitting || !formik.isValid || !formik.touched
@@ -130,8 +132,6 @@ const page = () => {
                 >
                   Change Password
                 </button>
-              </div>
-            </form>
           </div>
         </div>
       </FormikProvider>
