@@ -227,7 +227,9 @@ export default function Home() {
                                     {/* <span className='mrp'>
                                     <s>₹200.00</s>
                                   </span> */}
-                                    <span className='seling'>₹150.00</span>
+                                    <span className='seling'>
+                                      {formatCurrency(prodData?.pp)}
+                                    </span>
                                   </div>
 
                                   <div

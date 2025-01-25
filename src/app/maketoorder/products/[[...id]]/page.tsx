@@ -137,6 +137,8 @@ const page = () => {
     }
   };
 
+  console.log(categoryList);
+
   const onLoadMore = () => {
     setPaginationFilters((draft) => {
       draft.pageNumber = paginationFilters?.pageNumber + 12;

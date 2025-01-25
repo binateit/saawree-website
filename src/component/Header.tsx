@@ -53,7 +53,7 @@ const Header = () => {
           {authStatus === "authenticated" ? (
             <div className='d-flex justify-content-end'>
               Welcome {session?.user?.firstName} -{" "}
-              <Link href={`/${session.user.userType}`} className='pl-2'>
+              <Link href={`/${session?.user?.userType}`} className='pl-2'>
                 <BsSpeedometer2 fontSize={18} /> Dashboard
               </Link>{" "}
               <div

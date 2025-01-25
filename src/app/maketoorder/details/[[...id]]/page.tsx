@@ -31,7 +31,7 @@ import "slick-carousel/slick/slick-theme.css";
 import Link from "next/link";
 
 const page = () => {
-  const { data: session } = useSession();
+  const { data: session, status: authStatus } = useSession();
   const router = useRouter();
   const { setCartCount, cartCount, setIsBuyNow } = useCartCount();
   const [visible, setVisible] = useState(false);
@@ -517,30 +517,31 @@ const page = () => {
                   </div>
                 )}
 
-                {session?.user && (
-                  <div className='action-btn-wrapper mt-10'>
-                    <button
-                      className='btn btn-saawree-outline'
-                      onClick={() => {
-                        handleAddToCart(false);
-                      }}
-                    >
-                      Add to cart
-                    </button>
-                    <div
-                      onClick={() => {
-                        handleAddToCart(true);
-                      }}
-                      className='btn btn-saawree'
-                    >
-                      Buy now
+                {authStatus === "authenticated" &&
+                  session?.user?.userType === "customer" && (
+                    <div className='action-btn-wrapper mt-10'>
+                      <button
+                        className='btn btn-saawree-outline'
+                        onClick={() => {
+                          handleAddToCart(false);
+                        }}
+                      >
+                        Add to cart
+                      </button>
+                      <div
+                        onClick={() => {
+                          handleAddToCart(true);
+                        }}
+                        className='btn btn-saawree'
+                      >
+                        Buy now
+                      </div>
+                      {/* <button className="btn btn-saawree-outline"><i className="bi bi-heart"></i></button>  */}
+                      <a href='#' className='whatsapp'>
+                        <img src='img/whats-aap.png' alt='' />
+                      </a>
                     </div>
-                    {/* <button className="btn btn-saawree-outline"><i className="bi bi-heart"></i></button>  */}
-                    <a href='#' className='whatsapp'>
-                      <img src='img/whats-aap.png' alt='' />
-                    </a>
-                  </div>
-                )}
+                  )}
               </div>
             </div>
           </div>
