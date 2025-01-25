@@ -1,29 +1,38 @@
 "use client";
-import { formatCurrency } from "@/core/helpers/helperFunctions";
-import { PaginationFilter } from "@/core/models/model";
-import { SaleOrderDto } from "@/core/models/saleOrderModel";
+import { dateOptions, formatCurrency } from "@/core/helpers/helperFunctions";
+import { Filter, PaginationFilter } from "@/core/models/model";
+import { FilterOption, SaleOrderDto } from "@/core/models/saleOrderModel";
 import {
   getPaymentStatus,
   getSaleOrdersOfCustomer,
   getSaleOrderStatus,
 } from "@/core/requests/saleOrderRequests";
 import { useQuery } from "@tanstack/react-query";
-import { formatDate } from "date-fns";
+import { format, formatDate } from "date-fns";
 import Link from "next/link";
 import { Column } from "primereact/column";
+import { toZonedTime } from "date-fns-tz";
 import {
   DataTable,
   DataTableStateEvent,
   SortOrder,
 } from "primereact/datatable";
 import React, { useState } from "react";
-import { ButtonGroup, Dropdown, DropdownButton } from "react-bootstrap";
 import { useImmer } from "use-immer";
+import CustomDateSelectModal from "@/core/component/modal/CustomDateSelectModal";
 
 const page = () => {
   const [globalFilterValue, setGlobalFilterValue] = useState<string>("");
   const [showDropDown, setShowDropDown] = useState("");
+  const [isModalOpen, setModalOpen] = useState(false);
+  const [filterOption, updateFilterOption] = useState<FilterOption>({
+    filterDates: undefined,
+    filterOrderStatusId: undefined,
+    filterPaymentStatusId: undefined,
+  });
+  const [filterQuery, setFilterQuery] = useState({});
 
+  const [isCustomDate, setIsCustomDate] = useState(false);
   const [paginationModel, setPaginationModel] = useImmer<PaginationFilter>({
     first: 0,
     pageNumber: 1,
@@ -55,6 +64,112 @@ const page = () => {
     refetchOnWindowFocus: false,
   });
 
+  const updateSearchFilters = () => {
+    let filters: Filter[] = [];
+
+    if (filterOption?.filterOrderStatusId != undefined) {
+      filters.push({
+        field: "SaleOrderStatusId",
+        operator: "eq",
+        value: Number(filterOption?.filterOrderStatusId),
+      });
+    }
+
+    if (filterOption?.filterPaymentStatusId != undefined) {
+      filters.push({
+        field: "PaymentStatusId",
+        operator: "eq",
+        value: Number(filterOption?.filterPaymentStatusId),
+      });
+    }
+
+    // if (filterOption?.filterDates != undefined) {
+    //   let orderDateFilters: Filter[] = [];
+    //   if (filterOption?.filterDates?.[0] !== undefined) {
+    //     const fromDate = toZonedTime(
+    //       new Date(filterOption?.filterDates?.[0] as Date),
+    //       "Asia/Kolkata"
+    //     );
+    //     orderDateFilters.push({
+    //       field: "orderDate",
+    //       operator: "gte",
+    //       value: format(fromDate, "yyyy-MM-dd 00:00:00"),
+    //     });
+    //   }
+
+    //   if (filterOption?.filterDates?.[1] === null) {
+    //     const toDate = toZonedTime(
+    //       new Date(filterOption.filterDates[0] as Date),
+    //       "Asia/Kolkata"
+    //     );
+
+    //     orderDateFilters.push({
+    //       field: "orderDate",
+    //       operator: "lte",
+    //       value: format(toDate, "yyyy-MM-dd 23:59:59"),
+    //     });
+    //   } else {
+    //     const toDate = toZonedTime(
+    //       new Date(filterOption.filterDates[1] as Date),
+    //       "Asia/Kolkata"
+    //     );
+
+    //     orderDateFilters.push({
+    //       field: "orderDate",
+    //       operator: "lte",
+    //       value: format(toDate, "yyyy-MM-dd 23:59:59"),
+    //     });
+    //   }
+
+    //   filters.push({
+    //     filters: orderDateFilters,
+    //     logic: "and",
+    //   });
+    // }
+
+    if (filters.length > 1) {
+      const newFilterQuery = {
+        ...filterQuery,
+        advancedFilter: {
+          filters: filters,
+          logic: "and",
+        },
+      };
+      setFilterQuery(newFilterQuery);
+    } else if (filters.length === 1) {
+      const newFilterQuery = {
+        ...filterQuery,
+        advancedFilter: filters[0],
+      };
+      setFilterQuery(newFilterQuery);
+    } else {
+      const newFilterQuery = {
+        ...filterQuery,
+        advancedFilter: undefined,
+      };
+      setFilterQuery(newFilterQuery);
+    }
+  };
+  // const handleDateChange = async (e: React.ChangeEvent<HTMLSelectElement>) => {
+  //   if (e.target.value === "custom") {
+  //     setIsCustomDate(true);
+  //     return;
+  //   } else {
+  //     setIsCustomDate(false);
+  //   }
+  //   const selectedDate = JSON.parse(e.target.value);
+
+  //   const startDate = toZonedTime(new Date(selectedDate.from), "Asia/Kolkata");
+  //   const endDate = toZonedTime(new Date(selectedDate.to), "Asia/Kolkata");
+  //   updateFilterOption({
+  //     ...filterOption,
+  //     filterDates: {
+  //       format(startDate, "yyyy-MM-dd"),
+  //      format(endDate, "yyyy-MM-dd"),
+  //     },
+  //   });
+  // };
+
   const onPageOrSortChange = (event: DataTableStateEvent) => {
     setPaginationModel((draft) => {
       draft.pageNumber =
@@ -78,6 +193,14 @@ const page = () => {
     })
   );
 
+  const openModal = () => {
+    setModalOpen(true);
+  };
+
+  const closeModal = () => {
+    setModalOpen(false);
+  };
+
   const leftContent = (
     <div className='paginaton-showing'>
       {`Showing ${
@@ -94,9 +217,33 @@ const page = () => {
     </div>
   );
 
+  const handleDateChange = async (dateValue: any) => {
+    if (dateValue === "custom") {
+      setIsCustomDate(true);
+      openModal();
+      return;
+    } else {
+      setIsCustomDate(false);
+      const selectedDate = dateValue;
+
+      const startDate = toZonedTime(
+        new Date(selectedDate.from),
+        "Asia/Kolkata"
+      );
+      const endDate = toZonedTime(new Date(selectedDate.to), "Asia/Kolkata");
+      updateFilterOption({
+        ...filterOption,
+        filterDates: [
+          format(startDate, "yyyy-MM-dd"),
+          format(endDate, "yyyy-MM-dd"),
+        ],
+      });
+      setShowDropDown("");
+    }
+  };
+
   return (
     <>
-      {showDropDown}
       <div className='card mb-2'>
         <div className='card-body'>
           <div className='row justify-content-between'>
@@ -115,55 +262,26 @@ const page = () => {
             </div>
             <div className='col-xl-7 col-lg-7 col-md-6 text-right'>
               <div
-                className='btn-group'
+                className='btn-group relative'
                 aria-label='Button group with nested dropdown'
               >
-                <div className='btn-group' role='group'>
-                  <button
-                    type='button'
-                    className='btn btn-saawree-outline dropdown-toggle'
-                    data-toggle='dropdown'
-                    aria-haspopup='true'
-                    aria-expanded='false'
-                  >
-                    By Date
-                  </button>
-                  <div className='dropdown-menu'>
-                    <a className='dropdown-item' href='#'>
-                      Last 7 Days
-                    </a>
-                    <a className='dropdown-item' href='#'>
-                      Last 15 Days
-                    </a>
-                    <a className='dropdown-item' href='#'>
-                      Last Month
-                    </a>
-                    <a
-                      className='dropdown-item cursor-pointer'
-                      href='#'
-                      data-toggle='modal'
-                      data-target='#dateSelector'
-                    >
-                      Custom
-                    </a>
-                  </div>
-                </div>
-
-                <div className='btn-group' role='group'>
+                <div className='btn-group d-flex flex-column'>
                   <div
                     className='btn btn-saawree-outline dropdown-toggle'
-                    // data-toggle='dropdown'
-                    // aria-haspopup='true'
-                    onClick={() => setShowDropDown("status")}
-                    // aria-expanded={showDropDown == "status" ? true : false}
+                    onClick={() => setShowDropDown("dates")}
                   >
-                    Status
+                    By Date
                   </div>
-                  <div className='dropdown-menu'>
-                    {showDropDown === "status" && (
+                  <div className='button-group-dropdown'>
+                    {showDropDown === "dates" && (
                       <>
-                        {statusList?.map((status) => (
-                          <div>{status.name}</div>
+                        {dateOptions?.map((date) => (
+                          <div
+                            className='dropdown-item'
+                            onClick={() => handleDateChange(date?.value)}
+                          >
+                            {date?.label}
+                          </div>
                         ))}
                       </>
                     )}
@@ -171,20 +289,61 @@ const page = () => {
                 </div>
 
                 <div className='btn-group' role='group'>
-                  <button
-                    type='button'
+                  <div
                     className='btn btn-saawree-outline dropdown-toggle'
-                    data-toggle='dropdown'
-                    aria-haspopup='true'
-                    aria-expanded='false'
-                    // onClick={() => setShowDropDown("payment-status")}
+                    onClick={() => setShowDropDown("status")}
+                  >
+                    Status
+                  </div>
+                  <div className='dropdown-menu'>
+                    {showDropDown === "status" && (
+                      <>
+                        {statusList?.map((status) => (
+                          <div
+                            onClick={() => {
+                              updateFilterOption({
+                                ...filterOption,
+                                filterOrderStatusId: status?.id,
+                              });
+                              updateSearchFilters();
+                              setShowDropDown("");
+                            }}
+                          >
+                            {status.name}
+                          </div>
+                        ))}
+                      </>
+                    )}
+                  </div>
+                </div>
+
+                <div className='btn-group' role='group'>
+                  <div
+                    className='btn btn-saawree-outline dropdown-toggle'
+                    onClick={() => setShowDropDown("payment-status")}
                   >
                     Payment Status
-                  </button>
+                  </div>
                   <div className='dropdown-menu'>
-                    {paymentStatusList?.map((paymentStatus) => (
-                      <div className='dropdown-item'>{paymentStatus.name}</div>
-                    ))}
+                    {showDropDown === "payment-status" && (
+                      <>
+                        {paymentStatusList?.map((paymentStatus) => (
+                          <div
+                            className='dropdown-item'
+                            onClick={() => {
+                              updateFilterOption({
+                                ...filterOption,
+                                filterOrderStatusId: paymentStatus?.id,
+                              });
+                              updateSearchFilters();
+                              setShowDropDown("");
+                            }}
+                          >
+                            {paymentStatus.name}
+                          </div>
+                        ))}
+                      </>
+                    )}
                   </div>
                 </div>
               </div>
@@ -244,8 +403,6 @@ const page = () => {
             <Column
               field='totalAmountReceived'
               header='Amount Received'
-              sortable
-              sortField='totalAmountReceived'
               body={(rowData) => formatCurrency(rowData?.totalAmountReceived)}
             />
             <Column
@@ -274,6 +431,11 @@ const page = () => {
           </DataTable>
         </div>
       </div>
+
+      <CustomDateSelectModal
+        isModalOpen={isModalOpen}
+        closeModal={closeModal}
+      />
     </>
   );
 };

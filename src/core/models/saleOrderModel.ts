@@ -133,7 +133,7 @@ export interface StatusList {
 }
 
 export interface FilterOption {
-  filterOrderStatus?: { id: number; name: string }[];
-  filterPaymentStatus?: { id: number; name: string }[];
-  filterDates?: Nullable<Date>[];
+  filterOrderStatusId?: number | undefined;
+  filterPaymentStatusId?: number | undefined;
+  filterDates?: any;
 }

@@ -140,7 +140,8 @@ const page = () => {
       modal: {
         escape: false,
         ondismiss: function () {
-          setCartCount(0);
+          // setCartCount(0);
+          queryClient.invalidateQueries({ queryKey: ["cartDetails"] });
         },
       },
     };
@@ -150,6 +151,7 @@ const page = () => {
 
     rzpay.on("payment.failed", (response: any) => {
       setCartCount(0);
+      queryClient.invalidateQueries({ queryKey: ["cartDetails"] });
     });
   };
   const queryClient = useQueryClient();

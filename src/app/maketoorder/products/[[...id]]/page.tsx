@@ -97,14 +97,7 @@ const page = () => {
   });
 
   useEffect(() => {
-    let mulitiFilter: any = [
-      {
-        id: Number(categoryId),
-        name: subCategoryName,
-        isParent: true,
-        hasChild: true,
-      },
-    ];
+    let mulitiFilter: any = [];
     categoryList?.map((t) =>
       mulitiFilter.push({
         id: t?.id,
@@ -193,6 +186,7 @@ const page = () => {
                   multiFilter={categoryFilterList}
                   onChange={handleCategoryChange}
                   selectedFilter={selectedFilters?.categoryIds || []}
+                  parentCategoryId={categoryId}
                 />
               </div>
             </div>

@@ -26,4 +26,96 @@ function urlExists(url: string, callback: (status: boolean) => void) {
   });
 }
 
-export { camelize, formatCurrency, formatDate, isNotEmpty, urlExists };
+const dateOptions = [
+  {
+    label: "Last 7 Days",
+    value: {
+      from: new Date().toISOString(),
+      to: new Date(new Date().setDate(new Date().getDate() - 7)).toISOString(),
+    },
+  },
+  {
+    label: "Last 15 Days",
+    value: {
+      from: new Date().toISOString(),
+      to: new Date(new Date().setDate(new Date().getDate() - 15)).toISOString(),
+    },
+  },
+  {
+    label: "This Month",
+    value: {
+      from: new Date(
+        new Date().getFullYear(),
+        new Date().getMonth(),
+        1
+      ).toISOString(),
+      to: new Date(
+        new Date().getFullYear(),
+        new Date().getMonth() + 1,
+        0
+      ).toISOString(),
+    },
+  },
+  // {
+  //   label: 'This Quarter',
+  //   value: getQuarterDateRange(new Date(), 'current'),
+  // },
+  // {
+  //   label: 'Previous Quarter',
+  //   value: getQuarterDateRange(new Date(), 'previous'),
+  // },
+  // {
+  //   label: "This Year",
+  //   value: {
+  //     from: (() => {
+  //       const now = new Date();
+  //       return new Date(
+  //         now.getMonth() < 3 ? now.getFullYear() - 1 : now.getFullYear(),
+  //         3,
+  //         1
+  //       ).toString();
+  //     })(),
+  //     to: (() => {
+  //       const now = new Date();
+  //       return new Date(
+  //         now.getMonth() < 3 ? now.getFullYear() : now.getFullYear() + 1,
+  //         2,
+  //         31
+  //       ).toISOString();
+  //     })(),
+  //   },
+  // },
+  // {
+  //   label: "Previous Year",
+  //   value: {
+  //     from: (() => {
+  //       const now = new Date();
+  //       return new Date(
+  //         now.getMonth() < 3 ? now.getFullYear() - 2 : now.getFullYear() - 1,
+  //         3,
+  //         1
+  //       ).toISOString();
+  //     })(),
+  //     to: (() => {
+  //       const now = new Date();
+  //       return new Date(
+  //         now.getMonth() < 3 ? now.getFullYear() - 1 : now.getFullYear(),
+  //         2,
+  //         31
+  //       ).toISOString();
+  //     })(),
+  //   },
+  // },
+  {
+    label: "Custom",
+    value: "custom",
+  },
+];
+export {
+  camelize,
+  formatCurrency,
+  formatDate,
+  isNotEmpty,
+  urlExists,
+  dateOptions,
+};

@@ -11,6 +11,7 @@ interface FilterProps {
   multiFilter?: any[];
   selectedFilter: number[];
   type: string;
+  parentCategoryId?: any;
 }
 
 const FilterSection = ({
@@ -21,8 +22,8 @@ const FilterSection = ({
   multiFilter,
   //   anonymous,
   type,
+  parentCategoryId,
 }: FilterProps) => {
-  console.log(multiFilter);
   return (
     <div className='card mb-3'>
       <div className='card-header'>
@@ -41,7 +42,25 @@ const FilterSection = ({
                 .map((cat) => (
                   <li className='list-group-item p-0' key={cat?.id}>
                     <div className='category-item d-flex justify-content-between list-group-item-action cursor-pointer'>
-                      {cat.name} <BsChevronRight />
+                      <div className='form-group'>
+                        <input
+                          type='checkbox'
+                          id={`${cat.name} - ${cat?.id}`}
+                          className='filter-chekbox'
+                          onChange={() => onChange(cat?.id)}
+                          checked={
+                            selectedFilter.includes(cat.id as number) ||
+                            cat?.parentCategoryId === Number(parentCategoryId)
+                          }
+                        />
+                        <label
+                          htmlFor={`${cat.name} - ${cat?.id}`}
+                          className='filter-label d-flex align-items-start'
+                        >
+                          {cat?.name}
+                        </label>
+                      </div>
+                      <BsChevronRight />
                     </div>
                     <div className='filters-inner'>
                       {multiFilter
@@ -53,9 +72,11 @@ const FilterSection = ({
                               id={`${subCat.name} - ${subCat?.id}`}
                               className='filter-chekbox'
                               onChange={() => onChange(subCat?.id)}
-                              checked={selectedFilter.includes(
-                                subCat.id as number
-                              )}
+                              checked={
+                                selectedFilter.includes(subCat.id as number) ||
+                                cat?.parentCategoryId ===
+                                  Number(parentCategoryId)
+                              }
                             />
                             <label
                               htmlFor={`${subCat.name} - ${subCat?.id}`}
