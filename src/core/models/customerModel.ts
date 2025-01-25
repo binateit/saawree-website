@@ -36,6 +36,9 @@ export type EditCustomerProfile = {
   emailAddress: string;
   website: string;
   whatsappNumber: string;
+  faxNumber: string;
+  printName: string;
+  contactPerson: string;
   dateOfBirth: string;
   dateOfAnniversary: string;
 };

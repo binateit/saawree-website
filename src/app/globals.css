@@ -1123,6 +1123,7 @@ ul.sub-menu {
     z-index: 1;
     background-color: white;
     border: 1px solid #ccc;
+ 
 }
 
 .button-group-dropdown>.dropdown-item{
@@ -3722,6 +3723,7 @@ table>tbody>tr>th {
 
 .common-seacrch-box>.form-control {
     border-radius: .25rem;
+    width: 300px;
 }
 
 .common-seacrch-box>.btn {

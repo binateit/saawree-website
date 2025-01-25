@@ -23,6 +23,7 @@ const ProfileDetails = () => {
     emailAddress: Yup.string(),
     website: Yup.string(),
     dateOfBirth: Yup.string(),
+    faxNumber: Yup.string(),
     dateOfAnniversary: Yup.string(),
   });
   const sessionData = session?.user as userToken;
@@ -47,6 +48,9 @@ const ProfileDetails = () => {
       website: customerProfile?.website || undefined,
       whatsappNumber: customerProfile?.whatsappNumber || undefined,
       dateOfBirth: customerProfile?.dateOfBirth || undefined,
+      faxNumber: customerProfile?.faxNumber || undefined,
+      printName: customerProfile?.printName || undefined,
+      contactPerson: customerProfile?.contactPerson || undefined,
       dateOfAnniversary: customerProfile?.dateOfAnniversary || undefined,
     },
     validationSchema: editProfileSchema,
@@ -62,8 +66,15 @@ const ProfileDetails = () => {
           mobileNumber: formValues.mobileNumber as string,
           emailAddress: formValues.emailAddress as string,
           website: formValues.website as string,
+          faxNumber: formValues?.faxNumber as string,
           whatsappNumber: formValues.whatsappNumber as string,
           dateOfBirth: formValues.dateOfBirth as string,
+          printName: (formValues?.firstName +
+            " " +
+            formValues?.lastName) as string,
+          contactPerson: (formValues?.firstName +
+            " " +
+            formValues?.lastName) as string,
           dateOfAnniversary: formValues.dateOfAnniversary as string,
         };
         let result;
@@ -227,7 +238,6 @@ const ProfileDetails = () => {
               noValidate
             >
               <div className='card-body'>
-
                 <div className='form-group'>
                   <div className='row'>
                     <div className='col-xl-6 col-lg-6 col-md-6 mb-3'>
@@ -289,6 +299,7 @@ const ProfileDetails = () => {
                         placeholder='E-mail Address'
                         {...formik.getFieldProps("emailAddress")}
                         name='emailAddress'
+                        disabled
                       />
                     </div>
                     <div className='col-xl-6 col-lg-6 col-md-6 mb-3'>
@@ -340,11 +351,11 @@ const ProfileDetails = () => {
                           className='form-control'
                           value={
                             formik.values.dateOfBirth &&
-                              !isNaN(
-                                Date.parse(
-                                  formik.values.dateOfBirth as unknown as string
-                                )
+                            !isNaN(
+                              Date.parse(
+                                formik.values.dateOfBirth as unknown as string
                               )
+                            )
                               ? new Date(formik.values.dateOfBirth)
                               : null
                           }
@@ -359,15 +370,14 @@ const ProfileDetails = () => {
                           name='dateOfAnniversary'
                           placeholder='Date of Anniversary'
                           className='form-control'
-
                           value={
                             formik.values.dateOfAnniversary &&
-                              !isNaN(
-                                Date.parse(
-                                  formik.values
-                                    .dateOfAnniversary as unknown as string
-                                )
+                            !isNaN(
+                              Date.parse(
+                                formik.values
+                                  .dateOfAnniversary as unknown as string
                               )
+                            )
                               ? new Date(formik.values.dateOfAnniversary)
                               : null
                           }
@@ -376,11 +386,9 @@ const ProfileDetails = () => {
                       </div>
                     </div>
                   </div>
-
                 </div>
-
               </div>
-              <div className="card-footer text-right">
+              <div className='card-footer text-right'>
                 <button
                   className='btn btn-saawree close-edit-form mr-3'
                   onClick={() => setEditMode(false)}
@@ -390,11 +398,7 @@ const ProfileDetails = () => {
                 <button
                   type='submit'
                   className='btn btn-saawree close-edit-form'
-                  disabled={
-                    formik.isSubmitting ||
-                    !formik.isValid ||
-                    !formik.touched
-                  }
+                  disabled={formik.isSubmitting || !formik.isValid}
                 >
                   <span className='indicator-label'>Update</span>
                   {formik.isSubmitting && (

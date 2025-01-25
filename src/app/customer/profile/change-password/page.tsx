@@ -37,7 +37,6 @@ const page = () => {
           signOut();
           navigate.push("/auth/login");
         } else {
-          // toast.error("Invalid old password");
           formik.setFieldError("password", "Invalid old password");
         }
       } catch (ex) {
@@ -123,15 +122,15 @@ const page = () => {
               </div>
             </form>
           </div>
-          <div className="card-footer text-right">
-          <button
-                  className='btn btn-saawree'
-                  disabled={
-                    formik.isSubmitting || !formik.isValid || !formik.touched
-                  }
-                >
-                  Change Password
-                </button>
+          <div className='card-footer text-right'>
+            <button
+              className='btn btn-saawree'
+              disabled={
+                formik.isSubmitting || !formik.isValid || !formik.touched
+              }
+            >
+              Change Password
+            </button>
           </div>
         </div>
       </FormikProvider>
