@@ -18,6 +18,7 @@ const CustomDateSelectModal: FC<Props> = ({
 
   const searchWithCustomDates = () => {
     handleCustomDateChange(customDate);
+    updateSearchFilters();
     closeModal();
   };
 

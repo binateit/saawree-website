@@ -32,13 +32,12 @@ const page = () => {
       try {
         // let result: Result;
         let result: any = await changePassword(formValues);
-
-        if (result) {
+        if (result === "Your password has been changed.") {
           toast.success("Password changed successfully.");
           signOut();
           navigate.push("/auth/login");
         } else {
-          toast.error("Invalid old password");
+          formik.setFieldError("password", "Invalid old password");
         }
       } catch (ex) {
         console.error(ex);
@@ -123,15 +122,15 @@ const page = () => {
               </div>
             </form>
           </div>
-          <div className="card-footer text-right">
-          <button
-                  className='btn btn-saawree'
-                  disabled={
-                    formik.isSubmitting || !formik.isValid || !formik.touched
-                  }
-                >
-                  Change Password
-                </button>
+          <div className='card-footer text-right'>
+            <button
+              className='btn btn-saawree'
+              disabled={
+                formik.isSubmitting || !formik.isValid || !formik.touched
+              }
+            >
+              Change Password
+            </button>
           </div>
         </div>
       </FormikProvider>

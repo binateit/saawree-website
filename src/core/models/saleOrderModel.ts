@@ -133,7 +133,7 @@ export interface StatusList {
 }
 
 export interface FilterOption {
-  filterOrderStatusId?: number | undefined;
-  filterPaymentStatusId?: number | undefined;
+  filterOrderStatusId?: number;
+  filterPaymentStatusId?: number;
   filterDates?: any;
 }

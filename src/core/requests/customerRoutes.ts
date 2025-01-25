@@ -84,8 +84,8 @@ const createCustomerAddress = (
   );
 };
 
-const changePassword = (cp: ChangePassword): Promise<Result> => {
-  return axiosInstance
+const changePassword = async (cp: ChangePassword): Promise<Result> => {
+  return await axiosInstance
     .put(`${CHANGE_PASSWORD_URL}`, {
       password: cp.password,
       newPassword: cp.newPassword,

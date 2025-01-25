@@ -200,6 +200,22 @@ const page = () => {
     setModalOpen(false);
   };
 
+  const rendorHeader = () => (
+    <div className='dashboard-common-search'>
+      <div className='common-seacrch-box d-flex'>
+        <input
+          type='text'
+          className='form-control'
+          placeholder='Search'
+          value={globalFilterValue}
+          onChange={(e) => setGlobalFilterValue(e.target.value)}
+        />
+      </div>
+    </div>
+  );
+
+  const header = rendorHeader();
+
   const leftContent = (
     <div className='paginaton-showing'>
       {`Showing ${
@@ -253,123 +269,14 @@ const page = () => {
         format(endDate, "yyyy-MM-dd"),
       ],
     });
-
-    updateSearchFilters();
     setShowDropDown("");
   };
 
-  console.log(filterQuery);
   return (
     <>
       <div className='card mb-2'>
         <div className='card-body'>
-          <div className='row justify-content-between'>
-            <div className='col-xl-5 col-lg-5 col-md-6 mb-3 mb-md-0'>
-              <div className='dashboard-common-search'>
-                <div className='common-seacrch-box d-flex'>
-                  <input
-                    type='text'
-                    className='form-control'
-                    placeholder='Search'
-                    value={globalFilterValue}
-                    onChange={(e) => setGlobalFilterValue(e.target.value)}
-                  />
-                </div>
-              </div>
-            </div>
-            <div className='col-xl-7 col-lg-7 col-md-6 text-right'>
-              <div
-                className='btn-group relative'
-                aria-label='Button group with nested dropdown'
-              >
-                <div className='btn-group d-flex flex-column'>
-                  <div
-                    className='btn btn-saawree-outline dropdown-toggle'
-                    onClick={() => setShowDropDown("dates")}
-                  >
-                    By Date
-                  </div>
-                  <div className='button-group-dropdown'>
-                    {showDropDown === "dates" && (
-                      <>
-                        {dateOptions?.map((date) => (
-                          <div
-                            className='dropdown-item'
-                            onClick={() => {
-                              handleDateChange(date?.value);
-                              updateSearchFilters();
-                              setShowDropDown("");
-                            }}
-                          >
-                            {date?.label}
-                          </div>
-                        ))}
-                      </>
-                    )}
-                  </div>
-                </div>
-
-                <div className='btn-group' role='group'>
-                  <div
-                    className='btn btn-saawree-outline dropdown-toggle'
-                    onClick={() => setShowDropDown("status")}
-                  >
-                    Status
-                  </div>
-                  <div className='dropdown-menu'>
-                    {showDropDown === "status" && (
-                      <>
-                        {statusList?.map((status) => (
-                          <div
-                            onClick={() => {
-                              updateFilterOption({
-                                ...filterOption,
-                                filterOrderStatusId: status?.id,
-                              });
-                              updateSearchFilters();
-                              setShowDropDown("");
-                            }}
-                          >
-                            {status.name}
-                          </div>
-                        ))}
-                      </>
-                    )}
-                  </div>
-                </div>
-
-                <div className='btn-group' role='group'>
-                  <div
-                    className='btn btn-saawree-outline dropdown-toggle'
-                    onClick={() => setShowDropDown("payment-status")}
-                  >
-                    Payment Status
-                  </div>
-                  <div className='dropdown-menu'>
-                    {showDropDown === "payment-status" && (
-                      <>
-                        {paymentStatusList?.map((paymentStatus) => (
-                          <div
-                            className='dropdown-item'
-                            onClick={() => {
-                              updateFilterOption({
-                                ...filterOption,
-                                filterOrderStatusId: paymentStatus?.id,
-                              });
-                              updateSearchFilters();
-                              setShowDropDown("");
-                            }}
-                          >
-                            {paymentStatus.name}
-                          </div>
-                        ))}
-                      </>
-                    )}
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
+          <div className='row justify-content-between'>{/* filters */}</div>
         </div>
       </div>
 
@@ -384,6 +291,7 @@ const page = () => {
             lazy
             loading={isLoading}
             showGridlines
+            header={header}
             dataKey='id'
             responsiveLayout='stack'
             rows={paginationModel.pageSize}
