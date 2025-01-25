@@ -82,50 +82,49 @@ const page = () => {
         value: Number(filterOption?.filterPaymentStatusId),
       });
     }
+    if (filterOption?.filterDates != undefined) {
+      let orderDateFilters: Filter[] = [];
+      if (filterOption?.filterDates?.[0] !== undefined) {
+        const fromDate = toZonedTime(
+          new Date(filterOption?.filterDates?.[0] as Date),
+          "Asia/Kolkata"
+        );
+        orderDateFilters.push({
+          field: "orderDate",
+          operator: "gte",
+          value: format(fromDate, "yyyy-MM-dd 00:00:00"),
+        });
+      }
 
-    // if (filterOption?.filterDates != undefined) {
-    //   let orderDateFilters: Filter[] = [];
-    //   if (filterOption?.filterDates?.[0] !== undefined) {
-    //     const fromDate = toZonedTime(
-    //       new Date(filterOption?.filterDates?.[0] as Date),
-    //       "Asia/Kolkata"
-    //     );
-    //     orderDateFilters.push({
-    //       field: "orderDate",
-    //       operator: "gte",
-    //       value: format(fromDate, "yyyy-MM-dd 00:00:00"),
-    //     });
-    //   }
+      if (filterOption?.filterDates?.[1] === null) {
+        const toDate = toZonedTime(
+          new Date(filterOption.filterDates[0] as Date),
+          "Asia/Kolkata"
+        );
 
-    //   if (filterOption?.filterDates?.[1] === null) {
-    //     const toDate = toZonedTime(
-    //       new Date(filterOption.filterDates[0] as Date),
-    //       "Asia/Kolkata"
-    //     );
+        orderDateFilters.push({
+          field: "orderDate",
+          operator: "lte",
+          value: format(toDate, "yyyy-MM-dd 23:59:59"),
+        });
+      } else {
+        const toDate = toZonedTime(
+          new Date(filterOption.filterDates[1] as Date),
+          "Asia/Kolkata"
+        );
 
-    //     orderDateFilters.push({
-    //       field: "orderDate",
-    //       operator: "lte",
-    //       value: format(toDate, "yyyy-MM-dd 23:59:59"),
-    //     });
-    //   } else {
-    //     const toDate = toZonedTime(
-    //       new Date(filterOption.filterDates[1] as Date),
-    //       "Asia/Kolkata"
-    //     );
+        orderDateFilters.push({
+          field: "orderDate",
+          operator: "lte",
+          value: format(toDate, "yyyy-MM-dd 23:59:59"),
+        });
+      }
 
-    //     orderDateFilters.push({
-    //       field: "orderDate",
-    //       operator: "lte",
-    //       value: format(toDate, "yyyy-MM-dd 23:59:59"),
-    //     });
-    //   }
-
-    //   filters.push({
-    //     filters: orderDateFilters,
-    //     logic: "and",
-    //   });
-    // }
+      filters.push({
+        filters: orderDateFilters,
+        logic: "and",
+      });
+    }
 
     if (filters.length > 1) {
       const newFilterQuery = {
@@ -242,6 +241,24 @@ const page = () => {
     }
   };
 
+  const handleCustomDateChange = (dates: any) => {
+    // if (dates.length !== 2) return;
+
+    const startDate = toZonedTime(dates.from, "Asia/Kolkata");
+    const endDate = toZonedTime(dates.end, "Asia/Kolkata");
+    updateFilterOption({
+      ...filterOption,
+      filterDates: [
+        format(startDate, "yyyy-MM-dd"),
+        format(endDate, "yyyy-MM-dd"),
+      ],
+    });
+
+    updateSearchFilters();
+    setShowDropDown("");
+  };
+
+  console.log(filterQuery);
   return (
     <>
       <div className='card mb-2'>
@@ -278,7 +295,11 @@ const page = () => {
                         {dateOptions?.map((date) => (
                           <div
                             className='dropdown-item'
-                            onClick={() => handleDateChange(date?.value)}
+                            onClick={() => {
+                              handleDateChange(date?.value);
+                              updateSearchFilters();
+                              setShowDropDown("");
+                            }}
                           >
                             {date?.label}
                           </div>
@@ -435,6 +456,8 @@ const page = () => {
       <CustomDateSelectModal
         isModalOpen={isModalOpen}
         closeModal={closeModal}
+        handleCustomDateChange={handleCustomDateChange}
+        updateSearchFilters={updateSearchFilters}
       />
     </>
   );

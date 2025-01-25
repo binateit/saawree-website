@@ -5,9 +5,21 @@ import { Button, Modal } from "react-bootstrap";
 interface Props {
   isModalOpen: boolean;
   closeModal: () => void;
+  handleCustomDateChange: (dates: any) => void;
+  updateSearchFilters: () => void;
 }
-const CustomDateSelectModal: FC<Props> = ({ isModalOpen, closeModal }) => {
+const CustomDateSelectModal: FC<Props> = ({
+  isModalOpen,
+  closeModal,
+  handleCustomDateChange,
+  updateSearchFilters,
+}) => {
   const [customDate, setCustomDate] = useState({ from: "", end: "" });
+
+  const searchWithCustomDates = () => {
+    handleCustomDateChange(customDate);
+    closeModal();
+  };
 
   return (
     <div className='modal-dialog modal-dialog-centered' role='document'>
@@ -51,7 +63,11 @@ const CustomDateSelectModal: FC<Props> = ({ isModalOpen, closeModal }) => {
         </Modal.Body>
 
         <Modal.Footer>
-          <button type='button' className='btn btn-saawree'>
+          <button
+            type='button'
+            className='btn btn-saawree'
+            onClick={() => searchWithCustomDates()}
+          >
             Search
           </button>
         </Modal.Footer>
