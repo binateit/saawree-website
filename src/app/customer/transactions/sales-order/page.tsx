@@ -20,6 +20,7 @@ import {
 import React, { useState } from "react";
 import { useImmer } from "use-immer";
 import CustomDateSelectModal from "@/core/component/modal/CustomDateSelectModal";
+import { BsChevronDown, BsChevronUp } from "react-icons/bs";
 
 const page = () => {
   const [globalFilterValue, setGlobalFilterValue] = useState<string>("");
@@ -33,6 +34,7 @@ const page = () => {
   const [filterQuery, setFilterQuery] = useState({});
 
   const [isCustomDate, setIsCustomDate] = useState(false);
+  const [isFilter, setIsFilter] = useState<boolean>();
   const [paginationModel, setPaginationModel] = useImmer<PaginationFilter>({
     first: 0,
     pageNumber: 1,
@@ -218,16 +220,15 @@ const page = () => {
 
   const leftContent = (
     <div className='paginaton-showing'>
-      {`Showing ${
-        (saleOrderResponse?.pagination?.totalCount as number) > 0
-          ? (paginationModel.first as number) + 1
-          : 0
-      } to 
+      {`Showing ${(saleOrderResponse?.pagination?.totalCount as number) > 0
+        ? (paginationModel.first as number) + 1
+        : 0
+        } to 
             ${Math.min(
-              (saleOrderResponse?.pagination?.currentPage as number) *
-                (saleOrderResponse?.pagination?.pageSize as number),
-              saleOrderResponse?.pagination?.totalCount as number
-            )} 
+          (saleOrderResponse?.pagination?.currentPage as number) *
+          (saleOrderResponse?.pagination?.pageSize as number),
+          saleOrderResponse?.pagination?.totalCount as number
+        )} 
             out of ${saleOrderResponse?.pagination?.totalCount} Records`}
     </div>
   );
@@ -275,9 +276,54 @@ const page = () => {
   return (
     <>
       <div className='card mb-2'>
-        <div className='card-body'>
-          <div className='row justify-content-between'>{/* filters */}</div>
+        <div className="card-header bg-white">
+          <div className='d-flex justify-content-between w-100 align-items-center'>
+            <h5 className="mb-0">Filter</h5>
+            {!isFilter ? <BsChevronDown fontSize={20} onClick={() => { setIsFilter(!isFilter) }} /> : <BsChevronUp fontSize={20} onClick={() => { setIsFilter(!isFilter) }} />}
+
+          </div>
         </div>
+        {isFilter ?
+          <div className='card-body'>
+            <form>
+              <div className="row">
+                <div className="col-md-4">
+                  <div className="form-group">
+                    <label htmlFor="date">By Date</label>
+                    <input type="date" className="form-control" />
+                  </div>
+                </div>
+                <div className="col-md-4">
+                  <div className="form-group">
+                    <label htmlFor="all-status">All Status</label>
+                    <div className="search-category-dropdown">
+                      <select className="form-control">
+                        <option>Status 01</option>
+                        <option>Status 02</option>
+                        <option>Status 03</option>
+                      </select>
+                      <BsChevronDown className="drop-down-icon"/>
+                    </div>
+                  </div>
+                </div>
+                <div className="col-md-4">
+                  <div className="form-group">
+                    <label htmlFor="all-payment-status">All Payment Status</label>
+                    <div className="search-category-dropdown">
+                      <select className="form-control">
+                        <option>Payment Status 01</option>
+                        <option>Payment Status 02</option>
+                        <option>Payment Status 03</option>
+                      </select>
+                      <BsChevronDown className="drop-down-icon"/>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+            </form>
+          </div>
+          : ''}
       </div>
 
       <div className='card shadow'>

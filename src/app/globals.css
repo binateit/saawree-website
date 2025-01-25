@@ -112,8 +112,9 @@ header.nav-up {
     position: relative;
     cursor: pointer;
 }
-.cart-widget:hover{
-    color:#aa7c5b;
+
+.cart-widget:hover {
+    color: #aa7c5b;
 }
 
 .header-icons i {
@@ -578,7 +579,7 @@ ul.sub-menu {
     position: relative;
 }
 
-.kada-collections{
+.kada-collections {
     margin-bottom: 5px;
 }
 
@@ -622,7 +623,8 @@ ul.sub-menu {
     color: #fff;
 } */
 
-.new-arrival-box .mrp, .new-arrival-box .seling{
+.new-arrival-box .mrp,
+.new-arrival-box .seling {
     font-size: calc(14px + 2*(100vw - 320px) / 1600);
 }
 
@@ -642,8 +644,8 @@ ul.sub-menu {
     display: inline-block;
 }
 
-.products-list-wrap>a{
-    color:#000;
+.products-list-wrap>a {
+    color: #000;
 }
 
 
@@ -674,7 +676,7 @@ ul.sub-menu {
     background: rgb(173 124 88);
 }
 
-.new-arrival-box>.prod-name1{
+.new-arrival-box>.prod-name1 {
     font-size: calc(14px + 2*(100vw - 320px) / 1600);
 }
 
@@ -818,7 +820,7 @@ ul.sub-menu {
     position: relative;
     display: inline-block;
     transition: 0.3s;
-    border-radius:0px;
+    border-radius: 0px;
     padding: .3rem 1rem;
     font-size: 14px;
 }
@@ -990,6 +992,7 @@ ul.sub-menu {
     visibility: visible;
     opacity: 1;
 }
+
 .act-btn {
     height: 35px;
     width: 35px;
@@ -1117,16 +1120,16 @@ ul.sub-menu {
     cursor: pointer;
 }
 
-.button-group-dropdown {    
+.button-group-dropdown {
     position: absolute;
     top: 38px;
     z-index: 1;
     background-color: white;
     border: 1px solid #ccc;
- 
+
 }
 
-.button-group-dropdown>.dropdown-item{
+.button-group-dropdown>.dropdown-item {
     cursor: pointer;
     text-align: left;
     padding: .25rem 0.8rem;
@@ -1335,7 +1338,7 @@ ul.sub-menu {
 
 .page-title-box {
     /* background-image: url(../img/pendent-title-img.jpg); */
-    background-color:#f8f8f8;
+    background-color: #f8f8f8;
     height: 200px;
     line-height: 170px;
     display: flex;
@@ -1911,40 +1914,43 @@ label .span {
     transition: all 0.3s;
 } */
 
-.cart-item-mobile:last-child{
-    margin-bottom: 1rem!important;
+.cart-item-mobile:last-child {
+    margin-bottom: 1rem !important;
 }
 
-.cart-item-mobile .quantity .input-box{
+.cart-item-mobile .quantity .input-box {
     padding: 0px 10px;
     font-size: 12px;
 }
 
-.cart-item-mobile .btn{
+.cart-item-mobile .btn {
     font-size: 14px;
     padding: .2rem 0.8rem;
 }
 
-.fit-cover{
-    width:100%;
+.fit-cover {
+    width: 100%;
     height: 100%;
     object-fit: cover;
 }
 
-@media(max-width:450px){
-    .cart-pg-btn{
+@media(max-width:450px) {
+    .cart-pg-btn {
         flex-wrap: wrap;
     }
-    .cart-pg-btn .btn:nth-child(1){
-        width:100%!important;
-        order:3;
-        margin-top:10px;
+
+    .cart-pg-btn .btn:nth-child(1) {
+        width: 100% !important;
+        order: 3;
+        margin-top: 10px;
     }
-    .cart-pg-btn .btn:nth-child(2){
-       order:1
+
+    .cart-pg-btn .btn:nth-child(2) {
+        order: 1
     }
-    .cart-pg-btn .btn:nth-child(3){
-        order:2
+
+    .cart-pg-btn .btn:nth-child(3) {
+        order: 2
     }
 }
 
@@ -2209,6 +2215,7 @@ label .span {
     opacity: 1;
     width: 100% !important;
 }
+
 /*---------------(Login Page)-------*/
 
 .login-form {
@@ -3452,7 +3459,7 @@ label .span {
 .btn-saawree:hover {
     background-color: #fff;
     color: #aa7c5b;
-    border-color:#aa7c5b;
+    border-color: #aa7c5b;
 }
 
 .btn-saawree-outline {
@@ -4164,7 +4171,7 @@ select {
     font-size: 13px;
 }
 
-.contact-wraper a:hover{
+.contact-wraper a:hover {
     color: #aa7c5b;
 }
 
@@ -4312,9 +4319,9 @@ select {
 }
 
 .slick-list {
-    margin: 0 -10px!important;
+    margin: 0 -10px !important;
     /* margin: 0 5px!important; */
-    padding-bottom: 1px!important;
+    padding-bottom: 1px !important;
 }
 
 
@@ -4344,13 +4351,13 @@ select {
     border-color: #ccc;
 }
 
-.p-galleria-item-nav{
+.p-galleria-item-nav {
     transform: translateY(-50%);
 }
 
 /*-----Prime React Accordion-------*/
-.text-dark.p-accordion-header>a{
-    background-color: rgba(0,0,0,.03);
+.text-dark.p-accordion-header>a {
+    background-color: rgba(0, 0, 0, .03);
     color: #303030;
     display: block;
     text-decoration: none;
@@ -4365,64 +4372,67 @@ select {
         max-width: 1400px;
     }
 }
+
 /*----------Additional css for Container end-----------*/
 
 
 
 /*------Empty List CSS-----------*/
 
-.empty-list{
-    margin-top:150px;
+.empty-list {
+    margin-top: 150px;
 }
 
-.empty-list img{
+.empty-list img {
     opacity: 0.4;
     max-width: 150px;
     width: 100%;
 }
 
-.empty-list h4{
+.empty-list h4 {
     font-weight: 600;
 }
 
-.empty-list p{
+.empty-list p {
     font-size: 18px;
     margin-bottom: 0px;
-    color:#6c757d;
+    color: #6c757d;
 }
 
 /*------Empty List CSS End-----------*/
 
 
 
-.p-paginator .p-paginator-pages .p-paginator-page.p-highlight{
+.p-paginator .p-paginator-pages .p-paginator-page.p-highlight {
     background: rgb(170 124 91 / 20%);
     border-color: rgb(170 124 91 / 20%);
     color: #aa7c5b;
 }
 
-.p-paginator .p-paginator-pages .p-paginator-page{
+.p-paginator .p-paginator-pages .p-paginator-page {
     min-width: 2rem;
     height: 2rem;
 }
 
 
-.p-datatable .p-sortable-column.p-highlight .p-sortable-column-icon{
-    color: #aa7c5b!important;
+.p-datatable .p-sortable-column.p-highlight .p-sortable-column-icon {
+    color: #aa7c5b !important;
 }
 
-.p-datatable .p-sortable-column.p-highlight{
-    background: rgb(170 124 91 / 20%)!important;
-    color: #aa7c5b!important;
+.p-datatable .p-sortable-column.p-highlight {
+    background: rgb(170 124 91 / 20%) !important;
+    color: #aa7c5b !important;
 }
 
-.p-column-header-content .p-column-title{
+.p-column-header-content .p-column-title {
     font-size: 13px;
 }
-.p-column-header-content span svg{
-    height:10px;
+
+.p-column-header-content span svg {
+    height: 10px;
 }
-.p-calendar-wraper>.p-calendar{
+
+.p-calendar-wraper>.p-calendar {
     width: 100%;
 }
 
@@ -4430,8 +4440,15 @@ select {
 
 /*-------- panel Filter Css Start-------*/
 
-.flex-wrap{
-    flex-wrap: wrap!important;
+.flex-wrap {
+    flex-wrap: wrap !important;
 }
 
 /*-------- panel Filter Css Start-------*/
+.search-category-dropdown>.drop-down-icon {
+    position: absolute;
+    top: 45%;
+    transform: translateY(-50%);
+    right: 12px;
+    opacity: 0.8;
+}
