@@ -31,19 +31,21 @@ const page = () => {
       setSubmitting(true);
       try {
         // let result: Result;
-        let result: any = await changePassword(formValues);
-        if (result === "Your password has been changed.") {
+        let result = await changePassword(formValues);
+        if (result.succeeded) {
           toast.success("Password changed successfully.");
           signOut();
           navigate.push("/auth/login");
         } else {
-          formik.setFieldError("password", "Invalid old password");
+          formik.setFieldError("password", "Old password is not correct");
         }
       } catch (ex) {
         console.error(ex);
       }
     },
   });
+
+  console.log(formik?.errors);
   return (
     <>
       <FormikProvider value={formik}>
@@ -51,8 +53,8 @@ const page = () => {
           <div className='card-header bg-white'>
             <h5>Change Password</h5>
           </div>
-          <div className='card-body'>
-            <form className='password-change' onSubmit={formik.handleSubmit}>
+          <form className='password-change' onSubmit={formik.handleSubmit}>
+            <div className='card-body'>
               <div className='form-group'>
                 <div className='row'>
                   <div className='col-md-12'>
@@ -120,18 +122,19 @@ const page = () => {
                   </div>
                 </div>
               </div>
-            </form>
-          </div>
-          <div className='card-footer text-right'>
-            <button
-              className='btn btn-saawree'
-              disabled={
-                formik.isSubmitting || !formik.isValid || !formik.touched
-              }
-            >
-              Change Password
-            </button>
-          </div>
+            </div>
+            <div className='card-footer text-right'>
+              <button
+                type='submit'
+                className='btn btn-saawree'
+                // disabled={
+                //   formik.isSubmitting || !formik.isValid || !formik.touched
+                // }
+              >
+                Change Password
+              </button>
+            </div>
+          </form>
         </div>
       </FormikProvider>
     </>
