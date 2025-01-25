@@ -4363,6 +4363,11 @@ select {
         max-width: 1400px;
     }
 }
+/*----------Additional css for Container end-----------*/
+
+
+
+/*------Empty List CSS-----------*/
 
 .empty-list{
     margin-top:150px;
@@ -4383,6 +4388,10 @@ select {
     margin-bottom: 0px;
     color:#6c757d;
 }
+
+/*------Empty List CSS End-----------*/
+
+
 
 .p-paginator .p-paginator-pages .p-paginator-page.p-highlight{
     background: rgb(170 124 91 / 20%);
@@ -4415,3 +4424,12 @@ select {
     width: 100%;
 }
 
+/*------Prime React Data Table Start-----------*/
+
+/*-------- panel Filter Css Start-------*/
+
+.flex-wrap{
+    flex-wrap: wrap!important;
+}
+
+/*-------- panel Filter Css Start-------*/
