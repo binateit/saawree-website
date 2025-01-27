@@ -264,7 +264,7 @@ const page = () => {
         <div className="card-header bg-white">
           <div className='d-flex justify-content-between w-100 align-items-center'>
             <h5 className="mb-0">Filter</h5>
-            {!isFilter ? <BsChevronDown fontSize={20} onClick={() => { setIsFilter(!isFilter) }} /> : <BsChevronUp fontSize={20} onClick={() => { setIsFilter(!isFilter) }} />}
+            {!isFilter ? <BsChevronDown fontSize={20} onClick={() => { setIsFilter(!isFilter) }} className="cursor-pointer"/> : <BsChevronUp fontSize={20} onClick={() => { setIsFilter(!isFilter) }} className="cursor-pointer"/>}
 
           </div>
         </div>
