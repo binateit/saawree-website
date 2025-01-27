@@ -310,7 +310,6 @@ const Header = () => {
           </div>
         </div>
       </div>
-
       <Sidebar visible={show} position='right' onHide={() => setShow(false)}>
         <div>
           <div className='py-2'>

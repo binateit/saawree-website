@@ -117,10 +117,9 @@ const page = () => {
       </Row>
     </ColumnGroup>
   );
-  const checkStatus = orderDetails?.saleOrderStatusHistory?.find(
-    (status) => status?.saleOrderStatusId === 4
-  );
-  console.log(checkStatus);
+  // const checkStatus = orderDetails?.saleOrderStatusHistory?.find(
+  //   (status) => status?.saleOrderStatusId === 4
+  // );
   return (
     <>
       <div className='card mb-3'>
@@ -262,38 +261,6 @@ const page = () => {
           </button>
         </div>
         <div className='card-body'>
-          {/* <div className='table-responsive'>
-            <table className='table table-bordered table-striped mb-0'>
-              <thead>
-                <tr>
-                  <th scope='col'>Product</th>
-                  <th scope='col'>Qty</th>
-                  <th scope='col'>Unit Price</th>
-                  <th scope='col'>Discount</th>
-                  <th scope='col'>Total</th>
-                </tr>
-              </thead>
-              <tbody>
-                <tr>
-                  <th>Earring Tikka PET1 MD D Purple</th>
-                  <td>5 </td>
-                  <td>₹495.00</td>
-                  <td>₹247.50 (10% ) </td>
-                  <td>₹2,227.50</td>
-                </tr>
-                <tr>
-                  <th colSpan={2}>SubTotal</th>
-                  <td>₹1,42,350.00</td>
-                  <td>₹14,235.00</td>
-                  <td>₹1,28,115.00</td>
-                </tr>
-                <tr>
-                  <th colSpan={4}>Out Standing Amount</th>
-                  <td>₹1,35,099.00</td>
-                </tr>
-              </tbody>
-            </table>
-          </div> */}
           <DataTable
             stripedRows
             tableClassName='table table-bordered table-hover mb-0'

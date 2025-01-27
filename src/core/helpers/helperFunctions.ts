@@ -25,6 +25,14 @@ function urlExists(url: string, callback: (status: boolean) => void) {
     callback(status.ok);
   });
 }
+const generateOptions = (enumObject: any) => {
+  return Object.keys(enumObject)
+    .filter((key) => !isNaN(Number(enumObject[key])))
+    .map((key) => ({
+      value: enumObject[key],
+      label: key.replace(/([A-Z])/g, " $1").trim(),
+    }));
+};
 
 const dateOptions = [
   {
@@ -118,4 +126,5 @@ export {
   isNotEmpty,
   urlExists,
   dateOptions,
+  generateOptions,
 };

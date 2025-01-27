@@ -234,8 +234,8 @@ const ProfileDetails = () => {
           <FormikProvider value={formik}>
             <form
               onSubmit={formik.handleSubmit}
-              className='account-dtls'
               noValidate
+              className='account-dtls'
             >
               <div className='card-body'>
                 <div className='form-group'>

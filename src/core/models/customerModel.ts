@@ -1,3 +1,5 @@
+import { Response } from "./model";
+
 export type CustomerRecord = {
   totalSaleOrderCount?: number;
   totalSaleOrderAmount?: number;
@@ -81,4 +83,164 @@ export type ChangePassword = {
   password?: string;
   newPassword?: string;
   confirmNewPassword?: string;
+};
+
+export type CustomerAccounting = {
+  lstNumber?: string | undefined;
+  cstNumber?: string | undefined;
+  gstNumber?: string | undefined;
+  panNumber?: string | undefined;
+  aadharNumber?: string | undefined;
+  gstRegistrationTypeId?: number | undefined;
+  gstRegistrationTypeName?: string | undefined;
+};
+
+export enum gstRegisteredType {
+  RegisteredBusinessRegular = 1,
+  RegisteredBusinessComposition = 2,
+  UnregisteredBusiness = 3,
+  Consumer = 4,
+  Overseas = 5,
+  SpecialEconomicZoneSEZ = 6,
+  DeemedExport = 7,
+  TaxDeductor = 8,
+  SEZDeveloper = 9,
+}
+
+export type InvoiceRecords = {
+  id: number;
+  invoiceNumber: string;
+  invoiceDate: string;
+  invoiceStatusName: string;
+  orderTotal: number;
+};
+
+export type InvoicesQueryListResponse = Response<Array<InvoiceRecords>>;
+
+export type PaymentRecords = {
+  id: number;
+  paymentNumber: string;
+  amountReceived: number;
+  paymentDate: string;
+  paymentModeName: string;
+  isAdvance: boolean;
+  usedAmount: number;
+  advanceAmountLeft: number;
+};
+
+export type PaymentsQueryListResponse = Response<Array<PaymentRecords>>;
+
+export type InvoiceDetails = {
+  id: number;
+  saleOrderId: number;
+  customerId: number;
+  customerName: string;
+  emailAddress: string;
+  mobileNumber: string;
+  invoiceNumber: string;
+  invoiceDate: string;
+  billAddressLine1: string;
+  billAddressLine2: string;
+  billCityName: string;
+  billStateId: number;
+  billZipCode: string;
+  billStateName?: any;
+  billCountryId: number;
+  billCountryName: string;
+  shipAddressLine1: string;
+  shipAddressLine2: string;
+  shipCityName: string;
+  shipStateId: number;
+  shipStateName: string;
+  shipCountryId: number;
+  shipCountryName: string;
+  shipZipCode: string;
+  termId: number;
+  termName: string;
+  termNumberOfDays: number;
+  dueDate: string;
+  paymentStatusId: number;
+  paymentStatusName: string;
+  invoiceStatusId: number;
+  invoiceStatusName: string;
+  orderTotal: number;
+  orderSubTotal: number;
+  roundOff: number;
+  totalDiscountedPrice: number;
+  totalTaxAmount: number;
+  totalOtherCharges: number;
+  gstNumber?: any;
+  notes: string;
+  placeOfSupplyId: number;
+  placeOfSupplyName: string;
+  itemList: ItemList[];
+  paymentList: any[];
+  otherCharges: any[];
+};
+export type ItemList = {
+  invoiceItemId: number;
+  categoryName: string;
+  hsnCode: number;
+  productId: number;
+  productName: string;
+  productImagePath: string;
+  polishingTypeId: number;
+  polishingTypeName: string;
+  colorId: number;
+  colorName: string;
+  quantity: number;
+  productPrice: number;
+  subTotal: number;
+  discountApplicable: boolean;
+  discountPercent: number;
+  discountAmount: number;
+  total: number;
+  taxPercent: number;
+  taxAmount: number;
+  totalInclusiveTax: number;
+  invoiceItemTaxDtos: InvoiceItemTaxDto[];
+  isDeleted: boolean;
+};
+export type InvoiceItemTaxDto = {
+  invoiceItemId: number;
+  taxId: number;
+  taxPercent: number;
+  taxName: string;
+  taxAmount: number;
+};
+
+export type PaymentDetails = {
+  id: number;
+  customerId: number;
+  amountReceived: number;
+  paymentDate: string;
+  paymentNumber: string;
+  paymentModeId: number;
+  paymentModeName: string;
+  referenceNumber: string;
+  pdfPath: string;
+  isAdvance: boolean;
+  notes: string;
+  customerDetailForPaymentDto: CustomerDetailForPaymentDto;
+  saleOrderPayments: SaleOrderPayment[];
+  bankId: number;
+  bankName: string;
+  chequeBankName: string;
+  chequeNumber: string;
+  chequeDate: string;
+};
+export type SaleOrderPayment = {
+  id: number;
+  paymentReceivedId: number;
+  saleOrderId: number;
+  saleOrderNumber: string;
+  amountReceived: number;
+  paymentDate: string;
+  orderDate: string;
+};
+export type CustomerDetailForPaymentDto = {
+  id: number;
+  customerName: string;
+  email: string;
+  mobileNumber: string;
 };
