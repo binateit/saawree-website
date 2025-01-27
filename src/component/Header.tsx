@@ -20,6 +20,7 @@ import { Offcanvas } from "react-bootstrap";
 import { useQuery } from "@tanstack/react-query";
 import { getMenuCategories } from "@/core/requests/homeRequests";
 import { useCartCount } from "@/core/context/useCartCount";
+import { Sidebar } from "primereact/sidebar";
 
 const Header = () => {
   const { data: session, status: authStatus } = useSession();
@@ -149,9 +150,13 @@ const Header = () => {
                   <BsCart fontSize={25} />
                   <span className='badge badge-danger'>{cartCount}</span>
                 </Link>
-                {session?.user && (
+                {authStatus === "authenticated" && (
                   <div className='header-icons dashboard-menu-icon'>
-                    <BsList fontSize={25} onClick={handleShow} />
+                    <BsList
+                      fontSize={25}
+                      onClick={() => setShow(true)}
+                      // onClick={handleShow}
+                    />
                   </div>
                 )}
               </div>
@@ -305,9 +310,10 @@ const Header = () => {
           </div>
         </div>
       </div>
-      <Offcanvas show={show} onHide={handleClose} placement='end'>
-        <div className='dashboard-menu shadow'>
-          <div className='panel-menu py-2'>
+
+      <Sidebar visible={show} position='right' onHide={() => setShow(false)}>
+        <div>
+          <div className='py-2'>
             <ul className='nav flex-column nav-pills nav-pills-custom'>
               <li className='nav-link mb-2 active'>
                 <a
@@ -389,7 +395,7 @@ const Header = () => {
             </ul>
           </div>
         </div>
-      </Offcanvas>
+      </Sidebar>
     </>
   );
 };

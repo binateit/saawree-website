@@ -117,6 +117,10 @@ const page = () => {
       </Row>
     </ColumnGroup>
   );
+  const checkStatus = orderDetails?.saleOrderStatusHistory?.find(
+    (status) => status?.saleOrderStatusId === 4
+  );
+  console.log(checkStatus);
   return (
     <>
       <div className='card mb-3'>
