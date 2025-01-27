@@ -135,5 +135,5 @@ export interface StatusList {
 export interface FilterOption {
   filterOrderStatusId?: number;
   filterPaymentStatusId?: number;
-  filterDates?: any;
+  filterDates?: Nullable<Date>[];
 }
