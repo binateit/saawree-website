@@ -24,8 +24,6 @@ export default async function RootLayout({
 }: Readonly<{
   children: React.ReactNode;
 }>) {
-  const session = await getServerSession();
-
   return (
     <html lang='en'>
       <Head>
@@ -46,7 +44,7 @@ export default async function RootLayout({
           href='//cdn.jsdelivr.net/npm/slick-carousel@1.8.1/slick/slick.css'
         /> */}
       </Head>
-      <SessionProvider session={session}>
+      <SessionProvider>
         <QueryProvider>
           <CartCountProvider>
             <PrimeReactProvider>

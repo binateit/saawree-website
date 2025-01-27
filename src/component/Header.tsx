@@ -16,7 +16,7 @@ import {
 import { signOut, useSession } from "next-auth/react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { Offcanvas } from "react-bootstrap";
+import { Offcanvas } from "react-bootstrap/";
 import { useQuery } from "@tanstack/react-query";
 import { getMenuCategories } from "@/core/requests/homeRequests";
 import { useCartCount } from "@/core/context/useCartCount";
@@ -24,6 +24,9 @@ import { Sidebar } from "primereact/sidebar";
 
 const Header = () => {
   const { data: session, status: authStatus } = useSession();
+
+  console.log(session?.user, authStatus)
+
   const [show, setShow] = useState(false);
   const { cartCount } = useCartCount();
 
@@ -155,7 +158,7 @@ const Header = () => {
                     <BsList
                       fontSize={25}
                       onClick={() => setShow(true)}
-                      // onClick={handleShow}
+                    // onClick={handleShow}
                     />
                   </div>
                 )}
@@ -310,17 +313,25 @@ const Header = () => {
           </div>
         </div>
       </div>
-      <Sidebar visible={show} position='right' onHide={() => setShow(false)}>
-        <div>
+
+      <Sidebar 
+      visible={show} 
+      position='right' 
+      onHide={() => setShow(false)} 
+      className="offcanvas-panel-menu"
+      showCloseIcon={false}
+      blockScroll={true}
+      >
+        
           <div className='py-2'>
             <ul className='nav flex-column nav-pills nav-pills-custom'>
               <li className='nav-link mb-2 active'>
-                <a
+                <Link
                   href='overview.html'
                   className='font-weight-bold small text-uppercase nav-link-item  py-1 px-3 d-block'
                 >
                   Overview
-                </a>
+                </Link>
               </li>
               <li className='mb-2 tab-has-dropdown nav-link cursor-pointer'>
                 <div
@@ -332,7 +343,7 @@ const Header = () => {
                     })
                   }
                 >
-                  Profile <BsChevronDown fontSize={18} />
+                  Profile <BsChevronDown fontSize={14} />
                 </div>
                 {openDropDown.display && openDropDown.name === "profile" && (
                   <div className='nav flex-column nav-pills nav-pills-custom-dropdown'>
@@ -371,7 +382,7 @@ const Header = () => {
                   }
                 >
                   Transaction
-                  <BsChevronDown fontSize={18} />
+                  <BsChevronDown fontSize={14} />
                 </div>
                 {openDropDown.display &&
                   openDropDown.name === "transaction" && (
@@ -393,7 +404,7 @@ const Header = () => {
               </li>
             </ul>
           </div>
-        </div>
+        
       </Sidebar>
     </>
   );
