@@ -4452,3 +4452,12 @@ select {
     right: 12px;
     opacity: 0.8;
 }
+
+
+
+/*----------Prime React sidebar Css--*/
+.offcanvas-panel-menu>.p-sidebar-header, .offcanvas-panel-menu>.p-sidebar-content{
+    padding: 0px;
+    overflow-x: hidden;
+}
+

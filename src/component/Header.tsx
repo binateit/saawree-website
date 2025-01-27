@@ -158,7 +158,7 @@ const Header = () => {
                     <BsList
                       fontSize={25}
                       onClick={() => setShow(true)}
-                      // onClick={handleShow}
+                    // onClick={handleShow}
                     />
                   </div>
                 )}
@@ -314,17 +314,24 @@ const Header = () => {
         </div>
       </div>
 
-      <Sidebar visible={show} position='right' onHide={() => setShow(false)}>
-        <div>
+      <Sidebar 
+      visible={show} 
+      position='right' 
+      onHide={() => setShow(false)} 
+      className="offcanvas-panel-menu"
+      showCloseIcon={false}
+      blockScroll={true}
+      >
+        
           <div className='py-2'>
             <ul className='nav flex-column nav-pills nav-pills-custom'>
               <li className='nav-link mb-2 active'>
-                <a
+                <Link
                   href='overview.html'
                   className='font-weight-bold small text-uppercase nav-link-item  py-1 px-3 d-block'
                 >
                   Overview
-                </a>
+                </Link>
               </li>
               <li className='mb-2 tab-has-dropdown nav-link cursor-pointer'>
                 <div
@@ -336,7 +343,7 @@ const Header = () => {
                     })
                   }
                 >
-                  Profile <BsChevronDown fontSize={18} />
+                  Profile <BsChevronDown fontSize={14} />
                 </div>
                 {openDropDown.display && openDropDown.name === "profile" && (
                   <div className='nav flex-column nav-pills nav-pills-custom-dropdown'>
@@ -375,7 +382,7 @@ const Header = () => {
                   }
                 >
                   Transaction
-                  <BsChevronDown fontSize={18} />
+                  <BsChevronDown fontSize={14} />
                 </div>
                 {openDropDown.display &&
                   openDropDown.name === "transaction" && (
@@ -397,7 +404,7 @@ const Header = () => {
               </li>
             </ul>
           </div>
-        </div>
+        
       </Sidebar>
     </>
   );
