@@ -117,98 +117,99 @@ const page = () => {
             </div>
             :
             <div className="card shadow edit-form">
-            <div className="card-header bg-white">
-                <h5>Update Profile</h5>
-            </div>
-            <div className="card-body">
+                <div className="card-header bg-white">
+                    <h5>Update Profile</h5>
+                </div>
                 <form className="account-dtls">
-                    <div className="form-group">
-                        <div className="row">
-                            <div className="col-xl-6 col-lg-6 col-md-6 mb-3">
-                                <label htmlFor="">First Name</label>
-                                <input type="text" className="form-control" id="" placeholder="First Name" value="Vikas"/>
+                <div className="card-body">
+                    
+                        <div className="form-group">
+                            <div className="row">
+                                <div className="col-xl-6 col-lg-6 col-md-6 mb-3">
+                                    <label htmlFor="">First Name</label>
+                                    <input type="text" className="form-control" id="" placeholder="First Name" value="Vikas"/>
+                                </div>
+                                <div className="col-xl-6 col-lg-6 col-md-6 mb-3">
+                                    <label htmlFor="">Last Name</label>
+                                    <input type="text" className="form-control" id="" placeholder="Last Name" value="Patel"/>
+                                </div>
+                                <div className="col-xl-6 col-lg-6 col-md-6 mb-3">
+                                    <label htmlFor="">Agent Code</label>
+                                    <input type="text" className="form-control" id="" placeholder="Agent Code" disabled={true} value="BIT25"/>
+                                </div>
+                                <div className="col-xl-6 col-lg-6 col-md-6 mb-3">
+                                    <label htmlFor="">Status</label>
+                                    <input type="text" className="form-control" id="" placeholder="Status" disabled={true} value="Active"/>
+                                </div>
+                                <div className="col-xl-6 col-lg-6 col-md-6 mb-3">
+                                    <label htmlFor="">Company Name</label>
+                                    <input type="text" className="form-control" id="" placeholder="Company Name" value="Binate IT Services Private Limited"/>
+                                </div>
+                                <div className="col-xl-6 col-lg-6 col-md-6 mb-3">
+                                    <label htmlFor="">E-mail Address</label>
+                                    <input type="text" className="form-control" id="" placeholder="E-mail Address" value="vikas.patel@binateitservices.com"/>
+                                </div>
+                                <div className="col-xl-6 col-lg-6 col-md-6 mb-3">
+                                    <label htmlFor="">Mobile Number</label>
+                                    <input type="text" className="form-control" id="" placeholder="Mobile Number" value="+91 885485547"/>
+                                </div>
+                                <div className="col-xl-6 col-lg-6 col-md-6 mb-3">
+                                    <label htmlFor="">Whatsapp Number</label>
+                                    <input type="text" className="form-control" id="" placeholder="Whatsapp Number" value="+91 885485547"/>
+                                </div>
+                                <div className="col-xl-6 col-lg-6 col-md-6 mb-3">
+                                    <label htmlFor="">Commission Percent</label>
+                                    <input type="text" className="form-control" id="" placeholder="Commission" value="25"/>
+                                </div>
+                                <div className="col-xl-6 col-lg-6 col-md-6 mb-3">
+                                    <label htmlFor="">Date of Birth</label>
+                                    <input type="text" className="form-control" id="" placeholder="Date of Birth" value="10 June 1995"/>
+                                </div>
+                                <div className="col-xl-6 col-lg-6 col-md-6 mb-3">
+                                    <label htmlFor="">Date of Anniversary</label>
+                                    <input type="text" className="form-control" id="" placeholder="Date of Anniversary" value="8 May 2005"/>
+                                </div>
+                                <div className="col-xl-6 col-lg-6 col-md-6 mb-3">
+                                    <label htmlFor="">Rate Applicable</label>
+                                    <input type="text" className="form-control" id="" placeholder="Rate Applicable" value="NA"/>
+                                </div>
+                                <div className="col-xl-6 col-lg-6 col-md-6 mb-3">
+                                    <label htmlFor="">Address Line1</label>
+                                    <input type="text" className="form-control" id="" placeholder="Address Line1" value="B107, Sai Sanman CHSL"/>
+                                </div>
+                                <div className="col-xl-6 col-lg-6 col-md-6 mb-3">
+                                    <label htmlFor="">Address Line2</label>
+                                    <input type="text" className="form-control" id="" placeholder="Address Line2" value="Guru Nanak Nagar"/>
+                                </div>
+                                <div className="col-xl-6 col-lg-6 col-md-6 mb-3">
+                                    <label htmlFor="">State</label>
+                                    <select className="form-control">
+                                        <option>Maharashtra</option>
+                                        <option>Uttar Pradesh</option>
+                                        <option>Delhi</option>
+                                    </select>
+                                </div>
+                                <div className="col-xl-6 col-lg-6 col-md-6 mb-3">
+                                    <label htmlFor="">City</label>
+                                    <select className="form-control">
+                                        <option>Vasai</option>
+                                        <option>Mumbai</option>
+                                        <option>Lucknow</option>
+                                    </select>
+                                </div>
+                                <div className="col-xl-6 col-lg-6 col-md-6 mb-3">
+                                    <label htmlFor="">Zip Code</label>
+                                    <input type="text" className="form-control" id="" placeholder="Zip Code" value="401202"/>
+                                </div>
                             </div>
-                            <div className="col-xl-6 col-lg-6 col-md-6 mb-3">
-                                <label htmlFor="">Last Name</label>
-                                <input type="text" className="form-control" id="" placeholder="Last Name" value="Patel"/>
-                            </div>
-                            <div className="col-xl-6 col-lg-6 col-md-6 mb-3">
-                                <label htmlFor="">Agent Code</label>
-                                <input type="text" className="form-control" id="" placeholder="Agent Code" disabled={true} value="BIT25"/>
-                            </div>
-                            <div className="col-xl-6 col-lg-6 col-md-6 mb-3">
-                                <label htmlFor="">Status</label>
-                                <input type="text" className="form-control" id="" placeholder="Status" disabled={true} value="Active"/>
-                            </div>
-                            <div className="col-xl-6 col-lg-6 col-md-6 mb-3">
-                                <label htmlFor="">Company Name</label>
-                                <input type="text" className="form-control" id="" placeholder="Company Name" value="Binate IT Services Private Limited"/>
-                            </div>
-                            <div className="col-xl-6 col-lg-6 col-md-6 mb-3">
-                                <label htmlFor="">E-mail Address</label>
-                                <input type="text" className="form-control" id="" placeholder="E-mail Address" value="vikas.patel@binateitservices.com"/>
-                            </div>
-                            <div className="col-xl-6 col-lg-6 col-md-6 mb-3">
-                                <label htmlFor="">Mobile Number</label>
-                                <input type="text" className="form-control" id="" placeholder="Mobile Number" value="+91 885485547"/>
-                            </div>
-                            <div className="col-xl-6 col-lg-6 col-md-6 mb-3">
-                                <label htmlFor="">Whatsapp Number</label>
-                                <input type="text" className="form-control" id="" placeholder="Whatsapp Number" value="+91 885485547"/>
-                            </div>
-                            <div className="col-xl-6 col-lg-6 col-md-6 mb-3">
-                                <label htmlFor="">Commission Percent</label>
-                                <input type="text" className="form-control" id="" placeholder="Commission" value="25"/>
-                            </div>
-                            <div className="col-xl-6 col-lg-6 col-md-6 mb-3">
-                                <label htmlFor="">Date of Birth</label>
-                                <input type="text" className="form-control" id="" placeholder="Date of Birth" value="10 June 1995"/>
-                            </div>
-                            <div className="col-xl-6 col-lg-6 col-md-6 mb-3">
-                                <label htmlFor="">Date of Anniversary</label>
-                                <input type="text" className="form-control" id="" placeholder="Date of Anniversary" value="8 May 2005"/>
-                            </div>
-                            <div className="col-xl-6 col-lg-6 col-md-6 mb-3">
-                                <label htmlFor="">Rate Applicable</label>
-                                <input type="text" className="form-control" id="" placeholder="Rate Applicable" value="NA"/>
-                            </div>
-                            <div className="col-xl-6 col-lg-6 col-md-6 mb-3">
-                                <label htmlFor="">Address Line1</label>
-                                <input type="text" className="form-control" id="" placeholder="Address Line1" value="B107, Sai Sanman CHSL"/>
-                            </div>
-                            <div className="col-xl-6 col-lg-6 col-md-6 mb-3">
-                                <label htmlFor="">Address Line2</label>
-                                <input type="text" className="form-control" id="" placeholder="Address Line2" value="Guru Nanak Nagar"/>
-                            </div>
-                            <div className="col-xl-6 col-lg-6 col-md-6 mb-3">
-                                <label htmlFor="">State</label>
-                                <select className="form-control">
-                                    <option>Maharashtra</option>
-                                    <option>Uttar Pradesh</option>
-                                    <option>Delhi</option>
-                                </select>
-                            </div>
-                            <div className="col-xl-6 col-lg-6 col-md-6 mb-3">
-                                <label htmlFor="">City</label>
-                                <select className="form-control">
-                                    <option>Vasai</option>
-                                    <option>Mumbai</option>
-                                    <option>Lucknow</option>
-                                </select>
-                            </div>
-                            <div className="col-xl-6 col-lg-6 col-md-6 mb-3">
-                                <label htmlFor="">Zip Code</label>
-                                <input type="text" className="form-control" id="" placeholder="Zip Code" value="401202"/>
-                            </div>
+                            
                         </div>
-                        <div className="row">
-                            <div className="col-12 text-right">
-                                <div className="btn btn-saawree close-edit-form" onClick={()=>setIsEdit(!isEdit)}>Update</div>
-                            </div>
-                        </div>
-                    </div>
+                   
+                </div>
+                <div className="card-footer text-right">           
+                    <div className="btn btn-saawree close-edit-form" onClick={()=>setIsEdit(!isEdit)}>Update</div>                            
+                </div>
                 </form>
-            </div>
         </div>}
             
 

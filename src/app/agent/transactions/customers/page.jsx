@@ -1,58 +1,59 @@
-import React from 'react'
+"use client"
 import Link from 'next/link'
+import React, { useState } from 'react'
+import { BsChevronDown, BsChevronUp } from "react-icons/bs";
 
 const page = () => {
+const [isFilter, setIsFilter] = useState();
   return (
     <>
-        <div className="card mb-2">
-            <div className="card-body">
-                <div className="row justify-content-between">
-                    <div className="col-xl-5 col-lg-5 col-md-6 mb-3 mb-md-0">
-                        <div className="dashboard-common-search">
-                            <div className="common-seacrch-box d-flex">
-                                <input type="text" className="form-control" placeholder="Search"/>
-                                <button className="btn btn-saawree">Search </button>
-                            </div>
-                        </div>
-                    </div>
-                    <div className="col-xl-7 col-lg-7 col-md-6 text-right">
-                        <div className="btn-group" aria-label="Button group with nested dropdown">
-                            <div className="btn-group" role="group">
-                                <button type="button" className="btn btn-saawree-outline dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                                    By Date
-                                </button>
-                                <div className="dropdown-menu">
-                                    <a className="dropdown-item" href="#">Last 7 Days</a>
-                                    <a className="dropdown-item" href="#">Last 15 Days</a>
-                                    <a className="dropdown-item" href="#">Last Month</a>
-                                    <a className="dropdown-item cursor-pointer" href="#" data-toggle="modal" data-target="#dateSelector">Custom</a>
-                                </div>
-                            </div>
-
-                            <div className="btn-group" role="group">
-                                <button type="button" className="btn btn-saawree-outline dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                                    Status
-                                </button>
-                                <div className="dropdown-menu">
-                                    <a className="dropdown-item" href="#">Confirmed</a>
-                                    <a className="dropdown-item" href="#">Pending</a>
-                                </div>
-                            </div>
-
-                            <div className="btn-group" role="group">
-                                <button type="button" className="btn btn-saawree-outline dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                                    Payment Status
-                                </button>
-                                <div className="dropdown-menu">
-                                    <a className="dropdown-item" href="#">Done</a>
-                                    <a className="dropdown-item" href="#">Pending</a>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
+            <div className="card mb-2">
+                <div className="card-header align-items-center justify-content-between bg-white">
+                    <h5>Filter</h5>
+                    {!isFilter ? <BsChevronDown fontSize={20} onClick={()=>{setIsFilter(!isFilter)}}/> : <BsChevronUp fontSize={20} onClick={()=>{setIsFilter(!isFilter)}}/>}
+                    
                 </div>
+                {isFilter ? <div className='card-body'>
+                    <form>
+                        <div className="row">
+                            <div className="col-md-4">
+                                <div className="form-group">
+                                    <label htmlFor="date">By Date</label>
+                                    <input type="date" className="form-control" />
+                                </div>
+                            </div>
+                            <div className="col-md-4">
+                                <div className="form-group">
+                                    <label htmlFor="all-status">All Status</label>
+                                    <div className="search-category-dropdown">
+                                        <select className="form-control">
+                                            <option>Status 01</option>
+                                            <option>Status 02</option>
+                                            <option>Status 03</option>
+                                        </select>
+                                        <BsChevronDown className="drop-down-icon" />
+                                    </div>
+                                </div>
+                            </div>
+                            <div className="col-md-4">
+                                <div className="form-group">
+                                    <label htmlFor="all-payment-status">All Payment Status</label>
+                                    <div className="search-category-dropdown">
+                                        <select className="form-control">
+                                            <option>Payment Status 01</option>
+                                            <option>Payment Status 02</option>
+                                            <option>Payment Status 03</option>
+                                        </select>
+                                        <BsChevronDown className="drop-down-icon" />
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                    </form>
+                </div> : ""}
+                
             </div>
-        </div>
         <div className="card shadow">
             <div className="card-header bg-white">
                 <h5>Customers</h5>

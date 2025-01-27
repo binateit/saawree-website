@@ -79,15 +79,24 @@ const layout = ({
                       role='tablist'
                       aria-orientation='vertical'
                     >
-                      <a className='nav-link py-2 px-3' href='sale-order.html'>
+                      <Link className='nav-link py-2 px-3' href='/agent/transactions/sales-order'>
                         Sales Order
-                      </a>
-                      <a className='nav-link py-2 px-3' href='invoice.html'>
+                      </Link>
+                      <Link className='nav-link py-2 px-3' href='/agent/transactions/invoice'>
                         Invoice
-                      </a>
-                      <a className='nav-link py-2 px-3' href='payment.html'>
+                      </Link>
+                      <Link className='nav-link py-2 px-3' href='/agent/transactions/payment'>
                         Payment
-                      </a>
+                      </Link>
+                      <Link className='nav-link py-2 px-3' href='/agent/transactions/commissions'>
+                        Commission
+                      </Link>
+                      <Link className='nav-link py-2 px-3' href='/agent/transactions/customers'>
+                        Customers
+                      </Link>
+                      <Link className='nav-link py-2 px-3' href='/agent/transactions/payout'>
+                        Payout
+                      </Link>
                     </div>
                   </div>
                 </li>
