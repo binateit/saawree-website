@@ -1,134 +1,137 @@
+"use client"
 import Link from 'next/link'
-import React from 'react'
+import React, { useState } from 'react'
+import { BsChevronDown, BsChevronUp } from "react-icons/bs";
 
 const page = () => {
-  return (
-    <>
-      <div className="card mb-2">
-                        <div className="card-body">
-                            <div className="row justify-content-between">
-                                <div className="col-xl-5 col-lg-5 col-md-6 mb-3 mb-md-0">
-                                    <div className="dashboard-common-search">
-                                        <div className="common-seacrch-box d-flex">
-                                            <input type="text" className="form-control" placeholder="Search"/>
-                                            <button className="btn btn-saawree">Search </button>
+    const [isFilter, setIsFilter] = useState<boolean>();
+    return (
+        <>
+            <div className='card mb-2'>
+                <div className="card-header bg-white">
+                    <div className='d-flex justify-content-between w-100 align-items-center'>
+                        <h5 className="mb-0">Filter</h5>
+                        {!isFilter ? <BsChevronDown fontSize={20} onClick={() => { setIsFilter(!isFilter) }} className="cursor-pointer" /> : <BsChevronUp fontSize={20} onClick={() => { setIsFilter(!isFilter) }} className="cursor-pointer" />}
+
+                    </div>
+                </div>
+                {isFilter ?
+                    <div className='card-body'>
+                        <form>
+                            <div className="row">
+                                <div className="col-md-4">
+                                    <div className="form-group">
+                                        <label htmlFor="date">By Date</label>
+                                        <input type="date" className="form-control" />
+                                    </div>
+                                </div>
+                                <div className="col-md-4">
+                                    <div className="form-group">
+                                        <label htmlFor="all-status">All Status</label>
+                                        <div className="search-category-dropdown">
+                                            <select className="form-control">
+                                                <option>Status 01</option>
+                                                <option>Status 02</option>
+                                                <option>Status 03</option>
+                                            </select>
+                                            <BsChevronDown className="drop-down-icon" />
                                         </div>
                                     </div>
                                 </div>
-                                <div className="col-xl-7 col-lg-7 col-md-6 text-right">
-                                    <div className="btn-group" aria-label="Button group with nested dropdown">
-                                        <div className="btn-group" role="group">
-                                            <button type="button" className="btn btn-saawree-outline dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                                                By Date
-                                            </button>
-                                            <div className="dropdown-menu">
-                                                <a className="dropdown-item" href="#">Last 7 Days</a>
-                                                <a className="dropdown-item" href="#">Last 15 Days</a>
-                                                <a className="dropdown-item" href="#">Last Month</a>
-                                                <a className="dropdown-item cursor-pointer" href="#" data-toggle="modal" data-target="#dateSelector">Custom</a>
-                                            </div>
-                                        </div>
-
-                                        <div className="btn-group" role="group">
-                                            <button type="button" className="btn btn-saawree-outline dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                                                Status
-                                            </button>
-                                            <div className="dropdown-menu">
-                                                <a className="dropdown-item" href="#">Confirmed</a>
-                                                <a className="dropdown-item" href="#">Pending</a>
-                                            </div>
-                                        </div>
-
-                                        <div className="btn-group" role="group">
-                                            <button type="button" className="btn btn-saawree-outline dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                                                Payment Status
-                                            </button>
-                                            <div className="dropdown-menu">
-                                                <a className="dropdown-item" href="#">Done</a>
-                                                <a className="dropdown-item" href="#">Pending</a>
-                                            </div>
+                                <div className="col-md-4">
+                                    <div className="form-group">
+                                        <label htmlFor="all-payment-status">All Payment Status</label>
+                                        <div className="search-category-dropdown">
+                                            <select className="form-control">
+                                                <option>Payment Status 01</option>
+                                                <option>Payment Status 02</option>
+                                                <option>Payment Status 03</option>
+                                            </select>
+                                            <BsChevronDown className="drop-down-icon" />
                                         </div>
                                     </div>
                                 </div>
                             </div>
-                        </div>
+                        </form>
                     </div>
-                    <div className="card shadow">
-                        <div className="card-header bg-white">
-                            <h5>Payment</h5>
-                        </div>
-                        <div className="card-body">
-                            <div className="table-responsive">
-                                <table className="table table-bordered table-striped mb-0">
-                                    <thead>
-                                        <tr>
-                                            <th scope="col">Payment Number</th>
-                                            <th scope="col">Payment Date</th>
-                                            <th scope="col">Payment Mode</th>
-                                            <th scope="col">Amount Received</th>
-                                            <th scope="col">Action</th>
-                                        </tr>
-                                    </thead>
-                                    <tbody>
-                                        <tr>
-                                            <th>CP1</th>
-                                            <td>25 Jan 2024</td>
-                                            <td>BHIM UPI</td>
-                                            <td>₹1,000.00</td>
-                                            <td><Link href="/customer/transactions/payment/details" className="btn btn-saawree">View</Link></td>
-                                        </tr>
-                                        <tr>
-                                            <th>CP1</th>
-                                            <td>22 Jan 2024</td>
-                                            <td>Cash</td>
-                                            <td>₹1,000.00</td>
-                                            <td><Link href="/customer/transactions/payment/details" className="btn btn-saawree">View</Link></td>
-                                        </tr>
-                                        <tr>
-                                            <th>CP1</th>
-                                            <td>15 Jan 2024</td>
-                                            <td>BHIM UPI</td>
-                                            <td>₹1,000.00</td>
-                                            <td><Link href="/customer/transactions/payment/details" className="btn btn-saawree">View</Link></td>
-                                        </tr>
-                                        <tr>
-                                            <th>CP1</th>
-                                            <td>12 Feb 2024</td>
-                                            <td>BHIM UPI</td>
-                                            <td>₹1,000.00</td>
-                                            <td><Link href="/customer/transactions/payment/details" className="btn btn-saawree">View</Link></td>
-                                        </tr>
-                                    </tbody>
-                                </table>
-                            </div>
-                            <div className="paginator mt-3 d-flex align-items-center justify-content-between">
-                                <div className="paginaton-showing">
-                                    Showing 10 Out of 100
-                                </div>
-                                <nav aria-label="Page navigation example">
-                                    <ul className="pagination mb-0">
-                                        <li className="page-item">
-                                            <a className="page-link" href="#" aria-label="Previous">
-                                                <span aria-hidden="true">«</span>
-                                                <span className="sr-only">Previous</span>
-                                            </a>
-                                        </li>
-                                        <li className="page-item active"><a className="page-link" href="#">1</a></li>
-                                        <li className="page-item"><a className="page-link" href="#">2</a></li>
-                                        <li className="page-item"><a className="page-link" href="#">3</a></li>
-                                        <li className="page-item">
-                                            <a className="page-link" href="#" aria-label="Next">
-                                                <span aria-hidden="true">»</span>
-                                                <span className="sr-only">Next</span>
-                                            </a>
-                                        </li>
-                                    </ul>
-                                </nav>
-                            </div>
-                        </div>
+                    : ''}
+            </div>
+            <div className="card shadow">
+                <div className="card-header bg-white">
+                    <h5>Payment</h5>
+                </div>
+                <div className="card-body">
+                    <div className="table-responsive">
+                        <table className="table table-bordered table-striped mb-0">
+                            <thead>
+                                <tr>
+                                    <th scope="col">Payment Number</th>
+                                    <th scope="col">Payment Date</th>
+                                    <th scope="col">Payment Mode</th>
+                                    <th scope="col">Amount Received</th>
+                                    <th scope="col">Action</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <th>CP1</th>
+                                    <td>25 Jan 2024</td>
+                                    <td>BHIM UPI</td>
+                                    <td>₹1,000.00</td>
+                                    <td><Link href="/customer/transactions/payment/details" className="btn btn-saawree">View</Link></td>
+                                </tr>
+                                <tr>
+                                    <th>CP1</th>
+                                    <td>22 Jan 2024</td>
+                                    <td>Cash</td>
+                                    <td>₹1,000.00</td>
+                                    <td><Link href="/customer/transactions/payment/details" className="btn btn-saawree">View</Link></td>
+                                </tr>
+                                <tr>
+                                    <th>CP1</th>
+                                    <td>15 Jan 2024</td>
+                                    <td>BHIM UPI</td>
+                                    <td>₹1,000.00</td>
+                                    <td><Link href="/customer/transactions/payment/details" className="btn btn-saawree">View</Link></td>
+                                </tr>
+                                <tr>
+                                    <th>CP1</th>
+                                    <td>12 Feb 2024</td>
+                                    <td>BHIM UPI</td>
+                                    <td>₹1,000.00</td>
+                                    <td><Link href="/customer/transactions/payment/details" className="btn btn-saawree">View</Link></td>
+                                </tr>
+                            </tbody>
+                        </table>
                     </div>
-    </>
-  )
+                    <div className="paginator mt-3 d-flex align-items-center justify-content-between">
+                        <div className="paginaton-showing">
+                            Showing 10 Out of 100
+                        </div>
+                        <nav aria-label="Page navigation example">
+                            <ul className="pagination mb-0">
+                                <li className="page-item">
+                                    <a className="page-link" href="#" aria-label="Previous">
+                                        <span aria-hidden="true">«</span>
+                                        <span className="sr-only">Previous</span>
+                                    </a>
+                                </li>
+                                <li className="page-item active"><a className="page-link" href="#">1</a></li>
+                                <li className="page-item"><a className="page-link" href="#">2</a></li>
+                                <li className="page-item"><a className="page-link" href="#">3</a></li>
+                                <li className="page-item">
+                                    <a className="page-link" href="#" aria-label="Next">
+                                        <span aria-hidden="true">»</span>
+                                        <span className="sr-only">Next</span>
+                                    </a>
+                                </li>
+                            </ul>
+                        </nav>
+                    </div>
+                </div>
+            </div>
+        </>
+    )
 }
 
 export default page

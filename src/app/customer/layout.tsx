@@ -20,9 +20,8 @@ const layout = ({
             <div className='panel-menu'>
               <ul className='nav flex-column nav-pills nav-pills-custom'>
                 <li
-                  className={`nav-link mb-2 ${
-                    showRightPanel == "overview" ? "shadow active" : ""
-                  }`}
+                  className={`nav-link mb-2 ${showRightPanel == "overview" ? "shadow active" : ""
+                    }`}
                   onClick={() => setShowRightPanel("overview")}
                 >
                   <Link
@@ -34,9 +33,8 @@ const layout = ({
                 </li>
                 <li className='mb-2 shadow tab-has-dropdown nav-link cursor-pointer'>
                   <div
-                    className={`font-weight-bold small text-uppercase py-3 px-3 nav-link-item ${
-                      showRightPanel == "profile" ? "shadow active" : ""
-                    }`}
+                    className={`font-weight-bold small text-uppercase py-3 px-3 nav-link-item ${showRightPanel == "profile" ? "shadow active" : ""
+                      }`}
                     onClick={() =>
                       setShowDropDown({ name: "profile", display: true })
                     }
@@ -90,27 +88,33 @@ const layout = ({
                   </div>
                   {showDropDown.display &&
                     showDropDown.name == "transaction" && (
-                      <div className=''>
-                        <div
-                          className='nav flex-column nav-pills nav-pills-custom-dropdown'
-                          id='v-pills-tab'
-                          role='tablist'
-                          aria-orientation='vertical'
+
+                      <div
+                        className='nav flex-column nav-pills nav-pills-custom-dropdown'
+                        id='v-pills-tab'
+                        role='tablist'
+                        aria-orientation='vertical'
+                      >
+                        <Link
+                          className='nav-link py-2 px-3'
+                          href='/customer/transactions/sales-order'
                         >
-                          <Link
-                            className='nav-link py-2 px-3'
-                            href='/customer/transactions/sales-order'
-                          >
-                            Sales Order
-                          </Link>
-                          <a className='nav-link py-2 px-3' href='invoice.html'>
-                            Invoice
-                          </a>
-                          <a className='nav-link py-2 px-3' href='payment.html'>
-                            Payment
-                          </a>
-                        </div>
+                          Sales Order
+                        </Link>
+                        <Link
+                          href='/customer/transactions/invoice'
+                          className='nav-link py-2 px-3'
+                        >
+                          Invoice
+                        </Link>
+                        <Link
+                          href='/customer/transactions/payment'
+                          className='nav-link py-2 px-3'
+                        >
+                          Payment
+                        </Link>
                       </div>
+
                     )}
                 </li>
               </ul>
