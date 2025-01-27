@@ -1,4 +1,4 @@
-import NextAuth from "next-auth";
+import NextAuth, { User } from "next-auth";
 import CredentialsProvider from "next-auth/providers/credentials";
 import { signOut } from "next-auth/react";
 import jwt from "jsonwebtoken";
@@ -9,7 +9,7 @@ import {
   getRefreshToken,
   login,
 } from "@/core/requests/authRequests";
-import router from "next/navigation";
+import { redirect } from "next/navigation";
 
 const handler = NextAuth({
   // Configure one or more authentication providers
@@ -37,6 +37,7 @@ const handler = NextAuth({
             // const customerData = await getUserByToken(loginResponse.data.token);
             let user = {
               token: loginResponse.data.token,
+              tokenExpiryTime: loginResponse.data.tokenExpiryTime,
               refreshToken: loginResponse.data.refreshToken,
               refreshTokenExpiryTime: loginResponse.data.refreshTokenExpiryTime,
               firstName: loginResponse.data.firstName,
@@ -45,7 +46,7 @@ const handler = NextAuth({
               mobileNumber: loginResponse.data.mobileNumber,
               userType: "customer",
             };
-            return user as any;
+            return user as User;
           } else {
             throw new Error("Invalid Credentials");
           }
@@ -80,8 +81,7 @@ const handler = NextAuth({
             let agent = {
               token: loginResponse?.data?.token,
               refreshToken: loginResponse?.data?.refreshToken,
-              refreshTokenExpiryTime:
-                loginResponse?.data?.refreshTokenExpiryTime,
+              refreshTokenExpiryTime: loginResponse?.data?.refreshTokenExpiryTime,
               firstName: loginResponse?.data?.firstName,
               lastName: loginResponse?.data?.lastName,
               emailAddress: loginResponse?.data?.emailAddress,
@@ -121,8 +121,8 @@ const handler = NextAuth({
     },
 
     async session({ session, token }: any) {
-      console.log("Session Callback - Token:", token);
-      if (token.user) {
+      console.log("Session Callback - Token & Session:", token.user, session);
+      if (token) {
         session.user = {
           token: token.user.token as string,
           refreshToken: token.user.refreshToken as string,
@@ -131,14 +131,14 @@ const handler = NextAuth({
           lastName: token.user.lastName as string,
           emailAddress: token.user.emailAddress as string,
           userType: token.user.userType as boolean,
-          printName: token.user.printName as string,
         };
       }
-
-      return await session;
+      console.log("Session Callback Return - Session:", session);
+      return session;
     },
     async jwt({ token, user }: any) {
-      console.log("JWT Callback - Incoming Token:", token);
+      debugger
+      console.log("JWT Callback - Incoming Token & Users:", token, user);
 
       if (user) {
         token.user = {
@@ -179,13 +179,43 @@ const handler = NextAuth({
               await signOut({
                 redirect: false,
               });
-              router.push("/auth/login");
+              redirect("/auth/login")
+              // router.push("");
             }
           }
         }
       }
 
-      return await token;
+      console.log("JWT Callback - Outgoing Token & Users:", token);
+      return token;
+    },
+  },
+
+  cookies: {
+    sessionToken: {
+      name: `secure-swauth.session-token`, // Custom session token name
+      options: {
+        httpOnly: true,
+        sameSite: "lax",
+        path: "/",
+        secure: process.env.NODE_ENV === "production", // Use secure cookies in production
+      },
+    },
+    csrfToken: {
+      name: `secure-swauth.csrf-token`, // Custom CSRF token name
+      options: {
+        httpOnly: true,
+        sameSite: "lax",
+        secure: process.env.NODE_ENV === "production",
+      },
+    },
+    callbackUrl: {
+      name: `secure-swauth.callback-url`, // Custom callback URL cookie name
+      options: {
+        sameSite: "lax",
+        path: "/",
+        secure: process.env.NODE_ENV === "production",
+      },
     },
   },
 });

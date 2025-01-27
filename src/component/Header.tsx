@@ -23,6 +23,9 @@ import { useCartCount } from "@/core/context/useCartCount";
 
 const Header = () => {
   const { data: session, status: authStatus } = useSession();
+
+  console.log(session?.user, authStatus)
+
   const [show, setShow] = useState(false);
   const { cartCount } = useCartCount();
 
