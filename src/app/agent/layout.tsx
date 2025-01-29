@@ -54,7 +54,7 @@ const layout = ({
                         >
                           Profile Details
                         </Link>
-                        
+
                         <Link
                           className='nav-link pl-0 py-2 px-3'
                           href='/agent/profile/change-password'
@@ -68,37 +68,60 @@ const layout = ({
                 <li className='mb-2 shadow tab-has-dropdown nav-link cursor-pointer'>
                   <div
                     className='font-weight-bold small text-uppercase py-3 px-3'
-                    onClick={() => setShowRightPanel("transaction")}
+                    onClick={() =>
+                      setShowDropDown({ name: "transaction", display: true })
+                    }
                   >
                     Transaction
                   </div>
-                  <div className='tab-dropdown'>
-                    <div
-                      className='nav flex-column nav-pills nav-pills-custom-dropdown'
-                      id='v-pills-tab'
-                      role='tablist'
-                      aria-orientation='vertical'
-                    >
-                      <Link className='nav-link py-2 px-3' href='/agent/transactions/sales-order'>
-                        Sales Order
-                      </Link>
-                      <Link className='nav-link py-2 px-3' href='/agent/transactions/invoice'>
-                        Invoice
-                      </Link>
-                      <Link className='nav-link py-2 px-3' href='/agent/transactions/payment'>
-                        Payment
-                      </Link>
-                      <Link className='nav-link py-2 px-3' href='/agent/transactions/commissions'>
-                        Commission
-                      </Link>
-                      <Link className='nav-link py-2 px-3' href='/agent/transactions/customers'>
-                        Customers
-                      </Link>
-                      <Link className='nav-link py-2 px-3' href='/agent/transactions/payout'>
-                        Payout
-                      </Link>
-                    </div>
-                  </div>
+                  {showDropDown.display &&
+                    showDropDown.name == "transaction" && (
+                      <div className=''>
+                        <div
+                          className='nav flex-column nav-pills nav-pills-custom-dropdown'
+                          id='v-pills-tab'
+                          role='tablist'
+                          aria-orientation='vertical'
+                        >
+                          <Link
+                            className='nav-link py-2 px-3'
+                            href='/agent/transactions/sales-order'
+                          >
+                            Sales Order
+                          </Link>
+                          <Link
+                            className='nav-link py-2 px-3'
+                            href='/agent/transactions/invoice'
+                          >
+                            Invoice
+                          </Link>
+                          <Link
+                            className='nav-link py-2 px-3'
+                            href='/agent/transactions/payment'
+                          >
+                            Payment
+                          </Link>
+                          <Link
+                            className='nav-link py-2 px-3'
+                            href='/agent/transactions/commissions'
+                          >
+                            Commission
+                          </Link>
+                          <Link
+                            className='nav-link py-2 px-3'
+                            href='/agent/transactions/customers'
+                          >
+                            Customers
+                          </Link>
+                          <Link
+                            className='nav-link py-2 px-3'
+                            href='/agent/transactions/payout'
+                          >
+                            Payout
+                          </Link>
+                        </div>
+                      </div>
+                    )}
                 </li>
               </ul>
             </div>

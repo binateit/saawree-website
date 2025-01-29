@@ -1,13 +1,9 @@
 "use client";
-
-import { formatCurrency } from "@/core/helpers/helperFunctions";
-import { InvoiceRecords } from "@/core/models/agentModel";
+import { CustomersOfAgent } from "@/core/models/agentModel";
+import { CustomerFilters } from "@/core/models/customerModel";
 import { Filter, PaginationFilter } from "@/core/models/model";
-import { FilterOption } from "@/core/models/saleOrderModel";
-import { getInvoicesOfAgent } from "@/core/requests/agentRequests";
+import { getCustomerOfAgent } from "@/core/requests/agentRequests";
 import { useQuery } from "@tanstack/react-query";
-import { format, formatDate } from "date-fns";
-import { toZonedTime } from "date-fns-tz";
 import Link from "next/link";
 import { Column } from "primereact/column";
 import {
@@ -20,11 +16,13 @@ import { BsChevronDown, BsChevronUp } from "react-icons/bs";
 import { useImmer } from "use-immer";
 
 const page = () => {
-  const [globalFilterValue, setGlobalFilterValue] = useState<string>("");
   const [isFilter, setIsFilter] = useState<boolean>();
   const [filterQuery, setFilterQuery] = useState({});
-  const [filterOption, updateFilterOption] = useState<FilterOption>({
-    filterDates: undefined,
+  const [globalFilterValue, setGlobalFilterValue] = useState<string>("");
+  const [filterOption, updateFilterOption] = useState<CustomerFilters>({
+    filterPrintName: undefined,
+    filterEmailAddress: undefined,
+    filterMobileNumber: undefined,
   });
   const [paginationModel, setPaginationModel] = useImmer<PaginationFilter>({
     first: 0,
@@ -36,26 +34,41 @@ const page = () => {
   });
 
   const {
-    data: invoicesListResponse,
+    data: customersListResponse,
     isLoading,
     refetch,
   } = useQuery({
-    queryKey: ["agents-invoice-list", paginationModel, filterQuery],
+    queryKey: ["agent-customers-list", filterQuery, paginationModel],
     queryFn: () => {
-      return getInvoicesOfAgent({ ...filterQuery, ...paginationModel });
+      return getCustomerOfAgent({ ...filterQuery, ...paginationModel });
     },
   });
 
   const updateSearchFilters = () => {
     let filters: Filter[] = [];
 
-    // if (filterOption?.filterOrderStatusId != undefined) {
-    //   filters.push({
-    //     field: "SaleOrderStatusId",
-    //     operator: "eq",
-    //     value: Number(filterOption?.filterOrderStatusId),
-    //   });
-    // }
+    if (filterOption?.filterPrintName != undefined) {
+      filters.push({
+        field: "printName",
+        operator: "contains",
+        value: filterOption?.filterPrintName,
+      });
+    }
+
+    if (filterOption?.filterEmailAddress != undefined) {
+      filters.push({
+        field: "emailAddress",
+        operator: "contains",
+        value: filterOption?.filterEmailAddress,
+      });
+    }
+    if (filterOption?.filterMobileNumber != undefined) {
+      filters.push({
+        field: "mobileNumber",
+        operator: "contains",
+        value: filterOption?.filterMobileNumber,
+      });
+    }
 
     // if (filterOption?.filterPaymentStatusId != undefined) {
     //   filters.push({
@@ -64,50 +77,6 @@ const page = () => {
     //     value: Number(filterOption?.filterPaymentStatusId),
     //   });
     // }
-
-    if (filterOption?.filterDates != undefined) {
-      let orderDateFilters: Filter[] = [];
-      if (filterOption?.filterDates?.[0] !== undefined) {
-        const fromDate = toZonedTime(
-          new Date(filterOption?.filterDates?.[0] as Date),
-          "Asia/Kolkata"
-        );
-        orderDateFilters.push({
-          field: "orderDate",
-          operator: "gte",
-          value: format(fromDate, "yyyy-MM-dd 00:00:00"),
-        });
-      }
-
-      if (filterOption?.filterDates?.[1] === null) {
-        const toDate = toZonedTime(
-          new Date(filterOption.filterDates[0] as Date),
-          "Asia/Kolkata"
-        );
-
-        orderDateFilters.push({
-          field: "orderDate",
-          operator: "lte",
-          value: format(toDate, "yyyy-MM-dd 23:59:59"),
-        });
-      } else {
-        const toDate = toZonedTime(
-          new Date(filterOption.filterDates[1] as Date),
-          "Asia/Kolkata"
-        );
-
-        orderDateFilters.push({
-          field: "orderDate",
-          operator: "lte",
-          value: format(toDate, "yyyy-MM-dd 23:59:59"),
-        });
-      }
-
-      filters.push({
-        filters: orderDateFilters,
-        logic: "and",
-      });
-    }
 
     if (filters.length > 1) {
       const newFilterQuery = {
@@ -139,13 +108,12 @@ const page = () => {
       advancedFilter: undefined,
     });
     updateFilterOption({
-      filterDates: undefined,
-      filterOrderStatusId: undefined,
-      filterPaymentStatusId: undefined,
+      filterPrintName: "",
+      filterEmailAddress: "",
+      filterMobileNumber: "",
     });
     refetch();
   };
-
   const onPageOrSortChange = (event: DataTableStateEvent) => {
     setPaginationModel((draft) => {
       draft.pageNumber =
@@ -160,8 +128,8 @@ const page = () => {
     });
   };
 
-  const filteredData = invoicesListResponse?.data?.filter(
-    (item: InvoiceRecords) =>
+  const filteredData = customersListResponse?.data?.filter(
+    (item: CustomersOfAgent) =>
       Object.values(item).some((value: any) => {
         return (
           typeof value === "string" &&
@@ -189,16 +157,16 @@ const page = () => {
   const leftContent = (
     <div className='paginaton-showing'>
       {`Showing ${
-        (invoicesListResponse?.pagination?.totalCount as number) > 0
+        (customersListResponse?.pagination?.totalCount as number) > 0
           ? (paginationModel.first as number) + 1
           : 0
       } to 
-            ${Math.min(
-              (invoicesListResponse?.pagination?.currentPage as number) *
-                (invoicesListResponse?.pagination?.pageSize as number),
-              invoicesListResponse?.pagination?.totalCount as number
-            )} 
-            out of ${invoicesListResponse?.pagination?.totalCount} Records`}
+              ${Math.min(
+                (customersListResponse?.pagination?.currentPage as number) *
+                  (customersListResponse?.pagination?.pageSize as number),
+                customersListResponse?.pagination?.totalCount as number
+              )} 
+              out of ${customersListResponse?.pagination?.totalCount} Records`}
     </div>
   );
   return (
@@ -225,59 +193,61 @@ const page = () => {
         {isFilter ? (
           <>
             <div className='card-body'>
-              <div className='row'>
-                <div className='col-md-4'>
-                  <div className='form-group'>
-                    <label htmlFor='date'>By Date</label>
-                    <Calendar
-                      value={filterOption?.filterDates as Date[]}
-                      onChange={(e) => {
-                        updateFilterOption({
-                          ...filterOption,
-                          filterDates: e.value as Date[],
-                        });
-                      }}
-                      selectionMode='range'
-                      placeholder='Select Order Date'
-                      formatDateTime={(value) => format(value, "dd/MM/yyyy")}
-                      readOnlyInput
-                      hideOnRangeSelection
-                      style={{ width: "20rem", height: "3rem" }}
-                      showButtonBar
-                      className='w-100'
-                      inputClassName='form-control form-control-solid'
-                    />
+              <form>
+                <div className='row'>
+                  <div className='col-md-4'>
+                    <div className='form-group'>
+                      <label htmlFor='all-status'>Customer Name</label>
+                      <input
+                        type='text'
+                        className='form-control'
+                        placeholder='Customer Name'
+                        value={filterOption?.filterPrintName}
+                        onChange={(e) =>
+                          updateFilterOption({
+                            ...filterOption,
+                            filterPrintName: e?.target?.value,
+                          })
+                        }
+                      />
+                    </div>
                   </div>
-                </div>
-                {/* <div className='col-md-4'>
-                  <div className='form-group'>
-                    <label htmlFor='all-status'>All Status</label>
-                    <div className='search-category-dropdown'>
-                      <select className='form-control'>
-                        <option>Status 01</option>
-                        <option>Status 02</option>
-                        <option>Status 03</option>
-                      </select>
-                      <BsChevronDown className='drop-down-icon' />
+                  <div className='col-md-4'>
+                    <div className='form-group'>
+                      <label htmlFor='all-status'>Customer Email</label>
+                      <input
+                        type='text'
+                        className='form-control'
+                        placeholder='Customer Email'
+                        value={filterOption?.filterEmailAddress}
+                        onChange={(e) =>
+                          updateFilterOption({
+                            ...filterOption,
+                            filterEmailAddress: e.target.value,
+                          })
+                        }
+                      />
+                    </div>
+                  </div>
+                  <div className='col-md-4'>
+                    <div className='form-group'>
+                      <label htmlFor='all-status'>Customer Mobile</label>
+                      <input
+                        type='text'
+                        className='form-control'
+                        placeholder='Customer Mobile'
+                        value={filterOption?.filterMobileNumber}
+                        onChange={(e) =>
+                          updateFilterOption({
+                            ...filterOption,
+                            filterMobileNumber: e?.target?.value,
+                          })
+                        }
+                      />
                     </div>
                   </div>
                 </div>
-                <div className='col-md-4'>
-                  <div className='form-group'>
-                    <label htmlFor='all-payment-status'>
-                      All Payment Status
-                    </label>
-                    <div className='search-category-dropdown'>
-                      <select className='form-control'>
-                        <option>Payment Status 01</option>
-                        <option>Payment Status 02</option>
-                        <option>Payment Status 03</option>
-                      </select>
-                      <BsChevronDown className='drop-down-icon' />
-                    </div>
-                  </div>
-                </div> */}
-              </div>
+              </form>
             </div>
             <div className='card-footer bg-white'>
               <div className='d-flex justify-content-end'>
@@ -304,7 +274,7 @@ const page = () => {
       </div>
       <div className='card shadow'>
         <div className='card-header bg-white'>
-          <h5>Invoice</h5>
+          <h5>Customers</h5>
         </div>
         <div className='card-body'>
           <DataTable
@@ -318,7 +288,7 @@ const page = () => {
             responsiveLayout='stack'
             rows={paginationModel.pageSize}
             sortMode='single'
-            emptyMessage='No Sales Order found.'
+            emptyMessage='No Payment Order found.'
             tableClassName='table table-bordered table-hover mb-0'
             paginator
             currentPageReportTemplate='Showing {first} to {last} of {totalRecords} records'
@@ -327,48 +297,39 @@ const page = () => {
             onSort={onPageOrSortChange}
             onPage={onPageOrSortChange}
             first={paginationModel.first}
-            totalRecords={invoicesListResponse?.pagination?.totalCount}
+            totalRecords={customersListResponse?.pagination?.totalCount}
             sortField={paginationModel.sortField}
             sortOrder={paginationModel.sortOrder as SortOrder}
           >
             <Column
-              field='invoiceNumber'
-              header='Invoice No.'
-              sortable
-              sortField='invoiceNumber'
-            />
-            <Column
-              field='customerName'
+              field='printName'
               header='Customer Name'
               sortable
-              sortField='customerName'
+              sortField='printName'
             />
             <Column
-              field='invoiceDate'
-              header='Invoice Date'
+              field='mobileNumber'
+              header='Mobile Number'
               sortable
-              sortField='invoiceDate'
-              body={(rowData) =>
-                formatDate(rowData?.invoiceDate, "dd MMM yyyy")
-              }
+              sortField='mobileNumber'
             />
             <Column
-              field='orderTotal'
-              header='Total Amount'
+              field='emailAddress'
+              header='Email Address'
               sortable
-              sortField='orderTotal'
-              body={(rowData) => formatCurrency(rowData?.orderTotal)}
+              sortField='emailAddress'
             />
             <Column
-              field='invoiceStatusName'
-              header='Invoice Status'
-              body={(rowData) => formatCurrency(rowData?.invoiceStatusName)}
+              field='accountStatusName'
+              header='Status'
+              sortable
+              sortField='accountStatusName'
             />
             <Column
               header='Action'
               body={(rowData) => (
                 <Link
-                  href={`/agent/transactions/invoice/details?invoiceId=${rowData?.id}`}
+                  href={`/agent/transactions/customers/details?customerId=${rowData?.id}`}
                   className='btn btn-saawree'
                 >
                   View

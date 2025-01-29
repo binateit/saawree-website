@@ -917,7 +917,30 @@ ul.sub-menu {
 }
 
 
-
+.card.disabled {
+    position: relative;
+  }
+  
+  .card.disabled::after {
+    content: "Select the customer";
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    background-color: rgb(175 175 175 / 62%);
+    top: 0;
+    left: 0px;
+    z-index: 98;
+    color: #fff;
+    text-align: center;
+    padding-top: 20px;
+    font-size: 26px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 700;
+    border-radius: 0.625rem;
+    ;
+  }
 /*---------Fade-in Effect----------*/
 @keyframes fade-in {
     0% {

@@ -1,90 +1,131 @@
 "use client";
-import CalendarInput from "@/core/component/CalenderInput";
-import { formatDate, isNotEmpty } from "@/core/helpers/helperFunctions";
-import { EditCustomerProfile } from "@/core/models/customerModel";
-import { toast } from "react-toastify";
-import { userToken } from "@/core/models/model";
-import { updateCustomerProfile } from "@/core/requests/customerRoutes";
-import { Field, FormikProvider, useFormik } from "formik";
-import { useSession } from "next-auth/react";
-import React, { useEffect, useState } from "react";
-import * as Yup from "yup";
-import { useQuery } from "@tanstack/react-query";
-import { getUserProfileByToken } from "@/core/requests/authRequests";
-import CustomSelect from "@/core/component/CustomSelect";
 
-const ProfileDetails = () => {
-  const [editMode, setEditMode] = useState<boolean>();
-  const [combinations, setCombinations] = useState<string[]>([]);
+import * as Yup from "yup";
+import {
+  getAgentByToken,
+  updateAgentProfile,
+} from "@/core/requests/agentRequests";
+import { useQuery } from "@tanstack/react-query";
+import { formatDate } from "date-fns";
+import { useEffect, useState } from "react";
+import React from "react";
+import { EditAgentProfile } from "@/core/models/agentModel";
+import { Field, FormikProvider, useFormik } from "formik";
+import { toast } from "react-toastify";
+import CalendarInput from "@/core/component/CalenderInput";
+import CustomSelect from "@/core/component/CustomSelect";
+import { getCountryList, getStateList } from "@/core/requests/requests";
+import {
+  Country,
+  SelectOptionProps,
+  State,
+  userToken,
+} from "@/core/models/model";
+import { useSession } from "next-auth/react";
+
+const page = () => {
   const { data: session } = useSession();
+  const [isEdit, setIsEdit] = useState(false);
+  const [stateList, setStateList] = useState<SelectOptionProps[]>([]);
+  const [countryList, setCountryList] = useState<SelectOptionProps[]>([]);
+  const [selectedCountry, setSelectedCountry] = useState<number>();
   const editProfileSchema = Yup.object().shape({
     firstName: Yup.string(),
     lastName: Yup.string(),
     companyName: Yup.string(),
-    mobileNumber: Yup.number(),
+    mobileNumber: Yup.string()
+      .matches(/^[7-9]\d{9}$/, {
+        message: "Please enter valid phone number.",
+        excludeEmptyString: false,
+      })
+      .required("Please enter phone number"),
     emailAddress: Yup.string(),
-    website: Yup.string(),
-    dateOfBirth: Yup.string(),
-    faxNumber: Yup.string(),
+    whatsappNumber: Yup.string()
+      .matches(/^[7-9]\d{9}$/, {
+        message: "Please enter valid phone number.",
+        excludeEmptyString: false,
+      })
+      .required("Please enter whatsapp number"),
+    dob: Yup.string(),
     dateOfAnniversary: Yup.string(),
+    addressLine1: Yup.string(),
+    addressLine2: Yup.string(),
+    city: Yup.string(),
+    stateId: Yup.number(),
+    countryId: Yup.number(),
+    zip: Yup.string().matches(
+      /^\d{6}$/,
+      "Zip code must be numeric and exactly 6 digits"
+    ),
   });
-  const sessionData = session?.user as userToken;
-
   const {
-    data: customerProfile,
-    isLoading: customerProfileLoading,
-    refetch: customerProfileRefetch,
+    data: agentProfile,
+    isLoading: agentProfileLoading,
+    refetch: agentProfileRefetch,
   } = useQuery({
-    queryKey: ["userByToken"],
-    queryFn: () => getUserProfileByToken(session?.user?.token),
+    queryKey: ["agentByToken"],
+    queryFn: () => getAgentByToken(),
     refetchOnWindowFocus: false,
   });
+
+  const sessionData = session?.user as userToken;
+
   const formik = useFormik({
     enableReinitialize: true,
     initialValues: {
-      firstName: customerProfile?.firstName || undefined,
-      lastName: customerProfile?.lastName || undefined,
-      companyName: customerProfile?.companyName || undefined,
-      mobileNumber: customerProfile?.mobileNumber,
-      emailAddress: customerProfile?.emailAddress || undefined,
-      website: customerProfile?.website || undefined,
-      whatsappNumber: customerProfile?.whatsappNumber || undefined,
-      dateOfBirth: customerProfile?.dateOfBirth || undefined,
-      faxNumber: customerProfile?.faxNumber || undefined,
-      printName: customerProfile?.printName || undefined,
-      contactPerson: customerProfile?.contactPerson || undefined,
-      dateOfAnniversary: customerProfile?.dateOfAnniversary || undefined,
+      firstName: agentProfile?.firstName || undefined,
+      lastName: agentProfile?.lastName || undefined,
+      companyName: agentProfile?.companyName || undefined,
+      mobileNumber: agentProfile?.mobileNumber,
+      emailAddress: agentProfile?.emailAddress || undefined,
+      whatsappNumber: agentProfile?.whatsappNumber || undefined,
+      dob: agentProfile?.dateOfBirth || undefined,
+      dateOfAnniversary: agentProfile?.dateOfAnniversary || undefined,
+      addressLine1: agentProfile?.addressLine1,
+      addressLine2: agentProfile?.addressLine2,
+      city: agentProfile?.city,
+      stateId: agentProfile?.stateId,
+      stateName: agentProfile?.stateName,
+      countryId: agentProfile?.countryId,
+      countryName: agentProfile?.countryName,
+      zipCode: agentProfile?.zipCode,
     },
     validationSchema: editProfileSchema,
 
     onSubmit: async (formValues, { setFieldError, setSubmitting }) => {
       setSubmitting(true);
       try {
-        const profilePayload: EditCustomerProfile = {
+        let profilePayload: EditAgentProfile = {
           userId: sessionData?.userId,
-          firstName: formValues.firstName as string,
-          lastName: formValues.lastName as string,
-          companyName: formValues.companyName as string,
-          mobileNumber: formValues.mobileNumber as string,
-          emailAddress: formValues.emailAddress as string,
-          website: formValues.website as string,
-          faxNumber: formValues?.faxNumber as string,
-          whatsappNumber: formValues.whatsappNumber as string,
-          dateOfBirth: formValues.dateOfBirth as string,
-          printName: (formValues?.firstName +
-            " " +
-            formValues?.lastName) as string,
-          contactPerson: (formValues?.firstName +
-            " " +
-            formValues?.lastName) as string,
-          dateOfAnniversary: formValues.dateOfAnniversary as string,
+          firstName: formValues?.firstName as string,
+          lastName: formValues?.lastName as string,
+          companyName: formValues?.companyName as string,
+          mobileNumber: formValues?.mobileNumber as string,
+          emailAddress: formValues?.emailAddress as string,
+          whatsappNumber: formValues?.whatsappNumber as string,
+          dob: formValues?.dob as string,
+          dateOfAnniversary: formValues?.dateOfAnniversary as string,
+          addressLine1: formValues?.addressLine1 as string,
+          addressLine2: formValues?.addressLine2 as string,
+          city: formValues?.city as string,
+          stateId: formValues?.stateId as number,
+          countryId: formValues?.countryId as number,
+          zipCode: formValues?.zipCode as string,
         };
+        profilePayload.stateName = stateList.find(
+          (x) => x.value === formValues.stateId
+        )?.label as string;
+        profilePayload.countryName = countryList.find(
+          (x) => x.value === formValues.countryId
+        )?.label as string;
+
         let result;
-        result = await updateCustomerProfile(profilePayload);
-        console.log(result);
+
+        result = await updateAgentProfile(profilePayload);
+
         if (result.succeeded) {
-          toast.success("Customer is updated successfully.");
-          customerProfileRefetch();
+          toast.success("Agent is updated successfully.");
+          agentProfileRefetch();
         }
       } catch (ex) {
         console.error(ex);
@@ -92,49 +133,49 @@ const ProfileDetails = () => {
     },
   });
 
-  function generateCombinations() {
-    const combinations: string[] = [];
-    if (formik.values.firstName && formik.values.lastName) {
-      combinations.push(`${formik.values.firstName} ${formik.values.lastName}`);
-      combinations.push(`${formik.values.lastName} ${formik.values.firstName}`);
-      customerProfile?.contactPerson !== null
-        ? formik.setFieldValue("contactPerson", customerProfile?.contactPerson)
-        : formik.setFieldValue(
-            "contactPerson",
-            `${formik.values.lastName} ${formik.values.firstName}`
-          );
-      customerProfile?.printName !== null
-        ? formik.setFieldValue("contactPerson", customerProfile?.printName)
-        : formik.setFieldValue(
-            "printName",
-            `${formik.values.firstName} ${formik.values.lastName}`
-          );
-    }
-    if (formik.values.companyName) {
-      combinations.push(`${formik.values.companyName}`);
-    }
-    setCombinations(combinations);
-  }
+  const { data: country } = useQuery({
+    queryKey: ["getCountryList", formik.values.countryId],
+    queryFn: () => getCountryList(),
+  });
+
+  const { data: states } = useQuery({
+    queryKey: ["getStateList", formik.values.countryId],
+    queryFn: () => getStateList(Number(formik.values.countryId)),
+    enabled: !!formik.values.countryId,
+  });
 
   useEffect(() => {
-    generateCombinations();
-  }, [
-    formik.values.firstName,
-    formik.values.lastName,
-    formik.values.companyName,
-  ]);
+    let stateResult: any;
+    let countryResult: any;
+    if (states) {
+      stateResult = states as State[];
+      let stateArray: any[] = [];
+      stateResult.map((item: any) => {
+        return stateArray.push({ value: item.id, label: item.name });
+      });
+      setStateList(stateArray);
+    }
+    if (country) {
+      countryResult = country as Country[];
+      let countryArray: any[] = [];
+      countryResult?.map((item: any) => {
+        return countryArray.push({ value: item.id, label: item.name });
+      });
+      setCountryList(countryArray);
+    }
+  }, [states, country]);
 
-  if (customerProfileLoading) return <p>Loading....</p>;
+  if (agentProfileLoading) return <p>Loading...</p>;
 
   return (
     <>
-      {!editMode && (
+      {!isEdit ? (
         <div className='card shadow detail-box'>
           <div className='card-header bg-white justify-content-between'>
             <h5 className='mb-0'>Profile</h5>
             <button
               className='btn btn-saawree open-edit-form'
-              onClick={() => setEditMode(!editMode)}
+              onClick={() => setIsEdit(!isEdit)}
             >
               Edit Profile
             </button>
@@ -146,7 +187,7 @@ const ProfileDetails = () => {
                   <label className='font-weight-bold custome-lg-label mb-0'>
                     First Name :
                   </label>
-                  <span className='ml-xl-2'>{customerProfile?.firstName}</span>
+                  <span className='ml-xl-2'>{agentProfile?.firstName}</span>
                 </div>
               </div>
               <div className='col-xl-6 col-lg-12 col-md-12 mb-3'>
@@ -154,7 +195,25 @@ const ProfileDetails = () => {
                   <label className='font-weight-bold custome-lg-label mb-0'>
                     Last Name :
                   </label>
-                  <span className='ml-xl-2'>{customerProfile?.lastName}</span>
+                  <span className='ml-xl-2'>{agentProfile?.lastName}</span>
+                </div>
+              </div>
+              <div className='col-xl-6 col-lg-12 col-md-12 mb-3'>
+                <div className='profile-data d-flex'>
+                  <label className='font-weight-bold custome-lg-label mb-0'>
+                    Agent Code :
+                  </label>
+                  <span className='ml-xl-2'>{agentProfile?.agentCode}</span>
+                </div>
+              </div>
+              <div className='col-xl-6 col-lg-12 col-md-12 mb-3'>
+                <div className='profile-data d-flex'>
+                  <label className='font-weight-bold custome-lg-label mb-0'>
+                    Status :
+                  </label>
+                  <span className='ml-xl-2'>
+                    {agentProfile?.isActive ? "Active" : "De-activated"}
+                  </span>
                 </div>
               </div>
               <div className='col-xl-6 col-lg-12 col-md-12 mb-3'>
@@ -162,25 +221,7 @@ const ProfileDetails = () => {
                   <label className='font-weight-bold custome-lg-label mb-0'>
                     Company Name :
                   </label>
-                  <span className='ml-xl-2'>
-                    {customerProfile?.companyName}
-                  </span>
-                </div>
-              </div>
-              <div className='col-xl-6 col-lg-12 col-md-12 mb-3'>
-                <div className='profile-data d-flex'>
-                  <label className='font-weight-bold custome-lg-label mb-0'>
-                    Print Name :
-                  </label>
-                  <span className='ml-xl-2'>{customerProfile?.printName}</span>
-                </div>
-              </div>
-              <div className='col-xl-6 col-lg-12 col-md-12 mb-3'>
-                <div className='profile-data d-flex'>
-                  <label className='font-weight-bold custome-lg-label mb-0'>
-                    Fax Number :
-                  </label>
-                  <span className='ml-xl-2'>{customerProfile?.faxNumber}</span>
+                  <span className='ml-xl-2'>{agentProfile?.companyName}</span>
                 </div>
               </div>
               <div className='col-xl-6 col-lg-12 col-md-12 mb-3'>
@@ -188,27 +229,7 @@ const ProfileDetails = () => {
                   <label className='font-weight-bold custome-lg-label mb-0'>
                     E-mail Address :
                   </label>
-                  <span className='ml-xl-2'>
-                    {customerProfile?.emailAddress}
-                  </span>
-                </div>
-              </div>
-              <div className='col-xl-6 col-lg-12 col-md-12 mb-3'>
-                <div className='profile-data d-flex'>
-                  <label className='font-weight-bold custome-lg-label mb-0'>
-                    Contact Person :
-                  </label>
-                  <span className='ml-xl-2'>
-                    {customerProfile?.contactPerson}
-                  </span>
-                </div>
-              </div>
-              <div className='col-xl-6 col-lg-12 col-md-12 mb-3'>
-                <div className='profile-data d-flex'>
-                  <label className='font-weight-bold custome-lg-label mb-0'>
-                    Website :
-                  </label>
-                  <span className='ml-xl-2'>{customerProfile?.website}</span>
+                  <span className='ml-xl-2'>{agentProfile?.emailAddress}</span>
                 </div>
               </div>
               <div className='col-xl-6 col-lg-12 col-md-12 mb-3'>
@@ -216,9 +237,7 @@ const ProfileDetails = () => {
                   <label className='font-weight-bold custome-lg-label mb-0'>
                     Mobile Number :
                   </label>
-                  <span className='ml-xl-2'>
-                    {customerProfile?.mobileNumber}
-                  </span>
+                  <span className='ml-xl-2'>{`+91 ${agentProfile?.mobileNumber}`}</span>
                 </div>
               </div>
               <div className='col-xl-6 col-lg-12 col-md-12 mb-3'>
@@ -226,8 +245,16 @@ const ProfileDetails = () => {
                   <label className='font-weight-bold custome-lg-label mb-0'>
                     Whatsapp Number :
                   </label>
+                  <span className='ml-xl-2'>{`+91 ${agentProfile?.whatsappNumber}`}</span>
+                </div>
+              </div>
+              <div className='col-xl-6 col-lg-12 col-md-12 mb-3'>
+                <div className='profile-data d-flex'>
+                  <label className='font-weight-bold custome-lg-label mb-0'>
+                    Commission Percent :
+                  </label>
                   <span className='ml-xl-2'>
-                    {customerProfile?.whatsappNumber}
+                    {agentProfile?.commissionPercent}
                   </span>
                 </div>
               </div>
@@ -237,8 +264,10 @@ const ProfileDetails = () => {
                     Date of Birth :
                   </label>
                   <span className='ml-xl-2'>
-                    {customerProfile?.dateOfBirth &&
-                      formatDate(customerProfile?.dateOfBirth, "dd MMM yyyy")}
+                    {formatDate(
+                      agentProfile?.dateOfBirth as unknown as string,
+                      "dd MMM yyyy"
+                    )}
                   </span>
                 </div>
               </div>
@@ -248,19 +277,38 @@ const ProfileDetails = () => {
                     Date of Anniversary :
                   </label>
                   <span className='ml-xl-2'>
-                    {customerProfile?.dateOfAnniversary &&
-                      formatDate(
-                        customerProfile?.dateOfAnniversary,
-                        "dd MMM yyyy"
-                      )}
+                    {" "}
+                    {formatDate(
+                      agentProfile?.dateOfAnniversary as unknown as string,
+                      "dd MMM yyyy"
+                    )}
+                  </span>
+                </div>
+              </div>
+              <div className='col-xl-6 col-lg-12 col-md-12 mb-3'>
+                <div className='profile-data d-flex'>
+                  <label className='font-weight-bold custome-lg-label mb-0'>
+                    Rate Applicable :
+                  </label>
+                  <span className='ml-xl-2'>{agentProfile?.rateTypeName}</span>
+                </div>
+              </div>
+              <div className='col-xl-12 col-lg-12 col-md-12 mb-3'>
+                <div className='profile-data d-flex'>
+                  <label className='font-weight-bold custome-lg-label mb-0'>
+                    Address :
+                  </label>
+                  <span className='ml-xl-2'>
+                    {agentProfile?.addressLine1} {agentProfile?.addressLine2}{" "}
+                    {agentProfile?.city} {agentProfile?.stateName}{" "}
+                    {agentProfile?.countryName} {agentProfile?.zipCode}
                   </span>
                 </div>
               </div>
             </div>
           </div>
         </div>
-      )}
-      {editMode && (
+      ) : (
         <div className='card shadow edit-form'>
           <div className='card-header bg-white'>
             <h5>Update Profile</h5>
@@ -305,30 +353,6 @@ const ProfileDetails = () => {
                       />
                     </div>
                     <div className='col-xl-6 col-lg-6 col-md-6 mb-3'>
-                      <label htmlFor=''>Print Name</label>
-                      <Field
-                        className='form-select-solid'
-                        component={CustomSelect}
-                        {...formik.getFieldProps("printName")}
-                        // value={formik.values.printName}
-                        name={"printName"}
-                        options={combinations.map((value) => ({
-                          label: value,
-                          value,
-                        }))}
-                      ></Field>
-                    </div>
-                    <div className='col-xl-6 col-lg-6 col-md-6 mb-3'>
-                      <label htmlFor=''>Fax Number</label>
-                      <Field
-                        type='text'
-                        className='form-control'
-                        {...formik.getFieldProps("faxNumber")}
-                        placeholder='Fax Number'
-                        name='faxNumber'
-                      />
-                    </div>
-                    <div className='col-xl-6 col-lg-6 col-md-6 mb-3'>
                       <label htmlFor=''>E-mail Address</label>
                       <Field
                         type='text'
@@ -337,30 +361,6 @@ const ProfileDetails = () => {
                         {...formik.getFieldProps("emailAddress")}
                         name='emailAddress'
                         disabled
-                      />
-                    </div>
-                    <div className='col-xl-6 col-lg-6 col-md-6 mb-3'>
-                      <label htmlFor=''>Contact Person</label>
-                      <Field
-                        className='form-select-solid'
-                        component={CustomSelect}
-                        {...formik.getFieldProps("contactPerson")}
-                        // value={formik.values.printName}
-                        name={"contactPerson"}
-                        options={combinations.map((value) => ({
-                          label: value,
-                          value,
-                        }))}
-                      ></Field>
-                    </div>
-                    <div className='col-xl-6 col-lg-6 col-md-6 mb-3'>
-                      <label htmlFor=''>Website</label>
-                      <Field
-                        type='text'
-                        className='form-control'
-                        {...formik.getFieldProps("website")}
-                        name='website'
-                        placeholder='Website'
                       />
                     </div>
                     <div className='col-xl-6 col-lg-6 col-md-6 mb-3'>
@@ -391,13 +391,11 @@ const ProfileDetails = () => {
                           placeholder='Date of Birth'
                           className='form-control'
                           value={
-                            formik.values.dateOfBirth &&
+                            formik.values.dob &&
                             !isNaN(
-                              Date.parse(
-                                formik.values.dateOfBirth as unknown as string
-                              )
+                              Date.parse(formik.values.dob as unknown as string)
                             )
-                              ? new Date(formik.values.dateOfBirth)
+                              ? new Date(formik.values.dob)
                               : null
                           }
                           setFieldValue={formik.setFieldValue}
@@ -426,13 +424,75 @@ const ProfileDetails = () => {
                         />
                       </div>
                     </div>
+                    <div className='col-xl-6 col-lg-6 col-md-6 mb-3'>
+                      <label htmlFor=''>Address Line1</label>
+                      <Field
+                        type={"text"}
+                        className='form-control form-control-solid ms-2'
+                        {...formik.getFieldProps("addressLine1")}
+                        name='addressLine1'
+                      />
+                    </div>
+                    <div className='col-xl-6 col-lg-6 col-md-6 mb-3'>
+                      <label htmlFor=''>Address Line2</label>
+                      <Field
+                        className='form-control form-control-solid ms-2'
+                        type='text'
+                        {...formik.getFieldProps("addressLine2")}
+                        name='addressLine2'
+                      />
+                    </div>
+                    <div className='col-xl-6 col-lg-6 col-md-6 mb-3'>
+                      <label htmlFor=''>State</label>
+
+                      <Field
+                        name={"countryId"}
+                        className='search-category-dropdown'
+                        options={countryList}
+                        component={CustomSelect}
+                        placeholder='country'
+                        onDropDownChange={(e: any) => {
+                          setSelectedCountry(e.value);
+                          formik.setFieldValue("countryId", e.value);
+                        }}
+                      ></Field>
+                    </div>
+                    <div className='col-xl-6 col-lg-6 col-md-6 mb-3'>
+                      <label htmlFor=''>State</label>
+
+                      <Field
+                        className='form-select-solid'
+                        options={stateList}
+                        component={CustomSelect}
+                        placeholder='state'
+                        name={"stateId"}
+                      ></Field>
+                    </div>
+                    <div className='col-xl-6 col-lg-6 col-md-6 mb-3'>
+                      <label htmlFor=''>City</label>
+                      <Field
+                        type={"text"}
+                        className='form-control form-control-solid ms-2'
+                        {...formik.getFieldProps("city")}
+                        name='city'
+                      />
+                    </div>
+                    <div className='col-xl-6 col-lg-6 col-md-6 mb-3'>
+                      <label htmlFor=''>Zip Code</label>
+                      <Field
+                        type={"text"}
+                        className='form-control form-control-solid ms-2'
+                        {...formik.getFieldProps("zipCode")}
+                        name='zipCode'
+                      />
+                    </div>
                   </div>
                 </div>
               </div>
               <div className='card-footer text-right'>
                 <button
                   className='btn btn-saawree close-edit-form mr-3'
-                  onClick={() => setEditMode(false)}
+                  onClick={() => setIsEdit(false)}
                 >
                   <span className='indicator-label'>Cancel</span>
                 </button>
@@ -458,4 +518,4 @@ const ProfileDetails = () => {
   );
 };
 
-export default ProfileDetails;
+export default page;

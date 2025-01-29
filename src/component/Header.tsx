@@ -25,8 +25,6 @@ import { Sidebar } from "primereact/sidebar";
 const Header = () => {
   const { data: session, status: authStatus } = useSession();
 
-  console.log(session?.user, authStatus)
-
   const [show, setShow] = useState(false);
   const { cartCount } = useCartCount();
 
@@ -36,13 +34,10 @@ const Header = () => {
     display: false,
     name: "",
   });
-
-  const handleClose = () => setShow(false);
-  const handleShow = () => setShow(true);
   const navigate = useRouter();
   const handleLogout = async () => {
     signOut();
-    navigate.push("/auth/login");
+    navigate.push("/");
   };
 
   const { data: menuCategoryData } = useQuery({
@@ -158,7 +153,7 @@ const Header = () => {
                     <BsList
                       fontSize={25}
                       onClick={() => setShow(true)}
-                    // onClick={handleShow}
+                      // onClick={handleShow}
                     />
                   </div>
                 )}
@@ -314,97 +309,91 @@ const Header = () => {
         </div>
       </div>
 
-      <Sidebar 
-      visible={show} 
-      position='right' 
-      onHide={() => setShow(false)} 
-      className="offcanvas-panel-menu"
-      showCloseIcon={false}
-      blockScroll={true}
+      <Sidebar
+        visible={show}
+        position='right'
+        onHide={() => setShow(false)}
+        className='offcanvas-panel-menu'
+        showCloseIcon={false}
+        blockScroll={true}
       >
-        
-          <div className='py-2'>
-            <ul className='nav flex-column nav-pills nav-pills-custom'>
-              <li className='nav-link mb-2 active'>
-                <Link
-                  href='overview.html'
-                  className='font-weight-bold small text-uppercase nav-link-item  py-1 px-3 d-block'
-                >
-                  Overview
-                </Link>
-              </li>
-              <li className='mb-2 tab-has-dropdown nav-link cursor-pointer'>
-                <div
-                  className='font-weight-bold small text-uppercase py-1 px-3 nav-link-item'
-                  onClick={() =>
-                    setOpenDropDown({
-                      display: !openDropDown.display,
-                      name: "profile",
-                    })
-                  }
-                >
-                  Profile <BsChevronDown fontSize={14} />
+        <div className='py-2'>
+          <ul className='nav flex-column nav-pills nav-pills-custom'>
+            <li className='nav-link mb-2 active'>
+              <Link
+                href='overview.html'
+                className='font-weight-bold small text-uppercase nav-link-item  py-1 px-3 d-block'
+              >
+                Overview
+              </Link>
+            </li>
+            <li className='mb-2 tab-has-dropdown nav-link cursor-pointer'>
+              <div
+                className='font-weight-bold small text-uppercase py-1 px-3 nav-link-item'
+                onClick={() =>
+                  setOpenDropDown({
+                    display: !openDropDown.display,
+                    name: "profile",
+                  })
+                }
+              >
+                Profile <BsChevronDown fontSize={14} />
+              </div>
+              {openDropDown.display && openDropDown.name === "profile" && (
+                <div className='nav flex-column nav-pills nav-pills-custom-dropdown'>
+                  <a
+                    className='nav-link pl-0 py-2 px-3'
+                    href='profile-details.html'
+                  >
+                    Profile Details
+                  </a>
+                  <a
+                    className='nav-link pl-0 py-2 px-3'
+                    href='accounting-details.html'
+                  >
+                    Accounting Details
+                  </a>
+                  <a className='nav-link pl-0 py-2 px-3' href='address.html'>
+                    Address
+                  </a>
+                  <a
+                    className='nav-link pl-0 py-2 px-3'
+                    href='change-password.html'
+                  >
+                    Change Password
+                  </a>
                 </div>
-                {openDropDown.display && openDropDown.name === "profile" && (
-                  <div className='nav flex-column nav-pills nav-pills-custom-dropdown'>
-                    <a
-                      className='nav-link pl-0 py-2 px-3'
-                      href='profile-details.html'
-                    >
-                      Profile Details
-                    </a>
-                    <a
-                      className='nav-link pl-0 py-2 px-3'
-                      href='accounting-details.html'
-                    >
-                      Accounting Details
-                    </a>
-                    <a className='nav-link pl-0 py-2 px-3' href='address.html'>
-                      Address
-                    </a>
-                    <a
-                      className='nav-link pl-0 py-2 px-3'
-                      href='change-password.html'
-                    >
-                      Change Password
-                    </a>
-                  </div>
-                )}
-              </li>
-              <li className='mb-2 tab-has-dropdown nav-link cursor-pointer'>
-                <div
-                  className='font-weight-bold small text-uppercase py-1 px-3'
-                  onClick={() =>
-                    setOpenDropDown({
-                      display: !openDropDown.display,
-                      name: "transaction",
-                    })
-                  }
-                >
-                  Transaction
-                  <BsChevronDown fontSize={14} />
+              )}
+            </li>
+            <li className='mb-2 tab-has-dropdown nav-link cursor-pointer'>
+              <div
+                className='font-weight-bold small text-uppercase py-1 px-3'
+                onClick={() =>
+                  setOpenDropDown({
+                    display: !openDropDown.display,
+                    name: "transaction",
+                  })
+                }
+              >
+                Transaction
+                <BsChevronDown fontSize={14} />
+              </div>
+              {openDropDown.display && openDropDown.name === "transaction" && (
+                <div className='nav flex-column nav-pills nav-pills-custom-dropdown'>
+                  <Link className='nav-link py-2 px-3' href='sale-order.html'>
+                    Sales Order
+                  </Link>
+                  <Link className='nav-link py-2 px-3' href='invoice.html'>
+                    Invoice
+                  </Link>
+                  <Link className='nav-link py-2 px-3' href='payment.html'>
+                    Payment
+                  </Link>
                 </div>
-                {openDropDown.display &&
-                  openDropDown.name === "transaction" && (
-                    <div className='nav flex-column nav-pills nav-pills-custom-dropdown'>
-                      <Link
-                        className='nav-link py-2 px-3'
-                        href='sale-order.html'
-                      >
-                        Sales Order
-                      </Link>
-                      <Link className='nav-link py-2 px-3' href='invoice.html'>
-                        Invoice
-                      </Link>
-                      <Link className='nav-link py-2 px-3' href='payment.html'>
-                        Payment
-                      </Link>
-                    </div>
-                  )}
-              </li>
-            </ul>
-          </div>
-        
+              )}
+            </li>
+          </ul>
+        </div>
       </Sidebar>
     </>
   );

@@ -10,7 +10,7 @@ const page = () => {
 
   const { data: agentOverview, isLoading: agentOverviewLoading } = useQuery({
     queryKey: ["agentOverviewRec"],
-    queryFn: () => getRecordById(session?.user?.id),
+    queryFn: () => getRecordById(),
     refetchOnWindowFocus: false,
   });
 

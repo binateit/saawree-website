@@ -61,7 +61,7 @@ const layout = ({
                 </div>
 
                 <div className='total-row d-flex align-items-center justify-content-between'>
-                  <p className='subt'>Subtoal</p>
+                  <p className='subt'>Subtotal</p>
                   <p className='subt-amt'>
                     {formatCurrency(cartData?.orderSubTotal)}
                   </p>

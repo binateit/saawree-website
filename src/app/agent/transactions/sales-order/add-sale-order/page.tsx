@@ -1,400 +1,627 @@
-import React from 'react'
-import { BsChevronDown, BsSearch } from "react-icons/bs";
+"use client";
+import CustomSelect from "@/core/component/CustomSelect";
+import * as Yup from "yup";
+import { Field, FormikProvider, useFormik } from "formik";
+import React, { useEffect, useState } from "react";
+import { BsChevronDown, BsSearch, BsTrash } from "react-icons/bs";
+import { useQuery } from "@tanstack/react-query";
+import {
+  createSalesOrder,
+  getCategoryList,
+  getCustomerDetailsForSOById,
+  getCustomerList,
+} from "@/core/requests/saleOrderRequests";
+import {
+  CreateSaleOrder,
+  CreateSaleOrderItem,
+  CreateSaleOrderRequestModel,
+  CustomerAddressForSO,
+  CustomerDetailforSOModel,
+  CustomerListDropdown,
+} from "@/core/models/saleOrderModel";
+import {
+  PaginationFilter,
+  Product,
+  Result,
+  SelectOptionProps,
+} from "@/core/models/model";
+import { Calendar } from "primereact/calendar";
+import { format } from "date-fns";
+import ProductSelection from "@/core/component/Products/ProductSelection";
+import { useImmer } from "use-immer";
+import { InputNumber } from "primereact/inputnumber";
+import { DataTable } from "primereact/datatable";
+import { Column } from "primereact/column";
+import { camelize, formatCurrency } from "@/core/helpers/helperFunctions";
+import { toast } from "react-toastify";
+import { useRouter } from "next/navigation";
+const paginationFilter: PaginationFilter = {
+  pageNumber: 1,
+  pageSize: 500,
+  advancedFilter: {
+    field: "isActive",
+    operator: "eq",
+    value: true,
+  },
+};
 const page = () => {
+  const [saleOrderItems, updateSaleOrderItems] = useImmer<
+    CreateSaleOrderItem[]
+  >([]);
+  const navigate = useRouter();
+  const [customerList, setCustomerList] = useState<SelectOptionProps[]>();
+  const [customerData, setCustomerData] = useState<CustomerDetailforSOModel>();
+  const [errorMessage, updateErrorMessage] = useState<string>("");
+  const [shippingAddressOptions, setShippingAddressOptions] = useState<
+    SelectOptionProps[]
+  >([]);
+
+  const [roundOff, setRoundOff] = useState(0);
+  const [grandTotal, setGrandTotal] = useState(0);
+  const [totalDiscount, setTotalDiscount] = useState(0);
+  const [subTotal, setSubTotal] = useState(0);
+
+  const updatedPaginationFilter: PaginationFilter = {
+    ...paginationFilter,
+    advancedFilter: {
+      field: "isActive",
+      operator: "eq",
+      value: true,
+    },
+  };
+
+  const saleOrderSchema = Yup.object().shape({});
+  const initialValues = {
+    customerId: undefined,
+    orderDate: format(new Date(), "yyyy-MM-dd"),
+    shippingAddressId: undefined,
+    notes: "",
+    discountPercent: undefined,
+  };
+
+  const formik = useFormik({
+    initialValues: initialValues,
+    validationSchema: saleOrderSchema,
+    onSubmit: async (
+      formValues: CreateSaleOrder,
+      { setFieldError, setSubmitting }
+    ) => {
+      setSubmitting(true);
+      console.log(formValues);
+      try {
+        updateErrorMessage("");
+        if (saleOrderItems.filter((item) => !item.isDeleted).length === 0) {
+          updateErrorMessage("Alteast one product is required");
+          window.scrollTo(0, 0);
+          return;
+        }
+        if (
+          saleOrderItems.filter(
+            (item) => !item.isDeleted && item.productId == 0
+          ).length > 0
+        ) {
+          updateErrorMessage("Select Valid Product");
+          window.scrollTo(0, 0);
+
+          return;
+        }
+        if (
+          saleOrderItems.filter((item) => !item.isDeleted && item.quantity == 0)
+            .length > 0
+        ) {
+          updateErrorMessage("Please ensure that the quantity cannot be zero");
+          window.scrollTo(0, 0);
+
+          return;
+        }
+        if (grandTotal <= 0) {
+          updateErrorMessage(
+            "Please ensure that the total amount is greater than or equal to zero."
+          );
+          window.scrollTo(0, 0);
+
+          return;
+        }
+
+        let result: Result;
+        const requestData: CreateSaleOrderRequestModel = {
+          saleOrderTypeId: 1, // Replace with actual value
+          customerId: formik.values.customerId as number, // Taken from Formik or relevant state
+          orderDate: formik.values.orderDate as string, // Ensure date is in the correct format
+          shippingAddressId: formik.values.shippingAddressId as number,
+          notes: formik.values.notes || undefined,
+          discountPercent: formik.values.discountPercent as number,
+          itemList: saleOrderItems
+            .filter((x) => x.isDeleted == false)
+            .map((item) => ({
+              productId: Number(item.productId), // Ensure productId is a number
+              quantity: item.quantity ?? 0,
+              productPrice: item.productPrice ?? 0,
+              isDeleted: item.isDeleted || false,
+            })), // Transform `saleOrderItems` to match API expectations
+        };
+
+        result = await createSalesOrder(requestData);
+        if (result.hasOwnProperty("succeeded") && result?.succeeded) {
+          setSubmitting(true);
+          toast.success("Sale order created successfully!");
+          navigate.push("/agent/transactions/sales-order");
+        } else {
+          if (result.statusCode === 400) {
+            result.propertyResults.map((error) =>
+              setFieldError(camelize(error.propertyName), error.errorMessage)
+            );
+          }
+          toast.error("An error occurred while saving the Sale order.");
+        }
+      } catch (ex) {
+        console.error(ex);
+      }
+    },
+  });
+
+  const { data: customer, isLoading: isCustomerloading } = useQuery({
+    queryKey: ["getCustomersList"],
+    queryFn: () => getCustomerList(),
+  });
+
+  useEffect(() => {
+    let customerData: any;
+    if (customer) {
+      customerData = customer as CustomerListDropdown[];
+      let customerArray: any[] = [];
+      customerData?.map((item: any) => {
+        return customerArray.push({ value: item.id, label: item.name });
+      });
+      setCustomerList(customerArray);
+    }
+  }, [isCustomerloading]);
+
+  const onCustomerChange = (e: any) => {
+    getCustomerDetailsForSOById(e).then((result: CustomerDetailforSOModel) => {
+      setCustomerData(result);
+
+      // Update other customer-related fields
+      formik.setFieldValue("termId", result.termId);
+      formik.setFieldValue("discountPercent", result.discountPercent);
+      handleDiscountChange(result.discountPercent);
+
+      // Update shipping address options
+      const options =
+        result.addressList?.map(
+          ({ customerAddressId, displayAddress }: CustomerAddressForSO) => ({
+            value: customerAddressId,
+            label: displayAddress,
+          })
+        ) || [];
+      setShippingAddressOptions(options);
+
+      // Clear shipping address selection
+
+      // Validate shipping address availability
+      if (!result.addressList || result.addressList.length === 0) {
+        updateErrorMessage("Shipping address is required");
+      } else {
+        formik.setFieldValue("shippingAddressId", options[0].value);
+        updateErrorMessage("");
+      }
+    });
+  };
+  const getPriceForCustomer = (product: Product): number => {
+    switch (customerData?.rateTypeId) {
+      case 1:
+        return product.spWholeSeller ?? 0;
+      case 2:
+        return product.spSemiWholeSeller ?? 0;
+      default:
+        return product.spRetail ?? 0;
+    }
+  };
+
+  const onProductsChange = (product: Product, quantity: number = 1) => {
+    updateSaleOrderItems((items) => {
+      const existingItem = items.find((item) => item.productId === product.id);
+
+      if (existingItem) {
+        // Update existing item
+        existingItem.quantity = (existingItem.quantity ?? 0) + quantity;
+
+        const { productPrice, discountPercent } = existingItem;
+        const totals = calculateItemTotals(
+          productPrice ?? 0,
+          existingItem.quantity,
+          discountPercent ?? 0
+        );
+
+        Object.assign(existingItem, totals);
+      } else {
+        // Add a new item
+        const productPrice = getPriceForCustomer(product);
+        const discountPercent = formik.values.discountPercent ?? 0;
+        const taxPercent = product.taxRateValue ?? 0;
+
+        const totals = calculateItemTotals(
+          productPrice,
+          quantity,
+          discountPercent
+        );
+
+        items.push({
+          rowNumber: items.length,
+          productId: product.id,
+          productName: product.name,
+          quantity: quantity,
+          productPrice,
+          discountPercent,
+          taxPercent,
+          isDeleted: false,
+          ...totals,
+        });
+      }
+    });
+  };
+  const handleDelete = (
+    e: React.ChangeEvent<HTMLInputElement>,
+    rowNumber: number
+  ) => {
+    updateSaleOrderItems((draft) => {
+      return draft.filter((item) => item.rowNumber !== rowNumber);
+    });
+  };
+
+  const updateSaleOrderItem = (
+    rowNumber: number,
+    updates: Partial<CreateSaleOrderItem>
+  ) => {
+    updateSaleOrderItems((items) => {
+      const item = items.find((t) => t.rowNumber === rowNumber);
+      if (item) {
+        Object.assign(item, updates);
+      }
+    });
+  };
+
+  const updateItemTotal = (rowNumber: number) => {
+    updateSaleOrderItems((items) => {
+      const item = items.find((t) => t.rowNumber === rowNumber);
+      if (item) {
+        const { productPrice, quantity, discountPercent, taxPercent } = item;
+
+        const totals = calculateItemTotals(
+          productPrice ?? 0,
+          quantity ?? 0,
+          discountPercent ?? 0
+        );
+
+        Object.assign(item, totals);
+      }
+    });
+  };
+
+  const calculateItemTotals = (
+    unitPrice: number,
+    quantity: number,
+    discountPercent: number = 0
+  ) => {
+    const subTotal = parseFloat(
+      ((unitPrice || 0) * (quantity || 0)).toFixed(2)
+    );
+    const discountAmount = parseFloat(
+      ((subTotal * discountPercent) / 100).toFixed(2)
+    );
+
+    return {
+      subTotal,
+      discountAmount,
+    };
+  };
+
+  const handleDiscountChange = (discountPercent: number) => {
+    updateSaleOrderItems((items) =>
+      items.map((item) => {
+        const { productPrice, quantity } = item;
+
+        const totals = calculateItemTotals(
+          productPrice ?? 0,
+          quantity ?? 0,
+          discountPercent
+        );
+
+        return {
+          ...item,
+          ...totals,
+          discountPercent,
+        };
+      })
+    );
+  };
+
+  const unitPriceBody = (rowData: CreateSaleOrderItem) => {
     return (
-        <>
-            <div className="container">
+      <InputNumber
+        inputStyle={{ maxWidth: 100 }}
+        value={rowData.productPrice}
+        onValueChange={(e) => {
+          const productPrice = e.value as number;
+          updateSaleOrderItem(rowData.rowNumber, { productPrice });
+          updateItemTotal(rowData.rowNumber);
+        }}
+        mode='currency'
+        currency='INR'
+        locale='en-IN'
+      />
+    );
+  };
 
-                <div className="card shadow mb-2">
-                    <div className="card-header bg-white">
-                        <div className="card-title">
-                            <h5>Order Details</h5>
-                        </div>
-                    </div>
-                    <div className="card-body">
-                        <div className="row mb-3">
-                            <div className="col-xl-3 col-lg-3 col-md-3">
-                                <label>Customer<span className="required">*</span></label>
-                            </div>
-                            <div className="col-xl-9 col-lg-9 col-md-9">
-                                <div className="relative">
-                                    <select name="" id="" className="form-control">
-                                        <option>Customer 01</option>
-                                        <option>Customer 02</option>
-                                        <option>Customer 03</option>
-                                    </select>
-                                    <BsChevronDown className='select-dropdown-icon' />
-                                </div>
-                            </div>
-                        </div>
-                        <div className="row mb-3">
-                            <div className="col-xl-3 col-lg-3 col-md-3">
+  const quantityBody = (rowData: CreateSaleOrderItem) => {
+    return (
+      <InputNumber
+        inputStyle={{ maxWidth: 80 }}
+        value={rowData.quantity}
+        onValueChange={(e) => {
+          const quantity = e.value as number;
+          updateSaleOrderItem(rowData.rowNumber, { quantity });
+          updateItemTotal(rowData.rowNumber);
+        }}
+      />
+    );
+  };
 
-                            </div>
-                            <div className="col-xl-9 col-lg-9 col-md-9">
-                                <div className="row">
-                                    <div className="col-xl-6 col-lg-6 col-md-6 col-sm-6">
-                                        <label className="">Billing Address</label>
-                                        <div className="address-wraper">
-                                            <p className="mb-0">B107, Sai Sanman CHSL</p>
-                                            <p className="mb-0">Guru Nanak Nagar</p>
-                                            <p className="mb-0">Vasai West, 401202, India</p>
-                                            <p className="mb-0">Phone: 8888782613</p>
-                                        </div>
-                                    </div>
-                                    <div className="col-xl-6 col-lg-6 col-md-6 col-sm-6">
-                                        <label className="">Shipping Address</label>
-                                        <div className="address-wraper">
-                                            <p className="mb-0">B107, Sai Sanman CHSL</p>
-                                            <p className="mb-0">Guru Nanak Nagar</p>
-                                            <p className="mb-0">Vasai West, 401202, India</p>
-                                            <p className="mb-0">Phone: 8888782613</p>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                        <div className="row mb-3">
-                            <div className="col-xl-3 col-lg-3 col-md-3">
-                                <label>Order Date</label>
-                            </div>
-                            <div className="col-xl-4 col-lg-4 col-md-6">
-                                <div className="relative">
-                                    <input type="text" className="form-control" name="order-date" value="07-01-2025" disabled={true} />
-                                </div>
-                            </div>
-                        </div>
-                        <div className="row mb-3">
-                            <div className="col-xl-3 col-lg-3 col-md-3">
-                                <label>Expected Shippment Date</label>
-                            </div>
-                            <div className="col-xl-4 col-lg-4 col-md-6">
-                                <p>30-03-2025</p>
-                            </div>
-                        </div>
+  const actionBody = (rowData: CreateSaleOrderItem) => {
+    return (
+      <BsTrash
+        fontSize={20}
+        cursor={"pointer"}
+        onClick={(e: any) => {
+          handleDelete(e, rowData.rowNumber);
+        }}
+      />
+    );
+  };
 
-                        <div className="row mb-3">
-                            <div className="col-xl-3 col-lg-3 col-md-3">
-                                <label>Discount</label>
-                            </div>
-                            <div className="col-xl-4 col-lg-4 col-md-6">
-                                ₹ 4522.00
-                            </div>
-                        </div>
-                    </div>
+  useEffect(() => {
+    let tempSubTotal = 0;
+    let tempDiscount = 0;
+
+    // Calculate totals from saleOrderItems
+    saleOrderItems
+      .filter((t) => !t.isDeleted)
+      .forEach((item) => {
+        tempSubTotal += item.subTotal ?? 0;
+        tempDiscount += item.discountAmount ?? 0;
+      });
+
+    // Calculate totals from otherCharges
+
+    const tempTotal = tempSubTotal - tempDiscount;
+    const roundedTotal = Math.round(tempTotal);
+
+    setSubTotal(tempSubTotal);
+    setTotalDiscount(tempDiscount);
+    setRoundOff(roundedTotal - tempTotal);
+    setGrandTotal(roundedTotal);
+  }, [saleOrderItems]);
+
+  return (
+    <>
+      <FormikProvider value={formik}>
+        <form
+          id='add_saleorder_form'
+          className='form'
+          onSubmit={formik.handleSubmit}
+          noValidate
+        >
+          <div className='container'>
+            <div className='card shadow mb-2'>
+              <div className='card-header bg-white'>
+                <div className='card-title'>
+                  <h5>Order Details</h5>
                 </div>
-
-                <div className="card shadow mb-2">
-                    <div className="card-header bg-white">
-                        <div className="card-title">
-                            <h5>Item Details</h5>
-                        </div>
-                    </div>
-                    <div className="card-body">
-                        <div className="search-items relative">
-                            <input type="text" className="form-control pl-5" placeholder="Scan / Search Products by name and code" />
-                            <BsSearch className='search-icon' />
-                        </div>
-                        <div className="row mt-4 align-items-end">
-                            <div className="col-xl-3 col-lg-3 col-md-6 mb-3 md-pr-0">
-                                <label>Select Category</label>
-                                <div className="relative">
-                                    <select name="" id="" className="form-control">
-                                        <option>Category 01</option>
-                                        <option>Category 02</option>
-                                        <option>Category 03</option>
-                                    </select>
-                                    <BsChevronDown className='select-dropdown-icon' />
-                                </div>
-                            </div>
-                            <div className="col-xl-3 col-lg-3 col-md-6 mb-3">
-                                <label>Product Group</label>
-                                <div className="relative">
-                                    <select name="" id="" className="form-control">
-                                        <option>Product Group 01</option>
-                                        <option>Product Group 02</option>
-                                        <option>Product Group 03</option>
-                                    </select>
-                                    <BsChevronDown className='select-dropdown-icon' />
-                                </div>
-                            </div>
-                            <div className="col-xl-3 col-lg-3 col-md-6 mb-3">
-                                <label>Polishing Type</label>
-                                <div className="relative">
-                                    <select name="" id="" className="form-control">
-                                        <option>Polishing Type 01</option>
-                                        <option>Polishing Type 02</option>
-                                        <option>Polishing Type 03</option>
-                                    </select>
-                                    <BsChevronDown className='select-dropdown-icon' />
-                                </div>
-                            </div>
-                            <div className="col-xl-3 col-lg-3 col-md-6 mb-3">
-                                <input type="button" className="btn btn-saawree" value="Search" />
-                            </div>
-                        </div>
-                        <div className="sales-order-select-colors mt-4 border p-4">
-                            <div className="row">
-                                <div className="col-xl-3 col-lg-3 col-md-6 mb-3">
-                                    <div className="d-flex justify-content-between align-items-center">
-                                        <label className="mb-0">
-                                            <span className="mr-2 sales-order-color-options" >
-                                                <img src="../img/colors/Black.jpg" alt='' />
-                                            </span>
-                                            Black
-                                        </label>
-                                        <input type="text" className="form-control color-qnty-input" />
-                                    </div>
-                                </div>
-                                <div className="col-xl-3 col-lg-3 col-md-6 mb-3">
-                                    <div className="d-flex justify-content-between align-items-center">
-                                        <label className="mb-0">
-                                            <span className="mr-2 sales-order-color-options">
-                                                <img src="../img/colors/D-Purple.jpg" alt='' />
-                                            </span>D Purple
-                                        </label>
-                                        <input type="text" className="form-control color-qnty-input" />
-                                    </div>
-                                </div>
-                                <div className="col-xl-3 col-lg-3 col-md-6 mb-3">
-                                    <div className="d-flex justify-content-between align-items-center">
-                                        <label className="mb-0">
-                                            <span className="mr-2 sales-order-color-options">
-                                                <img src="../img/colors/Gajri.jpg" alt='' />
-                                            </span>Gajri</label>
-                                        <input type="text" className="form-control color-qnty-input" />
-                                    </div>
-                                </div>
-                                <div className="col-xl-3 col-lg-3 col-md-6 mb-3">
-                                    <div className="d-flex justify-content-between align-items-center">
-                                        <label className="mb-0"><span className="mr-2 sales-order-color-options">
-                                            <img src="../img/colors/gray.jpg" alt='' />
-                                        </span>Gray
-                                        </label>
-                                        <input type="text" className="form-control color-qnty-input" />
-                                    </div>
-                                </div>
-                                <div className="col-xl-3 col-lg-3 col-md-6 mb-3">
-                                    <div className="d-flex justify-content-between align-items-center">
-                                        <label className="mb-0"><span className="mr-2 sales-order-color-options">
-                                            <img src="../img/colors/Green.jpg" alt='' />
-                                        </span>Green
-                                        </label>
-                                        <input type="text" className="form-control color-qnty-input" />
-                                    </div>
-                                </div>
-                                <div className="col-xl-3 col-lg-3 col-md-6 mb-3">
-                                    <div className="d-flex justify-content-between align-items-center">
-                                        <label className="mb-0"><span className="mr-2 sales-order-color-options">
-                                            <img src="../img/colors/Light-Firogi.jpg" alt='' />
-                                        </span>Light Firoji
-                                        </label>
-                                        <input type="text" className="form-control color-qnty-input" />
-                                    </div>
-                                </div>
-                                <div className="col-xl-3 col-lg-3 col-md-6 mb-3">
-                                    <div className="d-flex justify-content-between align-items-center">
-                                        <label className="mb-0"><span className="mr-2 sales-order-color-options">
-                                            <img src="../img/colors/Light-Firogi.jpg" alt='' />
-                                        </span>Light Purple
-                                        </label>
-                                        <input type="text" className="form-control color-qnty-input" />
-                                    </div>
-                                </div>
-                                <div className="col-xl-3 col-lg-3 col-md-6 mb-3">
-                                    <div className="d-flex justify-content-between align-items-center">
-                                        <label className="mb-0">
-                                            <span className="mr-2 sales-order-color-options">
-                                                <img src="../img/colors/LCT.jpg" alt='' />
-                                            </span>LCT
-                                        </label>
-                                        <input type="text" className="form-control color-qnty-input" />
-                                    </div>
-                                </div>
-                                <div className="col-xl-3 col-lg-3 col-md-6 mb-3">
-                                    <div className="d-flex justify-content-between align-items-center">
-                                        <label className="mb-0">
-                                            <span className="mr-2 sales-order-color-options">
-                                                <img src="../img/colors/Montara.jpg" alt='' />
-                                            </span>Maroon
-                                        </label>
-                                        <input type="text" className="form-control color-qnty-input" />
-                                    </div>
-                                </div>
-                                <div className="col-xl-3 col-lg-3 col-md-6 mb-3">
-                                    <div className="d-flex justify-content-between align-items-center">
-                                        <label className="mb-0"><span className="mr-2 sales-order-color-options"><img src="../img/colors/Montara.jpg" alt='' /></span>Maroon Green</label>
-                                        <input type="text" className="form-control color-qnty-input" />
-                                    </div>
-                                </div>
-                                <div className="col-xl-3 col-lg-3 col-md-6 mb-3">
-                                    <div className="d-flex justify-content-between align-items-center">
-                                        <label className="mb-0"><span className="mr-2 sales-order-color-options"><img src="../img/colors/Metal.jpg" alt='' /></span>Metal</label>
-                                        <input type="text" className="form-control color-qnty-input" />
-                                    </div>
-                                </div>
-                                <div className="col-xl-3 col-lg-3 col-md-6 mb-3">
-                                    <div className="d-flex justify-content-between align-items-center">
-                                        <label className="mb-0"><span className="mr-2 sales-order-color-options"><img src="../img/colors/Mint.jpg" alt='' /></span>Mint</label>
-                                        <input type="text" className="form-control color-qnty-input" />
-                                    </div>
-                                </div>
-                                <div className="col-xl-3 col-lg-3 col-md-6 mb-3">
-                                    <div className="d-flex justify-content-between align-items-center">
-                                        <label className="mb-0"><span className="mr-2 sales-order-color-options"><img src="../img/colors/Gajari-and-mint.jpg" alt='' /></span>Mint Gajri</label>
-                                        <input type="text" className="form-control color-qnty-input" />
-                                    </div>
-                                </div>
-                                <div className="col-xl-3 col-lg-3 col-md-6 mb-3">
-                                    <div className="d-flex justify-content-between align-items-center">
-                                        <label className="mb-0"><span className="mr-2 sales-order-color-options"><img src="../img/colors/Montara.jpg" alt='' /></span>Montana</label>
-                                        <input type="text" className="form-control color-qnty-input" />
-                                    </div>
-                                </div>
-                                <div className="col-xl-3 col-lg-3 col-md-6 mb-3">
-                                    <div className="d-flex justify-content-between align-items-center">
-                                        <label className="mb-0"><span className="mr-2 sales-order-color-options"><img src="../img/colors/Montara.jpg" alt='' /></span>Multi</label>
-                                        <input type="text" className="form-control color-qnty-input" />
-                                    </div>
-                                </div>
-                                <div className="col-xl-3 col-lg-3 col-md-6 mb-3">
-                                    <div className="d-flex justify-content-between align-items-center">
-                                        <label className="mb-0"><span className="mr-2 sales-order-color-options"><img src="../img/colors/Orange.jpg" alt='' /></span>Orange</label>
-                                        <input type="text" className="form-control color-qnty-input" />
-                                    </div>
-                                </div>
-                                <div className="col-xl-3 col-lg-3 col-md-6 mb-3">
-                                    <div className="d-flex justify-content-between align-items-center">
-                                        <label className="mb-0"><span className="mr-2 sales-order-color-options"><img src="../img/colors/Peach.jpg" alt='' /></span>Peach</label>
-                                        <input type="text" className="form-control color-qnty-input" />
-                                    </div>
-                                </div>
-                                <div className="col-xl-3 col-lg-3 col-md-6 mb-3">
-                                    <div className="d-flex justify-content-between align-items-center">
-                                        <label className="mb-0"><span className="mr-2 sales-order-color-options"><img src="../img/colors/Pink.jpg" alt='' /></span>Pink</label>
-                                        <input type="text" className="form-control color-qnty-input" />
-                                    </div>
-                                </div>
-                                <div className="col-xl-3 col-lg-3 col-md-6 mb-3">
-                                    <div className="d-flex justify-content-between align-items-center">
-                                        <label className="mb-0"><span className="mr-2 sales-order-color-options"><img src="../img/colors/Pink.jpg" alt='' /></span>Pink Light Firogi</label>
-                                        <input type="text" className="form-control color-qnty-input" />
-                                    </div>
-                                </div>
-                                <div className="col-xl-3 col-lg-3 col-md-6 mb-3">
-                                    <div className="d-flex justify-content-between align-items-center">
-                                        <label className="mb-0"><span className="mr-2 sales-order-color-options"><img src="../img/colors/Pista.jpg" alt='' /></span>Pista</label>
-                                        <input type="text" className="form-control color-qnty-input" />
-                                    </div>
-                                </div>
-                                <div className="col-xl-3 col-lg-3 col-md-6 mb-3">
-                                    <div className="d-flex justify-content-between align-items-center">
-                                        <label className="mb-0"><span className="mr-2 sales-order-color-options"><img src="../img/colors/Rama.jpg" alt='' /></span>Rama</label>
-                                        <input type="text" className="form-control color-qnty-input" />
-                                    </div>
-                                </div>
-                                <div className="col-xl-3 col-lg-3 col-md-6 mb-3">
-                                    <div className="d-flex justify-content-between align-items-center">
-                                        <label className="mb-0"><span className="mr-2 sales-order-color-options"><img src="../img/colors/Royal-Blue.jpg" alt='' /></span>Royal Blue</label>
-                                        <input type="text" className="form-control color-qnty-input" />
-                                    </div>
-                                </div>
-                                <div className="col-xl-3 col-lg-3 col-md-6 mb-3">
-                                    <div className="d-flex justify-content-between align-items-center">
-                                        <label className="mb-0"><span className="mr-2 sales-order-color-options"><img src="../img/colors/Royal-Blue.jpg" alt='' /></span>Ruby</label>
-                                        <input type="text" className="form-control color-qnty-input" />
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                        <div className="table-responsive mt-4">
-                            <table className="table table-bordered table-striped mb-0">
-                                <thead>
-                                    <tr>
-                                        <th scope="col">Product</th>
-                                        <th scope="col">Quantity</th>
-                                        <th scope="col">Unit Price</th>
-                                        <th scope="col">Dsicount</th>
-                                        <th scope="col">Sub Total</th>
-                                        <th scope="col">Action</th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    <tr>
-                                        <th>Earring Tikka PET1 MD Black</th>
-                                        <td><input type="text" className="form-control qnty-input" value="5" /></td>
-                                        <td><input type="text" className="form-control unit-price-input" value="₹495.00" /></td>
-                                        <td>₹495.00</td>
-                                        <td>₹2475.00</td>
-                                        <td><a href="sale-order-details.html" className="remove-item-link"><i className="bi bi-x"></i></a></td>
-                                    </tr>
-                                    <tr>
-                                        <th>Earring Tikka PET1 MD Black</th>
-                                        <td><input type="text" className="form-control qnty-input" value="5" /></td>
-                                        <td><input type="text" className="form-control unit-price-input" value="₹495.00" /></td>
-                                        <td>₹495.00</td>
-                                        <td>₹2475.00</td>
-                                        <td><a href="sale-order-details.html" className="remove-item-link"><i className="bi bi-x"></i></a></td>
-                                    </tr>
-                                    <tr>
-                                        <th>Earring Tikka PET1 MD Black</th>
-                                        <td><input type="text" className="form-control qnty-input" value="5" /></td>
-                                        <td><input type="text" className="form-control unit-price-input" value="₹495.00" /></td>
-                                        <td>₹495.00</td>
-                                        <td>₹2475.00</td>
-                                        <td><a href="sale-order-details.html" className="remove-item-link"><i className="bi bi-x"></i></a></td>
-                                    </tr>
-                                    <tr>
-                                        <th>Earring Tikka PET1 MD Black</th>
-                                        <td><input type="text" className="form-control qnty-input" value="5" /></td>
-                                        <td><input type="text" className="form-control unit-price-input" value="₹495.00" /></td>
-                                        <td>₹495.00</td>
-                                        <td>₹2475.00</td>
-                                        <td><a href="sale-order-details.html" className="remove-item-link"><i className="bi bi-x"></i></a></td>
-                                    </tr>
-                                </tbody>
-                            </table>
-
-                        </div>
-                        <div className="row mt-4">
-                            <div className="col-xxl-6 col-lg-6 col-md-12 order-lg-2">
-                                <div className="bg-gray p-3">
-                                    <div className="d-flex align-items-center justify-content-between border-bottom mb-2">
-                                        <h6>Sub Total</h6>
-                                        <h6>₹4245.00</h6>
-                                    </div>
-
-                                    <div className="d-flex align-items-center justify-content-between">
-                                        <h6>Discount</h6>
-                                        <h6>₹1856.25</h6>
-                                    </div>
-                                    <div className="d-flex align-items-center justify-content-between">
-                                        <h6>Round Of</h6>
-                                        <h6>₹0.25</h6>
-                                    </div>
-                                    <div className="d-flex align-items-center justify-content-between">
-                                        <h6>Grand Total</h6>
-                                        <h6>₹5526.50</h6>
-                                    </div>
-                                </div>
-                            </div>
-                            <div className="col-xl-6 col-lg-6 col-md-12 order-lg-1">
-                                <label>Notes</label>
-                                <textarea className="form-control" name="notes" rows={5}></textarea>
-                            </div>
-                        </div>
-                    </div>
-                    <div className="card-footer">
-                        <div className="text-right">
-                            <button className="btn btn-light border mr-2">Discart</button>
-                            <button className="btn btn-saawree btn-small">Submit</button>
-                        </div>
-                    </div>
+              </div>
+              <div className='card-body'>
+                <div className='row mb-3'>
+                  <div className='col-xl-3 col-lg-3 col-md-3'>
+                    <label>
+                      Customer<span className='required'>*</span>
+                    </label>
+                  </div>
+                  <div className='col-xl-9 col-lg-9 col-md-9'>
+                    <Field
+                      name={"customerId"}
+                      className='search-category-dropdown'
+                      options={customerList}
+                      component={CustomSelect}
+                      placeholder='customer'
+                      onDropDownChange={(e: any) => {
+                        formik.setFieldValue("customerId", e.value);
+                        onCustomerChange(e.value);
+                      }}
+                    ></Field>
+                  </div>
                 </div>
+                <div className='row mb-3'>
+                  <div className='col-xl-3 col-lg-3 col-md-3'></div>
+                  <div className='col-xl-9 col-lg-9 col-md-9'>
+                    <div className='row'>
+                      <div className='col-xl-6 col-lg-6 col-md-6 col-sm-6'>
+                        <label className=''>Billing Address</label>
+                        <div className='address-wraper'>
+                          <p className='mb-0'>B107, Sai Sanman CHSL</p>
+                          <p className='mb-0'>Guru Nanak Nagar</p>
+                          <p className='mb-0'>Vasai West, 401202, India</p>
+                          <p className='mb-0'>Phone: 8888782613</p>
+                        </div>
+                      </div>
+                      <div className='col-xl-6 col-lg-6 col-md-6 col-sm-6'>
+                        <label className=''>Shipping Address</label>
+                        <Field
+                          className='form-select-solid'
+                          options={shippingAddressOptions}
+                          {...formik.getFieldProps("shippingAddressId")}
+                          component={CustomSelect}
+                          name='shippingAddressId'
+                          selectedValue={formik.values.shippingAddressId}
+                          onChange={(selected: any) =>
+                            formik.setFieldValue(
+                              "shippingAddressId",
+                              selected?.value || null
+                            )
+                          }
+                          formatOptionLabel={({ label }: { label: string }) => (
+                            <div style={{ whiteSpace: "pre-line" }}>
+                              {label}
+                            </div>
+                          )}
+                        />
+                      </div>
+                    </div>
+                  </div>
+                </div>
+                <div className='row mb-3'>
+                  <div className='col-xl-3 col-lg-3 col-md-3'>
+                    <label>Order Date</label>
+                  </div>
+                  <div className='col-xl-4 col-lg-4 col-md-6'>
+                    {/* <Calendar  onChange={(e) => setDate(e.value)} dateFormat="dd/mm/yy" /> */}
+                    <p>{format(new Date(), "dd MMM yyyy")}</p>
+                  </div>
+                </div>
+                {/* </div> */}
+                <div className='row mb-3'>
+                  <div className='col-xl-3 col-lg-3 col-md-3'>
+                    <label>Discount Percentage</label>
+                  </div>
+                  <div className='col-xl-4 col-lg-4 col-md-6'>
+                    {customerData?.discountPercent &&
+                      `${customerData?.discountPercent} %`}
+                  </div>
+                </div>
+              </div>
+            </div>
 
-            </div >
-        </>
-    )
-}
+            <div
+              className={`card ${
+                formik.values.customerId == undefined && "disabled"
+              }`}
+            >
+              <div className='card-header bg-white'>
+                <div className='card-title'>
+                  <h5>Item Details</h5>
+                </div>
+              </div>
+              <div className='card-body'>
+                <ProductSelection onSelect={onProductsChange} />
+                <div className='mt-4'>
+                  <DataTable
+                    value={saleOrderItems}
+                    dataKey='id'
+                    tableClassName='border'
+                    tableStyle={{ minWidth: "50rem" }}
+                    stripedRows
+                  >
+                    <Column
+                      field='productName'
+                      header='Product'
+                      style={{ width: "40%" }}
+                    ></Column>
+                    <Column
+                      field='quantity'
+                      header='Quantity'
+                      style={{ width: "10%" }}
+                      body={quantityBody}
+                    ></Column>
+                    <Column
+                      field='productPrice'
+                      header='Unit Price'
+                      style={{ width: "10%" }}
+                      body={unitPriceBody}
+                    ></Column>
+                    <Column
+                      field='discountAmount'
+                      header='Discount'
+                      style={{ width: "10%" }}
+                      body={(rowData: CreateSaleOrderItem) =>
+                        formatCurrency(rowData.discountAmount)
+                      }
+                    ></Column>
+                    <Column
+                      field='subTotal'
+                      header='Sub Total'
+                      style={{ width: "10%" }}
+                      body={(rowData: CreateSaleOrderItem) =>
+                        formatCurrency(rowData.subTotal)
+                      }
+                    ></Column>
+                    <Column
+                      field=''
+                      header='Action'
+                      style={{ width: "10%" }}
+                      body={actionBody}
+                    ></Column>
+                  </DataTable>
+                </div>
+                <div className='row mt-4'>
+                  <div className='col-xxl-6 col-lg-6 col-md-12 order-lg-2'>
+                    <div className='bg-gray p-3'>
+                      <div className='d-flex align-items-center justify-content-between border-bottom mb-2'>
+                        <h6>Sub Total</h6>
+                        <h6>{formatCurrency(subTotal)}</h6>
+                      </div>
 
-export default page
+                      <div className='d-flex align-items-center justify-content-between'>
+                        <h6>Discount</h6>
+                        <h6>{formatCurrency(totalDiscount)}</h6>
+                      </div>
+                      <div className='d-flex align-items-center justify-content-between'>
+                        <h6>Round Of</h6>
+                        <h6>{formatCurrency(roundOff)}</h6>
+                      </div>
+                      <div className='d-flex align-items-center justify-content-between'>
+                        <h6>Grand Total</h6>
+                        <h6>{formatCurrency(grandTotal)}</h6>
+                      </div>
+                    </div>
+                  </div>
+                  <div className='col-xl-6 col-lg-6 col-md-12 order-lg-1'>
+                    <label>Notes</label>
+                    <textarea
+                      {...formik.getFieldProps("notes")}
+                      className='form-control'
+                      name='notes'
+                      rows={5}
+                      autoComplete='off'
+                      disabled={formik.isSubmitting}
+                    ></textarea>
+                  </div>
+                </div>
+              </div>
+              <div className='card-footer'>
+                <div className='text-right'>
+                  <button className='btn btn-light border mr-2'>Discart</button>
+                  {/* <button className='btn btn-saawree btn-small'>Submit</button> */}
+                  <button
+                    type='submit'
+                    className='btn btn-saawree btn-small'
+                    disabled={
+                      formik.isSubmitting || !formik.isValid || !formik.touched
+                    }
+                  >
+                    <span className='indicator-label'>Submit</span>
+                    {formik.isSubmitting && (
+                      <span className='indicator-progress'>
+                        Please wait...{" "}
+                        <span className='spinner-border spinner-border-sm align-middle ms-2'></span>
+                      </span>
+                    )}
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+        </form>
+      </FormikProvider>
+    </>
+  );
+};
+
+export default page;

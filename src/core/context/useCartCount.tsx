@@ -29,9 +29,10 @@ export const CartCountProvider: React.FC<CartCountProviderProps> = ({
   const [isBuyNow, setIsBuy] = useState<boolean>(false);
 
   const { data: cartData, isLoading: cartDetailsLoading } = useQuery({
-    queryKey: ["cartDetails", session, isBuyNow],
+    queryKey: ["cartDetails", isBuyNow],
     queryFn: () => getCartDetails(isBuyNow),
-    enabled: authStatus === "authenticated",
+    enabled:
+      authStatus === "authenticated" && session?.user?.userType === "customer",
   });
 
   useEffect(() => {

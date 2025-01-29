@@ -24,8 +24,6 @@ import { Calendar } from "primereact/calendar";
 
 const page = () => {
   const [globalFilterValue, setGlobalFilterValue] = useState<string>("");
-  // const [showDropDown, setShowDropDown] = useState("");
-  // const [isModalOpen, setModalOpen] = useState(false);
   const [filterOption, updateFilterOption] = useState<FilterOption>({
     filterDates: undefined,
     filterOrderStatusId: undefined,

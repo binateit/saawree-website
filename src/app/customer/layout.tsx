@@ -20,8 +20,9 @@ const layout = ({
             <div className='panel-menu'>
               <ul className='nav flex-column nav-pills nav-pills-custom'>
                 <li
-                  className={`nav-link mb-2 ${showRightPanel == "overview" ? "shadow active" : ""
-                    }`}
+                  className={`nav-link mb-2 ${
+                    showRightPanel == "overview" ? "shadow active" : ""
+                  }`}
                   onClick={() => setShowRightPanel("overview")}
                 >
                   <Link
@@ -31,10 +32,15 @@ const layout = ({
                     Overview
                   </Link>
                 </li>
-                <li className='mb-2 shadow tab-has-dropdown nav-link cursor-pointer'>
+
+                <li
+                  className='mb-2 shadow tab-has-dropdown nav-link cursor-pointer'
+                  onClick={() => setShowRightPanel("profile")}
+                >
                   <div
-                    className={`font-weight-bold small text-uppercase py-3 px-3 nav-link-item ${showRightPanel == "profile" ? "shadow active" : ""
-                      }`}
+                    className={`font-weight-bold small text-uppercase py-3 px-3 nav-link-item ${
+                      showRightPanel == "profile" ? "shadow active" : ""
+                    }`}
                     onClick={() =>
                       setShowDropDown({ name: "profile", display: true })
                     }
@@ -88,7 +94,6 @@ const layout = ({
                   </div>
                   {showDropDown.display &&
                     showDropDown.name == "transaction" && (
-
                       <div
                         className='nav flex-column nav-pills nav-pills-custom-dropdown'
                         id='v-pills-tab'
@@ -114,7 +119,6 @@ const layout = ({
                           Payment
                         </Link>
                       </div>
-
                     )}
                 </li>
               </ul>

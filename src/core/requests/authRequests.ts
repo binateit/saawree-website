@@ -180,7 +180,7 @@ const getRefreshToken = async (refreshToken: RefreshToken) => {
   );
 };
 
-const getUserProfileByToken = (token: string): Promise<UserProfile> => {
+const getUserProfileByToken = async (token: string): Promise<UserProfile> => {
   const headers = {
     Authorization: `Bearer ${token}`,
   };
@@ -190,6 +190,7 @@ const getUserProfileByToken = (token: string): Promise<UserProfile> => {
     })
     .then((res: AxiosResponse<UserProfile>) => res.data);
 };
+
 const getAgentRefreshToken = async (refreshToken: RefreshToken) => {
   const headers = {
     tenant: "ho",

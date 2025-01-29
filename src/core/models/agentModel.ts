@@ -1,3 +1,5 @@
+import { Response } from "./model";
+
 export type AgentRecord = {
   totalCustomerCount?: number;
   totalSaleOrderCount?: number;
@@ -5,3 +7,121 @@ export type AgentRecord = {
   totalAgentCommission?: number;
   totalPaidCommission?: number;
 };
+
+export type ChangePassword = {
+  password?: string;
+  newPassword?: string;
+  confirmNewPassword?: string;
+};
+
+export type AgentProfile = {
+  id: number;
+  agentCode: string;
+  firstName: string;
+  lastName: string;
+  companyName: string;
+  emailAddress: string;
+  mobileNumber: string;
+  whatsappNumber: string;
+  addressLine1: string;
+  addressLine2: string;
+  city: string;
+  stateId: number;
+  stateName: string;
+  countryId: number;
+  countryName: string;
+  zipCode: string;
+  commissionPercent: number;
+  dateOfBirth: string;
+  dateOfAnniversary: string;
+  isActive: boolean;
+  userId: string;
+  password: string;
+  rateTypeId: number;
+  rateTypeName: string;
+  enableLogin: boolean;
+  imagePath: string;
+};
+
+export type EditAgentProfile = {
+  userId: string;
+  firstName: string;
+  lastName: string;
+  mobileNumber: string;
+  whatsappNumber: string;
+  companyName: string;
+  emailAddress: string;
+  dob: string;
+  dateOfAnniversary: string;
+  addressLine1: string;
+  addressLine2: string;
+  city: string;
+  stateId: number;
+  stateName?: string;
+  countryId: number;
+  countryName?: string;
+  zipCode: string;
+};
+
+export type CustomersOfAgent = {
+  id: number;
+  printName: string;
+  companyName: string;
+  emailAddress: string;
+  mobileNumber: string;
+  accountStatusName: string;
+};
+
+export type CustomersOfAgentQueryListResponse = Response<
+  Array<CustomersOfAgent>
+>;
+
+export type InvoiceRecords = {
+  id: number;
+  invoiceNumber: string;
+  invoiceDate: string;
+  customerName: string;
+  orderTotal: number;
+  invoiceStatusName: string;
+};
+
+export type InvoicesQueryListResponse = Response<Array<InvoiceRecords>>;
+
+export type AgentPaymentRecords = {
+  id: number;
+  paymentNumber: string;
+  customerName: string;
+  amountReceived: number;
+  paymentDate: string;
+  paymentModeName: string;
+  isAdvance: boolean;
+  usedAmount: number;
+  advanceAmountLeft?: any;
+};
+
+export type AgentPaymentQueryResponse = Response<Array<AgentPaymentRecords>>;
+
+export interface ColorDetails {
+  productId: number;
+  productName: string;
+  colorId: number;
+  colorName: string;
+  colorCode: string;
+  imagePath: string;
+}
+
+export type AgentCommissionRecord = {
+  id: number;
+  agentId: number;
+  agentName: string;
+  saleOrderId: number;
+  orderNumber: string;
+  orderTotal: number;
+  agentCommissionStatusId: number;
+  agentCommissionStatusName: string;
+  earnCommission: number;
+};
+
+export type AgentCommissionQueryResponse = Response<
+  Array<AgentCommissionRecord>
+>;

@@ -21,7 +21,6 @@ const page = () => {
           redirect: false,
         }
       );
-      console.log(result);
       if (result?.ok === false) {
         setAlertMessage("Invalid UserName and Password");
       } else {

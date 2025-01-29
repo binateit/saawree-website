@@ -1,5 +1,5 @@
 "use client";
-import { formatCurrency, formatDate } from "@/core/helpers/helperFunctions";
+import { formatCurrency } from "@/core/helpers/helperFunctions";
 import { FileResult } from "@/core/models/saleOrderModel";
 import { GeneratePdf, getInvoiceById } from "@/core/requests/customerRoutes";
 import { useQuery } from "@tanstack/react-query";
@@ -12,16 +12,19 @@ import React from "react";
 import { Row } from "react-bootstrap";
 import { toast } from "react-toastify";
 import { saveAs } from "file-saver";
+import { formatDate } from "date-fns";
 
 const page = () => {
   const searchParams = useSearchParams();
   const invoiceId = searchParams.get("invoiceId");
 
-  const { data: invoiceDetails } = useQuery({
-    queryKey: ["invoiceDetailsById"],
-    queryFn: () => getInvoiceById(Number(invoiceId)),
-    enabled: !!invoiceId,
-  });
+  const { data: invoiceDetails, isLoading: isInvoiceDetailsLoading } = useQuery(
+    {
+      queryKey: ["invoiceDetailsById"],
+      queryFn: () => getInvoiceById(Number(invoiceId)),
+      enabled: !!invoiceId,
+    }
+  );
   const Invoice_Download_URL = "invoices/downloadpdf";
   const challanpdf = () => {
     GeneratePdf(Number(invoiceId), Invoice_Download_URL).then((file) => {
@@ -107,6 +110,9 @@ const page = () => {
       </Row>
     </ColumnGroup>
   );
+
+  if (isInvoiceDetailsLoading) return <p>Loading....</p>;
+
   return (
     <>
       <div className='container'>
@@ -154,10 +160,10 @@ const page = () => {
                   <div className='col-xl-6 col-lg-3 col-md-3 col-sm-4'>
                     <label className='mb-0 font-weight-bold'>Date Added</label>
                     <p>
-                      {/* {formatDate(
+                      {formatDate(
                         invoiceDetails?.invoiceDate as string,
                         "dd MMM yyyy"
-                      )} */}
+                      )}
                     </p>
                   </div>
                   <div className='col-xl-6 col-lg-3 col-md-3 col-sm-4'>

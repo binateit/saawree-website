@@ -2,7 +2,12 @@
 import React, { useState } from "react";
 import logo4 from "@/assets/images/logo4.png";
 import paymentOpt from "@/assets/images/paymentOpt.png";
-import { BsArrowBarUp } from "react-icons/bs";
+import {
+  BsArrowBarUp,
+  BsEnvelope,
+  BsGeoAlt,
+  BsTelephone,
+} from "react-icons/bs";
 
 const Footer = () => {
   const [visible, setVisible] = useState(false);
@@ -103,19 +108,26 @@ const Footer = () => {
                 <div className='footer-widget'>
                   <div className='footer-widget-header'>Contact</div>
                   <div className='footer-widget-menu'>
-                    <p className='footer-contact'>
-                      <i className='bi bi-geo-alt'></i> Head Office Address Gala
-                      No. 1A,2A & 3A, 1st Floor Israni, Industrial Estate Penkar
-                      Pada, Mira Road (East)-401107
-                    </p>
-                    <p className='footer-contact'>
-                      <i className='bi bi-envelope'></i>{" "}
-                      <a href='mailto:info@saawree.com'>info@saawree.com</a>
-                    </p>
-                    <p className='footer-contact'>
-                      <i className='bi bi-phone'></i>{" "}
-                      <a href='tell:+919082813196'>+91 90828 13196</a>
-                    </p>
+                    <div className='d-flex'>
+                      <BsGeoAlt fontSize={40} />{" "}
+                      <p className='footer-contact'>
+                        Head Office Address Gala No. 1A,2A & 3A, 1st Floor
+                        Israni, Industrial Estate Penkar Pada, Mira Road
+                        (East)-401107
+                      </p>
+                    </div>
+                    <div className='d-flex'>
+                      <BsEnvelope fontSize={16} />{" "}
+                      <p className='footer-contact'>
+                        <a href='mailto:info@saawree.com'>info@saawree.com</a>
+                      </p>
+                    </div>
+                    <div className='d-flex'>
+                      <BsTelephone fontSize={16} />{" "}
+                      <p className='footer-contact'>
+                        <a href='tel:+919082813196'>+91 90828 13196</a>
+                      </p>
+                    </div>
                   </div>
                   <div className='payment-opt'>
                     <img src={paymentOpt.src} alt='' />

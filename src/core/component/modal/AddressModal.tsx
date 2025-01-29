@@ -80,7 +80,6 @@ const AddressModal: React.FC<Props> = ({
       setSubmitting(true);
       try {
         let result;
-        debugger;
         if (isNotEmpty(initialValues?.id) && isEditMode) {
           const updateAddressPayload = {
             customerAddressId: initialValues?.id as number,
@@ -211,7 +210,7 @@ const AddressModal: React.FC<Props> = ({
             >
               <div className='d-flex flex-column mb-2 fv-row fv-plugins-icon-container '>
                 <label className='fs-5 fw-semibold mb-2'>
-                  Address Line 1<span className="required">*</span>
+                  Address Line 1<span className='required'>*</span>
                 </label>
 
                 <Field
@@ -247,7 +246,7 @@ const AddressModal: React.FC<Props> = ({
               </div>
               <div className='d-flex flex-column mb-2 fv-row fv-plugins-icon-container'>
                 <label className='fs-5 fw-semibold mb-2'>
-                  Country<span className="required">*</span>
+                  Country<span className='required'>*</span>
                 </label>
 
                 <Field
@@ -275,7 +274,9 @@ const AddressModal: React.FC<Props> = ({
               </div>
 
               <div className='d-flex flex-column mb-2 fv-row fv-plugins-icon-container'>
-                <label className='fs-5 fw-semibold mb-2'>State<span className="required">*</span></label>
+                <label className='fs-5 fw-semibold mb-2'>
+                  State<span className='required'>*</span>
+                </label>
 
                 <Field
                   className='form-select-solid'
@@ -299,7 +300,9 @@ const AddressModal: React.FC<Props> = ({
 
               <div className='row g-9 mb-2'>
                 <div className='col-md-6 fv-row fv-plugins-icon-container'>
-                  <label className='fs-5 fw-semibold mb-2'>City<span className="required">*</span></label>
+                  <label className='fs-5 fw-semibold mb-2'>
+                    City<span className='required'>*</span>
+                  </label>
 
                   <Field
                     type={"text"}
@@ -346,7 +349,7 @@ const AddressModal: React.FC<Props> = ({
               <div className='row g-9 mb-2'>
                 <div className='col-md-6 fv-row fv-plugins-icon-container'>
                   <label className='fs-5 fw-semibold mb-2'>
-                    Phone Number<span className="required">*</span>
+                    Phone Number<span className='required'>*</span>
                   </label>
 
                   <Field
@@ -372,7 +375,7 @@ const AddressModal: React.FC<Props> = ({
           </Modal.Body>
           <Modal.Footer>
             <Button
-              className="btn btn-saawree-outline"
+              className='btn btn-saawree-outline'
               //data-bs-dismiss="modal"
               onClick={closeModal}
             >
@@ -380,7 +383,7 @@ const AddressModal: React.FC<Props> = ({
             </Button>
             <Button
               type='submit'
-              className="btn btn-saawree"
+              className='btn btn-saawree'
               disabled={
                 formik.isSubmitting || !formik.isValid || !formik.touched
               }

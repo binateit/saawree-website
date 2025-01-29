@@ -4,12 +4,18 @@ import { Button, Modal } from "react-bootstrap";
 interface Props {
   addressToDelete: number;
   onConfirm: (addressId: number) => void;
+  setShowConfirmationModal: any;
 }
-const ConfirmationModal: FC<Props> = ({ onConfirm, addressToDelete }) => {
+const ConfirmationModal: FC<Props> = ({
+  onConfirm,
+  addressToDelete,
+  setShowConfirmationModal,
+}) => {
   const [showModal, setShowModal] = useState(true);
 
   const closeModal = () => {
     setShowModal(false);
+    setShowConfirmationModal(false);
   };
 
   const handleConfirm = () => {
@@ -19,8 +25,11 @@ const ConfirmationModal: FC<Props> = ({ onConfirm, addressToDelete }) => {
   return (
     <>
       <Modal show={showModal}>
-        <Modal.Header closeButton>
+        <Modal.Header>
           <Modal.Title>Confirmation</Modal.Title>
+          <span onClick={closeModal} style={{ cursor: "pointer" }}>
+            X
+          </span>
         </Modal.Header>
         <Modal.Body>
           <h5 className='text-center'>Are you sure you want to delete ?</h5>
@@ -28,6 +37,7 @@ const ConfirmationModal: FC<Props> = ({ onConfirm, addressToDelete }) => {
         <Modal.Footer>
           <Button
             variant='secondary'
+            className='btn btn-saawree-outline'
             onClick={() => {
               handleConfirm();
             }}
@@ -35,6 +45,7 @@ const ConfirmationModal: FC<Props> = ({ onConfirm, addressToDelete }) => {
             Yes
           </Button>
           <Button
+            className='btn btn-saawree'
             variant='primary'
             onClick={() => {
               closeModal();

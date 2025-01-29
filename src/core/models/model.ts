@@ -154,3 +154,46 @@ export type PaginationFilter = BaseFilter & {
 export type RecomendedProductsFilter = {
   categoryIds: number[];
 };
+
+export type Product = {
+  id?: ID;
+  name?: string;
+  barcode?: string;
+  description?: string;
+  isActive?: boolean;
+  itemGroupId?: number;
+  colorId?: number;
+  colorName?: string;
+  polishingTypeId?: number;
+  polishingTypeName?: string;
+  spSemiWholeSeller?: number;
+  spRetail?: number;
+  availableQuantity?: number;
+  spWholeSeller?: number;
+  retailMoQ?: number;
+  wholeSellerMoQ?: number;
+  semiWholeSellerMoQ?: number;
+  metaTagDescription?: string;
+  metaTagKeyword?: string;
+  metaTagTitle?: string;
+  statusId?: number;
+  lowStockAlert?: number;
+  initialStockBalance?: number;
+  retailPrice?: number;
+  unitId?: number;
+  purchasePrice?: number;
+  productGroupId?: number;
+  productGroupName?: string;
+  isDefault?: boolean;
+  taxRateId?: number;
+  isReadyInStock?: boolean;
+  taxRateName?: string;
+  designNumberId?: number;
+  designNumber?: string;
+  categoryId?: number;
+  categoryName?: string;
+  productImagePath?: string;
+  taxRateValue?: number;
+};
+
+export type ProductQueryResponse = Response<Array<Product>>;

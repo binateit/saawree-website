@@ -21,7 +21,7 @@ const page = () => {
   const [showConfirmationModal, setShowConfirmationModal] = useState(false);
   const { data: customerAddressList, isLoading: customerAddressLoading } =
     useQuery({
-      queryKey: ["customerAddresses"],
+      queryKey: ["customerAddressList"],
       queryFn: () => getCustomerAddress(),
       refetchOnWindowFocus: false,
     });
@@ -116,7 +116,7 @@ const page = () => {
                     >
                       Edit
                     </div>
-                    <div
+                    <button
                       className='btn btn-saawree-outline ml-1'
                       onClick={() => {
                         handleDeleteButtonClick(
@@ -125,7 +125,7 @@ const page = () => {
                       }}
                     >
                       Delete
-                    </div>
+                    </button>
                   </div>
                 </div>
               ))}
@@ -141,6 +141,7 @@ const page = () => {
         <ConfirmationModal
           onConfirm={() => handleConfirm(addressToDelete as number)}
           addressToDelete={addressToDelete as number}
+          setShowConfirmationModal={setShowConfirmationModal}
         />
       )}
       <AddressModal

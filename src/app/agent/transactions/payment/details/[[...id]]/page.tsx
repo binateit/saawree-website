@@ -1,42 +1,45 @@
 "use client";
-import { formatCurrency } from "@/core/helpers/helperFunctions";
 import { FileResult } from "@/core/models/saleOrderModel";
 import {
   GeneratePdf,
-  getInvoiceById,
   getPaymentDetailsById,
 } from "@/core/requests/customerRoutes";
 import { useQuery } from "@tanstack/react-query";
-import { formatDate } from "date-fns";
 import { useSearchParams } from "next/navigation";
-import { Column } from "primereact/column";
-import { DataTable } from "primereact/datatable";
 import React from "react";
-import { saveAs } from "file-saver";
 import { toast } from "react-toastify";
+import { saveAs } from "file-saver";
+import { DataTable } from "primereact/datatable";
+import { Column } from "primereact/column";
+import { formatCurrency } from "@/core/helpers/helperFunctions";
+import { formatDate } from "date-fns";
 const page = () => {
   const searchParams = useSearchParams();
   const paymentId = searchParams.get("paymentId");
 
-  const { data: paymentDetails } = useQuery({
-    queryKey: ["paymentDetailsById"],
-    queryFn: () => getPaymentDetailsById(Number(paymentId)),
-    enabled: !!paymentId,
-  });
+  const { data: paymentDetails, isLoading: isPaymentDetailsLoading } = useQuery(
+    {
+      queryKey: ["paymentDetailsById"],
+      queryFn: () => getPaymentDetailsById(Number(paymentId)),
+      enabled: !!paymentId,
+    }
+  );
 
   const Payment_Download_URL = "saleorders/saleorderpayment/downloadpdf";
   const challanpdf = () => {
     GeneratePdf(Number(paymentId), Payment_Download_URL).then((file) => {
       let output = file as FileResult;
 
-      if (output.data) {
-        let url = window.URL.createObjectURL(output.data);
+      if (output?.data) {
+        let url = window.URL.createObjectURL(output?.data);
         saveAs(url, output.name);
       } else {
         toast.error(file.exception);
       }
     });
   };
+
+  if (isPaymentDetailsLoading) return <p>Loading...</p>;
   return (
     <>
       <div className='card mb-3'>
@@ -77,10 +80,12 @@ const page = () => {
               <div className='row'>
                 <div className='col-xl-6 col-lg-3 col-md-3 col-sm-4'>
                   <label className='mb-0 font-weight-bold'>Date Added</label>
-                  {/* {formatDate(
-                        invoiceDetails?.payment as string,
-                        "dd MMM yyyy"
-                      )} */}
+                  <p>
+                    {formatDate(
+                      paymentDetails?.paymentDate as string,
+                      "dd MMM yyyy"
+                    )}
+                  </p>
                 </div>
                 <div className='col-xl-6 col-lg-3 col-md-3 col-sm-4'>
                   <label className='mb-0 font-weight-bold'>

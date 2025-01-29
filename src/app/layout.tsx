@@ -7,7 +7,6 @@ import Header from "@/component/Header";
 import Footer from "@/component/Footer";
 import QueryProvider from "@/core/component/QueryProvider";
 import SessionProvider from "@/core/component/SessionProvider";
-import { getServerSession } from "next-auth";
 // import "bootstrap/dist/css/bootstrap.min.css";
 import { PrimeReactProvider } from "primereact/api";
 import "primereact/resources/themes/lara-light-cyan/theme.css";
@@ -16,8 +15,6 @@ import { CartCountProvider } from "@/core/context/useCartCount";
 import "./globals.css";
 import { Suspense } from "react";
 import Loading from "./loading";
-// import "slick-carousel/slick/slick.css";
-// import "slick-carousel/slick/slick-theme.css";
 
 export default async function RootLayout({
   children,
