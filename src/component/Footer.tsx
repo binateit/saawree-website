@@ -2,7 +2,12 @@
 import React, { useState } from "react";
 import logo4 from "@/assets/images/logo4.png";
 import paymentOpt from "@/assets/images/paymentOpt.png";
-import { BsArrowBarUp } from "react-icons/bs";
+import {
+  BsArrowBarUp,
+  BsEnvelope,
+  BsGeoAlt,
+  BsTelephone,
+} from "react-icons/bs";
 import Link from "next/link";
 import { useSession } from "next-auth/react";
 
@@ -87,18 +92,27 @@ const Footer = () => {
                   <div className='footer-widget-menu'>
                     <ul>
                       <li className='footer-list'>
-                        {authStatus === "authenticated" ? <Link href={`/${session?.user?.userType}`}>My Account</Link>
-                          : <Link href='/auth/login'>My Account</Link>
-                        }
-
+                        {authStatus === "authenticated" ? (
+                          <Link href={`/${session?.user?.userType}`}>
+                            My Account
+                          </Link>
+                        ) : (
+                          <Link href='/auth/login'>My Account</Link>
+                        )}
                       </li>
                       <li className='footer-list'>
                         <a href='checkout.html'>Checkout</a>
                       </li>
                       <li className='footer-list'>
-                        {authStatus === "authenticated" ? <Link href={`/${session?.user?.userType}/transactions/sales-order`}>My Order</Link>
-                          : <Link href='/auth/login'>My Order</Link>
-                        }
+                        {authStatus === "authenticated" ? (
+                          <Link
+                            href={`/${session?.user?.userType}/transactions/sales-order`}
+                          >
+                            My Order
+                          </Link>
+                        ) : (
+                          <Link href='/auth/login'>My Order</Link>
+                        )}
                       </li>
                     </ul>
                   </div>
