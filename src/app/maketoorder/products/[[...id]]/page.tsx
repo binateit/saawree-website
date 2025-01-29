@@ -16,6 +16,7 @@ import React, { useEffect, useState } from "react";
 import { BsFilter, BsGrid, BsListUl } from "react-icons/bs";
 import noProductImage from "@/assets/images/no-products-available.png";
 import { useImmer } from "use-immer";
+import pageTitleBgImage from "../../../../assets/images/page-title-bg2.jpg";
 
 const page = () => {
   const searchParams = useSearchParams();
@@ -166,7 +167,7 @@ const page = () => {
     );
   return (
     <>
-      <section className='page-title-box'>
+      <section className='page-title-box' style={{backgroundColor:'rgb(0, 0, 0, 0.5)', backgroundImage:`url(${pageTitleBgImage.src})`}}>
         <div className='container'>
           <h1 className='page-title'>{subCategoryName}</h1>
         </div>

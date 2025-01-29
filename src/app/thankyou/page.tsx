@@ -7,6 +7,7 @@ import Link from "next/link";
 import { useRouter, useSearchParams } from "next/navigation";
 import React, { FC } from "react";
 import { toast } from "react-toastify";
+import { BsShieldFillCheck } from "react-icons/bs";
 
 const ThankYouPage = () => {
   const navigate = useRouter();
@@ -28,8 +29,8 @@ const ThankYouPage = () => {
     <section className='thankyou-page'>
       <div className='container'>
         <div className='inner-wrap-th'>
-          <h2 className='thank-title'>Thank you</h2>
-          {/* <!-- <h4 className="ord-n">Order Number : 59198</h4> --> */}
+        <BsShieldFillCheck font-size={60} className="text-success"/>
+          <h2 className='thank-title text-success mt-3'>Thank you</h2>
           <p className='ord-txt'>
             We are getting started on your order{" "}
             <span>{orderDetails?.orderNumber}</span> right away. and youm will
@@ -37,12 +38,12 @@ const ThankYouPage = () => {
             {orderDetails?.email}.{" "}
           </p>
           <p className='btn-th'>
-            <a
-              href='customer-panel/sale-order-details.html'
-              className='btn btn-saawree'
+            <Link
+              href=''
+              className='btn btn-saawree mr-2'
             >
               Track your order
-            </a>
+            </Link>
             <Link href='/' className='btn btn-saawree'>
               Continue Shoping
             </Link>
@@ -51,7 +52,9 @@ const ThankYouPage = () => {
         <h3 className='text-center od'>
           Order Details: {orderDetails?.orderNumber}
         </h3>
-        <div className='order-details-box'>
+        <div className="row justify-content-center">
+          <div className="col-md-6">
+          <div className='order-details-box bg-light'>
           <div className='row'>
             <div className='col-md-6'>
               <div className='ord-details'>
@@ -103,6 +106,9 @@ const ThankYouPage = () => {
             </div>
           </div>
         </div>
+          </div>
+        </div>
+        
       </div>
     </section>
   );
