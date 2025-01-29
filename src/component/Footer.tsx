@@ -4,8 +4,10 @@ import logo4 from "@/assets/images/logo4.png";
 import paymentOpt from "@/assets/images/paymentOpt.png";
 import { BsArrowBarUp } from "react-icons/bs";
 import Link from "next/link";
+import { useSession } from "next-auth/react";
 
 const Footer = () => {
+  const { data: session, status: authStatus } = useSession();
   const [visible, setVisible] = useState(false);
 
   const toggleVisible = () => {
@@ -62,21 +64,18 @@ const Footer = () => {
                         <Link href='/'>Home</Link>
                       </li>
                       <li className='footer-list'>
-                        <Link href='/'>Shop</Link>
-                      </li>
-                      <li className='footer-list'>
                         <Link href='/contact-us'>Contact us</Link>
                       </li>
                       <li className='footer-list'>
-                        <Link href='/privacy-policy'>Privacy Policy</Link>
+                        <Link href='privacy-policy'>Privacy Policy</Link>
                       </li>
                       <li className='footer-list'>
-                        <Link href='/cancellation-policy'>
+                        <Link href='cancellation-policy'>
                           cancellation-policy
                         </Link>
                       </li>
                       <li className='footer-list'>
-                        <Link href='/terms-conditions'>Terms & Condition</Link>
+                        <Link href='terms-conditions'>Terms & Condition</Link>
                       </li>
                     </ul>
                   </div>
@@ -88,13 +87,18 @@ const Footer = () => {
                   <div className='footer-widget-menu'>
                     <ul>
                       <li className='footer-list'>
-                        <a href='#'>My Account</a>
+                        {authStatus === "authenticated" ? <Link href={`/${session?.user?.userType}`}>My Account</Link>
+                          : <Link href='/auth/login'>My Account</Link>
+                        }
+
                       </li>
                       <li className='footer-list'>
                         <a href='checkout.html'>Checkout</a>
                       </li>
                       <li className='footer-list'>
-                        <a href='#'>My Order</a>
+                        {authStatus === "authenticated" ? <Link href={`/${session?.user?.userType}/transactions/sales-order`}>My Order</Link>
+                          : <Link href='/auth/login'>My Order</Link>
+                        }
                       </li>
                     </ul>
                   </div>
