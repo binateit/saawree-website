@@ -113,6 +113,18 @@ export default function Home() {
     ],
   };
 
+  var testimonials = {
+    dots: false,
+    swipeToSlide: true,
+    draggable: true,
+    arrows: true,
+    infinite: false,
+    speed: 500,
+    slidesToShow: 1,
+    slidesToScroll: 1,
+    initialSlide: 0,
+  };
+
   return (
     <>
       {/* <!----------- Top Banner Section ----------> */}
@@ -488,16 +500,16 @@ export default function Home() {
           <div className='title-septer'>
             <img src={underlineIcon?.src} alt='' />
           </div>
-
-          <div className='testimonials-box'>
-            {homePageData?.tt?.map((testimonial, index) => (
+          <Slider {...testimonials}>
+          {homePageData?.tt?.map((testimonial, index) => (
               <div className='clients-list' key={index}>
                 <div className='clients-img'>
                   <Image
                     src={`${process.env.NEXT_PUBLIC_APP_IMAGE_API_URL}/${testimonial?.ip}`}
-                    width={200}
-                    height={200}
-                    alt=''
+                    width={100}
+                    height={100}
+                    alt='testimonials'
+                    className="rounded-circle"
                   />
                 </div>
                 <div className='clients-feedback'>{testimonial?.desc}</div>
@@ -507,7 +519,7 @@ export default function Home() {
                 </div>
               </div>
             ))}
-          </div>
+          </Slider>
         </div>
       </section>
     </>

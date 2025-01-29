@@ -3,6 +3,7 @@ import React, { useState } from "react";
 import logo4 from "@/assets/images/logo4.png";
 import paymentOpt from "@/assets/images/paymentOpt.png";
 import { BsArrowBarUp } from "react-icons/bs";
+import Link from "next/link";
 
 const Footer = () => {
   const [visible, setVisible] = useState(false);
@@ -58,24 +59,24 @@ const Footer = () => {
                   <div className='footer-widget-menu'>
                     <ul>
                       <li className='footer-list'>
-                        <a href='index.html'>Home</a>
+                        <Link href='/'>Home</Link>
                       </li>
                       <li className='footer-list'>
-                        <a href='#'>Shop</a>
+                        <Link href='/'>Shop</Link>
                       </li>
                       <li className='footer-list'>
-                        <a href='#'>Contact us</a>
+                        <Link href='/contact-us'>Contact us</Link>
                       </li>
                       <li className='footer-list'>
-                        <a href='privacy-policy.html'>Privacy Policy</a>
+                        <Link href='/privacy-policy'>Privacy Policy</Link>
                       </li>
                       <li className='footer-list'>
-                        <a href='cancellation-policy.html'>
+                        <Link href='/cancellation-policy'>
                           cancellation-policy
-                        </a>
+                        </Link>
                       </li>
                       <li className='footer-list'>
-                        <a href='terms-conditions.html'>Terms & Condition</a>
+                        <Link href='/terms-conditions'>Terms & Condition</Link>
                       </li>
                     </ul>
                   </div>
