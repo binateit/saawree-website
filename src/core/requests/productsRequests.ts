@@ -12,6 +12,8 @@ import {
 import {
   PaginationFilter,
   Product,
+  ProductFilter,
+  ProductQueryResponse,
   RecomendedProductsFilter,
   Result,
 } from "../models/model";
@@ -27,6 +29,7 @@ const MAKE_TO_ORDER_PRODUCTS = `${API_URL}/productgroup/productgroup-list`;
 const MAKE_TO_ORDER_PRODUCTS_DETAILS = `${API_URL}/products/product-detail`;
 const RS_PRODUCTS_DETAILS = `${API_URL}/products/ready-stock-product-detail`;
 const Product_BY_ID_URL = `${API_URL}/products`;
+const Product_LIST_URL = `${API_URL}/products/search`;
 
 const getCategoryList = async (): Promise<Category[]> => {
   return await axiosInstance
@@ -163,6 +166,19 @@ const getReadyStockRecomendedProducts = async (
     });
 };
 
+const getProductList = async (
+  filter: ProductFilter
+): Promise<ProductQueryResponse> => {
+  return await axiosInstance
+    .post(`${Product_LIST_URL}`, filter)
+    .then((d: AxiosResponse<ProductQueryResponse>) => {
+      return d.data;
+    })
+    .catch((err: Result) => {
+      return err;
+    });
+};
+
 export {
   getCategoryList,
   getPolishingTypeList,
@@ -175,4 +191,5 @@ export {
   getReadyStockRecomendedProducts,
   getMTOCategoryList,
   getProductById,
+  getProductList,
 };

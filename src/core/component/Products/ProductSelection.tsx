@@ -176,17 +176,17 @@ const ProductSelection = ({ onSelect }: ProductSelectionProps) => {
 
   return (
     <>
-      <div className='search-items relative'>
+      {/* <div className='search-items relative'>
         <input
           type='text'
           className='form-control pl-5'
           placeholder='Scan / Search Products by name and code'
         />
         <BsSearch className='search-icon' />
-      </div>
+      </div> */}
       <div className='row mt-4 align-items-end'>
         <div className='col-xl-3 col-lg-3 col-md-6 mb-3 md-pr-0'>
-          {/* <label>Select Category</label> */}
+          <label>Product Category</label>
           <Select
             name='categoryList'
             className='react-select-container'

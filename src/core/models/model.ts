@@ -150,7 +150,12 @@ export type PaginationFilter = BaseFilter & {
   sortOrder?: number | null;
   sortField?: string;
 };
-
+export type ProductFilter = PaginationFilter & {
+  categoryIds?: number[];
+  productGroupIds?: number[];
+  polishingTypeIds?: number[];
+  colorIds?: number[];
+};
 export type RecomendedProductsFilter = {
   categoryIds: number[];
 };

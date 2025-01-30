@@ -35,6 +35,7 @@ import { Column } from "primereact/column";
 import { camelize, formatCurrency } from "@/core/helpers/helperFunctions";
 import { toast } from "react-toastify";
 import { useRouter } from "next/navigation";
+import ProductSearchbar from "@/core/component/Products/ProductSearchbar";
 const paginationFilter: PaginationFilter = {
   pageNumber: 1,
   pageSize: 500,
@@ -508,6 +509,9 @@ const page = () => {
                 <div className='card-title'>
                   <h5>Item Details</h5>
                 </div>
+              </div>
+              <div className='card-body'>
+                <ProductSearchbar onSelect={onProductsChange} />
               </div>
               <div className='card-body'>
                 <ProductSelection onSelect={onProductsChange} />
