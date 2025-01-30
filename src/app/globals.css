@@ -818,7 +818,7 @@ ul.sub-menu {
     position: relative;
     display: inline-block;
     transition: 0.3s;
-    border-radius: 0px;
+    /* border-radius: 0px; */
     padding: .3rem 1rem;
     font-size: 14px;
 }
@@ -917,9 +917,9 @@ ul.sub-menu {
 
 .card.disabled {
     position: relative;
-  }
-  
-  .card.disabled::after {
+}
+
+.card.disabled::after {
     content: "Select the customer";
     position: absolute;
     width: 100%;
@@ -936,9 +936,10 @@ ul.sub-menu {
     align-items: center;
     justify-content: center;
     font-weight: 700;
-    border-radius: 0.625rem;
+    border-radius: 0.25rem;
     ;
-  }
+}
+
 /*---------Fade-in Effect----------*/
 @keyframes fade-in {
     0% {
@@ -1025,6 +1026,7 @@ ul.sub-menu {
     border: 1px solid #ad7d57;
     margin: 5px 0px;
     transition: all 0.4s;
+    border-radius:0.25rem;
 }
 
 .pro-act-btn {
@@ -2401,6 +2403,25 @@ label .span {
 .sales-order-color-options>img {
     aspect-ratio: 20/20;
     max-width: 20px;
+}
+
+.auto-complet-search>.wrapper {
+    top: 0;
+    left: 0;
+    border-color: rgba(0, 0, 0, .125)!important;
+    border-radius: 0.25rem !important;
+    padding-left: 24px;
+    font-size: 14px!important;
+    z-index: 1!important;
+}
+
+.auto-complet-search>.wrapper:focus, .auto-complet-search>.wrapper:hover, .auto-complet-search>.wrapper:focus-within  {
+    box-shadow: none !important;
+}
+
+.auto-complet-search .search-icon {
+    left: -6px;
+    top: 22px;
 }
 
 /*----------Register Form---------*/
@@ -4478,8 +4499,8 @@ select {
 
 
 /*----------Prime React sidebar Css--*/
-.offcanvas-panel-menu>.p-sidebar-header, .offcanvas-panel-menu>.p-sidebar-content{
+.offcanvas-panel-menu>.p-sidebar-header,
+.offcanvas-panel-menu>.p-sidebar-content {
     padding: 0px;
     overflow-x: hidden;
 }
-

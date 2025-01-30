@@ -510,9 +510,9 @@ const page = () => {
                   <h5>Item Details</h5>
                 </div>
               </div>
-              <div className='card-body'>
+             
                 <ProductSearchbar onSelect={onProductsChange} />
-              </div>
+              
               <div className='card-body'>
                 <ProductSelection onSelect={onProductsChange} />
                 <div className='mt-4'>
