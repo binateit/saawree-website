@@ -151,6 +151,7 @@ const page = () => {
 
     rzpay.on("payment.failed", (response: any) => {
       setCartCount(0);
+      router.push("/payment-failed");
       queryClient.invalidateQueries({ queryKey: ["cartDetails"] });
     });
   };

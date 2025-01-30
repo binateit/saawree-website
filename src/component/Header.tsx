@@ -64,13 +64,13 @@ const Header = () => {
             </div>
           ) : (
             <>
-            <Link href='/auth/login'>
-              <i className='bi bi-box-arrow-in-right'></i> Login
-            </Link> /
-
-            <Link href='/auth/register'>
-              <i className='bi bi-box-arrow-in-right'></i> Register
-            </Link>
+              <Link href='/auth/login'>
+                <i className='bi bi-box-arrow-in-right'></i> Login
+              </Link>{" "}
+              /
+              <Link href='/auth/registrationprocess'>
+                <i className='bi bi-box-arrow-in-right'></i> Register
+              </Link>
             </>
           )}
         </div>
@@ -318,11 +318,10 @@ const Header = () => {
         visible={show}
         position='right'
         onHide={() => setShow(false)}
-        className="offcanvas-panel-menu"
+        className='offcanvas-panel-menu'
         showCloseIcon={false}
         blockScroll={true}
       >
-
         <div className='py-2'>
           <ul className='nav flex-column nav-pills nav-pills-custom'>
             <li className='nav-link mb-2 active'>
@@ -384,27 +383,22 @@ const Header = () => {
                 Transaction
                 <BsChevronDown fontSize={14} />
               </div>
-              {openDropDown.display &&
-                openDropDown.name === "transaction" && (
-                  <div className='nav flex-column nav-pills nav-pills-custom-dropdown'>
-                    <Link
-                      className='nav-link py-2 px-3'
-                      href='sale-order.html'
-                    >
-                      Sales Order
-                    </Link>
-                    <Link className='nav-link py-2 px-3' href='invoice.html'>
-                      Invoice
-                    </Link>
-                    <Link className='nav-link py-2 px-3' href='payment.html'>
-                      Payment
-                    </Link>
-                  </div>
-                )}
+              {openDropDown.display && openDropDown.name === "transaction" && (
+                <div className='nav flex-column nav-pills nav-pills-custom-dropdown'>
+                  <Link className='nav-link py-2 px-3' href='sale-order.html'>
+                    Sales Order
+                  </Link>
+                  <Link className='nav-link py-2 px-3' href='invoice.html'>
+                    Invoice
+                  </Link>
+                  <Link className='nav-link py-2 px-3' href='payment.html'>
+                    Payment
+                  </Link>
+                </div>
+              )}
             </li>
           </ul>
         </div>
-
       </Sidebar>
     </>
   );

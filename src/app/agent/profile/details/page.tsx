@@ -46,7 +46,7 @@ const page = () => {
         excludeEmptyString: false,
       })
       .required("Please enter whatsapp number"),
-    dob: Yup.string(),
+    dateOfBirth: Yup.string(),
     dateOfAnniversary: Yup.string(),
     addressLine1: Yup.string(),
     addressLine2: Yup.string(),
@@ -79,7 +79,7 @@ const page = () => {
       mobileNumber: agentProfile?.mobileNumber,
       emailAddress: agentProfile?.emailAddress || undefined,
       whatsappNumber: agentProfile?.whatsappNumber || undefined,
-      dob: agentProfile?.dateOfBirth || undefined,
+      dateOfBirth: agentProfile?.dateOfBirth || undefined,
       dateOfAnniversary: agentProfile?.dateOfAnniversary || undefined,
       addressLine1: agentProfile?.addressLine1,
       addressLine2: agentProfile?.addressLine2,
@@ -103,7 +103,7 @@ const page = () => {
           mobileNumber: formValues?.mobileNumber as string,
           emailAddress: formValues?.emailAddress as string,
           whatsappNumber: formValues?.whatsappNumber as string,
-          dob: formValues?.dob as string,
+          dateOfBirth: formValues?.dateOfBirth as string,
           dateOfAnniversary: formValues?.dateOfAnniversary as string,
           addressLine1: formValues?.addressLine1 as string,
           addressLine2: formValues?.addressLine2 as string,
@@ -125,6 +125,7 @@ const page = () => {
 
         if (result.succeeded) {
           toast.success("Agent is updated successfully.");
+          setIsEdit(false);
           agentProfileRefetch();
         }
       } catch (ex) {
@@ -248,7 +249,7 @@ const page = () => {
                   <span className='ml-xl-2'>{`+91 ${agentProfile?.whatsappNumber}`}</span>
                 </div>
               </div>
-              <div className='col-xl-6 col-lg-12 col-md-12 mb-3'>
+              {/* <div className='col-xl-6 col-lg-12 col-md-12 mb-3'>
                 <div className='profile-data d-flex'>
                   <label className='font-weight-bold custome-lg-label mb-0'>
                     Commission Percent :
@@ -257,7 +258,7 @@ const page = () => {
                     {agentProfile?.commissionPercent}
                   </span>
                 </div>
-              </div>
+              </div> */}
               <div className='col-xl-6 col-lg-12 col-md-12 mb-3'>
                 <div className='profile-data d-flex'>
                   <label className='font-weight-bold custome-lg-label mb-0'>
@@ -285,14 +286,14 @@ const page = () => {
                   </span>
                 </div>
               </div>
-              <div className='col-xl-6 col-lg-12 col-md-12 mb-3'>
+              {/* <div className='col-xl-6 col-lg-12 col-md-12 mb-3'>
                 <div className='profile-data d-flex'>
                   <label className='font-weight-bold custome-lg-label mb-0'>
                     Rate Applicable :
                   </label>
                   <span className='ml-xl-2'>{agentProfile?.rateTypeName}</span>
                 </div>
-              </div>
+              </div> */}
               <div className='col-xl-12 col-lg-12 col-md-12 mb-3'>
                 <div className='profile-data d-flex'>
                   <label className='font-weight-bold custome-lg-label mb-0'>
@@ -391,11 +392,13 @@ const page = () => {
                           placeholder='Date of Birth'
                           className='form-control'
                           value={
-                            formik.values.dob &&
+                            formik.values.dateOfBirth &&
                             !isNaN(
-                              Date.parse(formik.values.dob as unknown as string)
+                              Date.parse(
+                                formik.values.dateOfBirth as unknown as string
+                              )
                             )
-                              ? new Date(formik.values.dob)
+                              ? new Date(formik.values.dateOfBirth)
                               : null
                           }
                           setFieldValue={formik.setFieldValue}

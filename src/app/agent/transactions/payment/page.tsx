@@ -8,6 +8,7 @@ import { useQuery } from "@tanstack/react-query";
 import { format, formatDate } from "date-fns";
 import { toZonedTime } from "date-fns-tz";
 import Link from "next/link";
+import { Calendar } from "primereact/calendar";
 import { Column } from "primereact/column";
 import {
   DataTable,
@@ -32,8 +33,8 @@ const page = () => {
     sortField: "",
     sortOrder: -1,
     orderBy: [],
+    order: "" as "asc" | "desc",
   });
-
   const {
     data: paymentsListResponse,
     isLoading,
@@ -152,10 +153,11 @@ const page = () => {
       draft.pageSize = event.rows;
       draft.first = event.first;
       draft.sortField = event.sortField;
-      draft.sortOrder = event.sortOrder as SortOrder;
-      draft.orderBy = [
-        `${event.sortField} ${event.sortOrder === 1 ? "asc" : "desc"}`,
-      ];
+      event.sortField && (draft.order = event.sortOrder === 1 ? "asc" : "desc");
+      event.sortField &&
+        (draft.orderBy = [
+          `${event.sortField} ${event.sortOrder === 1 ? "asc" : "desc"}`,
+        ]);
     });
   };
 
@@ -229,7 +231,24 @@ const page = () => {
                 <div className='col-md-4'>
                   <div className='form-group'>
                     <label htmlFor='date'>By Date</label>
-                    <input type='date' className='form-control' />
+                    <Calendar
+                      value={filterOption?.filterDates as Date[]}
+                      onChange={(e) => {
+                        updateFilterOption({
+                          ...filterOption,
+                          filterDates: e.value as Date[],
+                        });
+                      }}
+                      selectionMode='range'
+                      placeholder='Select Payment Date'
+                      formatDateTime={(value) => format(value, "dd/MM/yyyy")}
+                      readOnlyInput
+                      hideOnRangeSelection
+                      style={{ width: "20rem", height: "3rem" }}
+                      showButtonBar
+                      className='w-100'
+                      inputClassName='form-control form-control-solid'
+                    />
                   </div>
                 </div>
                 <div className='col-md-4'>
@@ -259,6 +278,24 @@ const page = () => {
                       <BsChevronDown className='drop-down-icon' />
                     </div>
                   </div>
+                </div>
+              </div>
+              <div className='card-footer bg-white'>
+                <div className='d-flex justify-content-end'>
+                  <button
+                    className='btn btn-saawree mr-2'
+                    id='btnSearch'
+                    onClick={clearFilters}
+                  >
+                    Clear Filters
+                  </button>
+                  <button
+                    className='btn btn-saawree'
+                    id='btnSearch'
+                    onClick={updateSearchFilters}
+                  >
+                    Search
+                  </button>
                 </div>
               </div>
             </form>

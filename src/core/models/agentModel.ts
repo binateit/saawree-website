@@ -51,7 +51,7 @@ export type EditAgentProfile = {
   whatsappNumber: string;
   companyName: string;
   emailAddress: string;
-  dob: string;
+  dateOfBirth: string;
   dateOfAnniversary: string;
   addressLine1: string;
   addressLine2: string;
@@ -125,3 +125,39 @@ export type AgentCommissionRecord = {
 export type AgentCommissionQueryResponse = Response<
   Array<AgentCommissionRecord>
 >;
+
+export type AgentPayoutRecord = {
+  id: number;
+  referenceNumber: string;
+  agentId: number;
+  agentName: string;
+  totalAmountPaid: number;
+  paymentDate: string;
+  paymentModeName: string;
+};
+
+export type AgentPayoutQueryResponse = Response<Array<AgentPayoutRecord>>;
+
+export type AgentPayoutDetails = {
+  id: number;
+  agentId: number;
+  agentName: string;
+  totalAmountPaid: number;
+  paymentDate: string;
+  paymentModeId: number;
+  paymentModeName: string;
+  referenceNumber: string;
+  notes: string;
+  commissions: Commission[];
+};
+
+export type Commission = {
+  id: number;
+  agentPayoutId: number;
+  agentCommissionId: number;
+  amountPaid: number;
+  saleOrderNumber: string;
+  saleOrderDate: string;
+  saleOrderAmount: number;
+  customerName: string;
+};

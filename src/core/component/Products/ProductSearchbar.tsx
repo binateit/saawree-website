@@ -1,8 +1,7 @@
 import { PaginationFilter, Product } from "@/core/models/model";
 import { getProductList } from "@/core/requests/productsRequests";
 import React, { useEffect, useState, useCallback } from "react";
-import { Col } from "react-bootstrap";
-import { BsSearch } from "react-icons/bs";
+
 import { ReactSearchAutocomplete } from "react-search-autocomplete";
 
 interface ProductSearchbarProps {

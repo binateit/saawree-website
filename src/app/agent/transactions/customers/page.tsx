@@ -31,6 +31,7 @@ const page = () => {
     sortField: "",
     sortOrder: -1,
     orderBy: [],
+    order: "" as "asc" | "desc",
   });
 
   const {
@@ -121,10 +122,11 @@ const page = () => {
       draft.pageSize = event.rows;
       draft.first = event.first;
       draft.sortField = event.sortField;
-      draft.sortOrder = event.sortOrder as SortOrder;
-      draft.orderBy = [
-        `${event.sortField} ${event.sortOrder === 1 ? "asc" : "desc"}`,
-      ];
+      event.sortField && (draft.order = event.sortOrder === 1 ? "asc" : "desc");
+      event.sortField &&
+        (draft.orderBy = [
+          `${event.sortField} ${event.sortOrder === 1 ? "asc" : "desc"}`,
+        ]);
     });
   };
 

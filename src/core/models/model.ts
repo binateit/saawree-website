@@ -149,6 +149,7 @@ export type PaginationFilter = BaseFilter & {
   orderBy?: Array<string>;
   sortOrder?: number | null;
   sortField?: string;
+  order?: string;
 };
 export type ProductFilter = PaginationFilter & {
   categoryIds?: number[];
@@ -202,3 +203,10 @@ export type Product = {
 };
 
 export type ProductQueryResponse = Response<Array<Product>>;
+
+export type ContactUsPayload = {
+  name: string;
+  email: string;
+  mobileNumber: string;
+  message: string;
+};

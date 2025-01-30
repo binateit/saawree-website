@@ -4,6 +4,8 @@ import axiosInstance from "../helpers/axiosInstance";
 import {
   AgentCommissionQueryResponse,
   AgentPaymentQueryResponse,
+  AgentPayoutDetails,
+  AgentPayoutQueryResponse,
   AgentProfile,
   AgentRecord,
   ChangePassword,
@@ -19,8 +21,10 @@ const CHANGE_PASSWORD_URL = `${API_URL}/agent/change-password`;
 const GET_AGENT_BY_ACCESSTOKEN_URL = `${API_URL}/agent/profile`;
 const GET_CUSTOMERS_BY_AGENT = `${API_URL}/customers/searchbyagent`;
 const GET_CUSTOMERS_BY_AGENT_DETAILS = `${API_URL}/customers`;
+const GET_AGENT_PAYOUT_DETAILS = `${API_URL}/agentpayout`;
 const Invoice_URL = `${API_URL}/invoices/agent-invoices`;
 const Payment_Records_URL = `${API_URL}/paymentreceived/agent-customer-payment`;
+const Payout_Records_URL = `${API_URL}/agentpayout/my-payouts`;
 const Commission_Records_URL = `${API_URL}/agentcommission/my-commission`;
 
 const getRecordById = async (id?: ID | undefined): Promise<AgentRecord> => {
@@ -60,7 +64,7 @@ const updateAgentProfile = async (
   payload: EditAgentProfile
 ): Promise<Result> => {
   return await axiosInstance
-    .put(`${GET_AGENT_BY_ACCESSTOKEN_URL}`, payload)
+    .post(`${GET_AGENT_BY_ACCESSTOKEN_URL}`, payload)
     .then((response: AxiosResponse<Result>) => response.data)
     .catch((err: Result) => {
       return err;
@@ -133,6 +137,30 @@ const getCommissionListOfAgent = async (
     });
 };
 
+const getPayoutListOfAgent = async (
+  filter: PaginationFilter
+): Promise<AgentPayoutQueryResponse> => {
+  return await axiosInstance
+    .post(`${Payout_Records_URL}`, filter)
+    .then((response: AxiosResponse<AgentPayoutQueryResponse>) => response.data)
+    .then((response: AgentPayoutQueryResponse) => response)
+    .catch((err) => {
+      return err;
+    });
+};
+
+const getAgentPayoutDetails = async (
+  id: number
+): Promise<AgentPayoutDetails> => {
+  return await axiosInstance
+    .get(`${GET_AGENT_PAYOUT_DETAILS}/${id}`)
+    .then((response: AxiosResponse<AgentPayoutDetails>) => {
+      return response?.data;
+    })
+    .catch((err) => {
+      return err;
+    });
+};
 export {
   getRecordById,
   changePassword,
@@ -142,5 +170,7 @@ export {
   getCustomerofAgentDetails,
   getInvoicesOfAgent,
   getPaymentListOfAgent,
+  getPayoutListOfAgent,
   getCommissionListOfAgent,
+  getAgentPayoutDetails,
 };
