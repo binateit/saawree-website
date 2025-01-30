@@ -115,7 +115,7 @@ const ProductSearchbar = ({ onSelect }: ProductSearchbarProps) => {
         onSearch={handleOnSearch}
         inputSearchString={searchString} // Controlled input value
         onSelect={handleOnSelect}
-        className='form-control'
+        className='auto-complet-search'
         formatResult={formatResult}
         showIcon={true}
         showClear={true}
