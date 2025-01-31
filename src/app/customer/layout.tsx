@@ -2,7 +2,7 @@
 import Link from "next/link";
 import React, { useState } from "react";
 
-const layout = ({
+const Layout = ({
   children,
 }: Readonly<{
   children: React.ReactNode;
@@ -131,4 +131,4 @@ const layout = ({
   );
 };
 
-export default layout;
+export default Layout;

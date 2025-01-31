@@ -23,12 +23,11 @@ import {
 } from "@/core/models/model";
 import { useSession } from "next-auth/react";
 
-const page = () => {
+const Page = () => {
   const { data: session } = useSession();
   const [isEdit, setIsEdit] = useState(false);
   const [stateList, setStateList] = useState<SelectOptionProps[]>([]);
   const [countryList, setCountryList] = useState<SelectOptionProps[]>([]);
-  const [selectedCountry, setSelectedCountry] = useState<number>();
   const editProfileSchema = Yup.object().shape({
     firstName: Yup.string(),
     lastName: Yup.string(),
@@ -92,10 +91,10 @@ const page = () => {
     },
     validationSchema: editProfileSchema,
 
-    onSubmit: async (formValues, { setFieldError, setSubmitting }) => {
+    onSubmit: async (formValues, { setSubmitting }) => {
       setSubmitting(true);
       try {
-        let profilePayload: EditAgentProfile = {
+        const profilePayload: EditAgentProfile = {
           userId: sessionData?.userId,
           firstName: formValues?.firstName as string,
           lastName: formValues?.lastName as string,
@@ -119,9 +118,7 @@ const page = () => {
           (x) => x.value === formValues.countryId
         )?.label as string;
 
-        let result;
-
-        result = await updateAgentProfile(profilePayload);
+        const result = await updateAgentProfile(profilePayload);
 
         if (result.succeeded) {
           toast.success("Agent is updated successfully.");
@@ -146,21 +143,27 @@ const page = () => {
   });
 
   useEffect(() => {
-    let stateResult: any;
-    let countryResult: any;
+    let stateResult;
+    let countryResult;
     if (states) {
       stateResult = states as State[];
-      let stateArray: any[] = [];
-      stateResult.map((item: any) => {
-        return stateArray.push({ value: item.id, label: item.name });
+      const stateArray: SelectOptionProps[] = [];
+      stateResult.map((item: State) => {
+        return stateArray.push({
+          value: item.id as number,
+          label: item.name as string,
+        });
       });
       setStateList(stateArray);
     }
     if (country) {
       countryResult = country as Country[];
-      let countryArray: any[] = [];
-      countryResult?.map((item: any) => {
-        return countryArray.push({ value: item.id, label: item.name });
+      const countryArray: SelectOptionProps[] = [];
+      countryResult?.map((item: Country) => {
+        return countryArray.push({
+          value: item.id as number,
+          label: item.name as string,
+        });
       });
       setCountryList(countryArray);
     }
@@ -454,8 +457,7 @@ const page = () => {
                         options={countryList}
                         component={CustomSelect}
                         placeholder='country'
-                        onDropDownChange={(e: any) => {
-                          setSelectedCountry(e.value);
+                        onDropDownChange={(e: { value: number }) => {
                           formik.setFieldValue("countryId", e.value);
                         }}
                       ></Field>
@@ -521,4 +523,4 @@ const page = () => {
   );
 };
 
-export default page;
+export default Page;

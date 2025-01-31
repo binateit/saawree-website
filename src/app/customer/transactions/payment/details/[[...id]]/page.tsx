@@ -3,7 +3,6 @@ import { formatCurrency } from "@/core/helpers/helperFunctions";
 import { FileResult } from "@/core/models/saleOrderModel";
 import {
   GeneratePdf,
-  getInvoiceById,
   getPaymentDetailsById,
 } from "@/core/requests/customerRoutes";
 import { useQuery } from "@tanstack/react-query";
@@ -14,7 +13,7 @@ import { DataTable } from "primereact/datatable";
 import React from "react";
 import { saveAs } from "file-saver";
 import { toast } from "react-toastify";
-const page = () => {
+const Page = () => {
   const searchParams = useSearchParams();
   const paymentId = searchParams.get("paymentId");
 
@@ -27,10 +26,10 @@ const page = () => {
   const Payment_Download_URL = "saleorders/saleorderpayment/downloadpdf";
   const challanpdf = () => {
     GeneratePdf(Number(paymentId), Payment_Download_URL).then((file) => {
-      let output = file as FileResult;
+      const output = file as FileResult;
 
       if (output.data) {
-        let url = window.URL.createObjectURL(output.data);
+        const url = window.URL.createObjectURL(output.data);
         saveAs(url, output.name);
       } else {
         toast.error(file.exception);
@@ -154,4 +153,4 @@ const page = () => {
   );
 };
 
-export default page;
+export default Page;

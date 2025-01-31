@@ -5,10 +5,11 @@ import { useRouter } from "next/navigation";
 import React from "react";
 import { BsCart } from "react-icons/bs";
 import ProductImage from "./ProductImage";
+import { Session } from "../../models/model";
 
 interface ProductsProps {
   product: ProductList | MakeToOrderProduct;
-  session?: any;
+  session?: Session;
   type: string;
 }
 

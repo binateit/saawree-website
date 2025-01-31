@@ -1,10 +1,10 @@
-import React, { FC, useEffect, useState } from "react";
+import React, { FC, useState } from "react";
 import { Button, Modal } from "react-bootstrap";
 
 interface Props {
   addressToDelete: number;
   onConfirm: (addressId: number) => void;
-  setShowConfirmationModal: any;
+  setShowConfirmationModal: (state: boolean) => void;
 }
 const ConfirmationModal: FC<Props> = ({
   onConfirm,

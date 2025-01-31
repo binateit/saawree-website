@@ -8,15 +8,11 @@ import { useQuery } from "@tanstack/react-query";
 import React from "react";
 import { useState } from "react";
 import { Field, FormikProvider, useFormik } from "formik";
-import {
-  CustomerAccounting,
-  gstRegisteredType,
-} from "@/core/models/customerModel";
+import { CustomerAccounting } from "@/core/models/customerModel";
 import { toast } from "react-toastify";
-import { generateOptions } from "@/core/helpers/helperFunctions";
 import CustomSelect from "@/core/component/CustomSelect";
 
-const page = () => {
+const Page = () => {
   const [editMode, setEditMode] = useState<boolean>();
   const editCustomerSchema = Yup.object().shape({
     lstNumber: Yup.string().nullable(),
@@ -27,7 +23,17 @@ const page = () => {
     gstRegistrationTypeId: Yup.string().nullable(),
     gstRegistrationTypeName: Yup.string().nullable(),
   });
-  const gstRegisteredTypeOptions = generateOptions(gstRegisteredType);
+  const gstRegisteredTypeOptions = [
+    { value: 1, label: "RegisteredBusinessRegular" },
+    { value: 2, label: "RegisteredBusinessComposition" },
+    { value: 3, label: "UnregisteredBusiness" },
+    { value: 4, label: "Consumer" },
+    { value: 5, label: "Overseas" },
+    { value: 6, label: "SpecialEconomicZoneSEZ" },
+    { value: 7, label: "DeemedExport" },
+    { value: 8, label: "TaxDeductor" },
+    { value: 9, label: "SEZDeveloper" },
+  ];
   const { data: customerAcounting, refetch: customerAccountingRefetch } =
     useQuery({
       queryKey: ["getCustomerAccounting"],
@@ -47,7 +53,7 @@ const page = () => {
     },
     validationSchema: editCustomerSchema,
 
-    onSubmit: async (formValues, { setFieldError, setSubmitting }) => {
+    onSubmit: async (formValues, { setSubmitting }) => {
       setSubmitting(true);
       try {
         const profilePayload: CustomerAccounting = {
@@ -61,9 +67,8 @@ const page = () => {
             (type) => type?.value === formValues?.gstRegistrationTypeId
           )?.[0]?.label,
         };
-        let result;
-        result = await updateCustomerAccounting(profilePayload);
-        console.log(result);
+
+        const result = await updateCustomerAccounting(profilePayload);
         if (result.succeeded) {
           toast.success("Customer is updated successfully.");
           customerAccountingRefetch();
@@ -243,7 +248,7 @@ const page = () => {
                         options={gstRegisteredTypeOptions}
                         component={CustomSelect}
                         placeholder='GST Registration Type'
-                        onDropDownChange={(e: any) => {
+                        onDropDownChange={(e: { value: number }) => {
                           formik.setFieldValue(
                             "gstRegistrationTypeId",
                             e.value
@@ -283,4 +288,4 @@ const page = () => {
   );
 };
 
-export default page;
+export default Page;

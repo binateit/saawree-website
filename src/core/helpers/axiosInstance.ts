@@ -2,11 +2,11 @@
 
 import axios, {
   AxiosError,
-  AxiosRequestConfig,
   AxiosRequestHeaders,
   AxiosResponse,
   InternalAxiosRequestConfig,
 } from "axios";
+import { Session } from "../models/model";
 import { getSession } from "next-auth/react";
 
 const API_URL = process.env.NEXT_PUBLIC_API_URL;
@@ -20,10 +20,11 @@ const onRequest = async (
   config: InternalAxiosRequestConfig
 ): Promise<InternalAxiosRequestConfig> => {
   const session = await getSession();
-  if (session?.user?.token) {
+  const UserSession = session as Session;
+  if (UserSession?.user?.token) {
     config.headers = {
       ...config.headers,
-      Authorization: `Bearer ${session?.user?.token}`,
+      Authorization: `Bearer ${UserSession?.user?.token}`,
     } as AxiosRequestHeaders;
   } else {
     config.headers.set("tenant", "ho");
@@ -44,19 +45,17 @@ const onResponseError = async (
   error: AxiosError | Error
 ): Promise<AxiosResponse | undefined> => {
   if (axios.isAxiosError(error)) {
-    const { message } = error;
-    const { method, url } = error.config as AxiosRequestConfig;
-    const { statusText, status } = (error.response as AxiosResponse) ?? {};
+    // const { message } = error;
+    // const { method, url } = error.config as AxiosRequestConfig;
+    const { status } = (error.response as AxiosResponse) ?? {};
 
     switch (status) {
       case 400: {
         // Bad Request
         return Promise.reject(error.response);
-        break;
       }
       case 401: {
         return Promise.resolve(error.response);
-        break;
       }
       case 403: {
         // "Permission denied"

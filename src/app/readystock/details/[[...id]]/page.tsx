@@ -1,6 +1,7 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 "use client";
 import { formatCurrency, urlExists } from "@/core/helpers/helperFunctions";
-import { SelectOptionProps } from "@/core/models/model";
+import { SelectOptionProps, Session } from "@/core/models/model";
 import underlineIcon from "@/assets/images/underlineIcon.png";
 import {
   getReadyStockRecomendedProducts,
@@ -12,8 +13,7 @@ import { useRouter, useSearchParams } from "next/navigation";
 import { Dropdown } from "primereact/dropdown";
 import React, { useEffect, useState } from "react";
 import Image from "next/image";
-import { BsCart, BsHeart } from "react-icons/bs";
-import { Carousel } from "primereact/carousel";
+import { BsCart } from "react-icons/bs";
 import InnerImageZoom from "react-inner-image-zoom";
 import "react-inner-image-zoom/lib/InnerImageZoom/styles.css";
 import { Dialog } from "primereact/dialog";
@@ -29,8 +29,9 @@ import productImagePlaceholder from "@/assets/images/productImagePlaceHolder.jpg
 import ProductImage from "@/core/component/Products/ProductImage";
 import Link from "next/link";
 
-const page = () => {
+const Page = () => {
   const { data: session, status: authStatus } = useSession();
+  const userSession = session as Session;
   const router = useRouter();
   const searchParams = useSearchParams();
   const productId = searchParams.get("productId");
@@ -43,18 +44,17 @@ const page = () => {
   });
   const [polishType, setPolishType] = useState<string>("");
   const [visible, setVisible] = useState(false);
-  const [selectedProductId, setSelectedProductId] = useState<number>();
   const [selectedColors, setSelectedColors] = useState<ProductColor[]>([]);
   const [polishTypeList, setPolishTypeList] = useState<SelectOptionProps[]>([]);
   const [visibleTab, setVisibleTab] = useState<string>("description");
   const { setCartCount, cartCount, setIsBuyNow } = useCartCount();
 
-  const { data: response, isLoading: isProductDetailsLoading } = useQuery({
+  const { data: response } = useQuery({
     queryKey: ["getRSProductDetailsData"],
     queryFn: () => getRSProductDetails(Number(productId)),
   });
   useEffect(() => {
-    let polishTypes: any = [];
+    const polishTypes: any = [];
     response?.polishingTypeList?.map((ptype) => {
       return polishTypes.push({
         name: ptype?.polishingTypeName,
@@ -74,7 +74,7 @@ const page = () => {
     });
     urlExists(
       `${process.env.NEXT_PUBLIC_APP_IMAGE_API_URL}/${response?.productImages?.[0]?.mediumImagePath}`,
-      function (status: any) {
+      function (status: number | boolean) {
         if (status === 200) {
           console.log("image found");
         } else {
@@ -124,7 +124,7 @@ const page = () => {
           response &&
           selectedColors.length > 0
         ) {
-          let updatedItems: Items[] = selectedColors.map((color) => ({
+          const updatedItems: Items[] = selectedColors.map((color) => ({
             productId: color.productId as number,
             quantity: color.quantity as number,
           }));
@@ -153,10 +153,11 @@ const page = () => {
       }
     } catch (error) {
       toast.error("An error occurred while adding item to cart");
+      console.log(error);
     }
   };
 
-  var collectionSettings = {
+  const collectionSettings = {
     dots: false,
     swipeToSlide: true,
     draggable: true,
@@ -192,7 +193,7 @@ const page = () => {
     ],
   };
 
-  var productImagesThumbnails = {
+  const productImagesThumbnails = {
     dots: false,
     swipeToSlide: true,
     draggable: true,
@@ -268,11 +269,13 @@ const page = () => {
                     data-gallery='thumb'
                     className='is-active'
                     onClick={() => {
-                      mainProductImage?.mainImage &&
+                      return (
+                        mainProductImage?.mainImage &&
                         setMainProductImage({
                           mainImage: pi?.mediumImagePath,
                           zoomedImage: pi?.zoomImagePath,
-                        });
+                        })
+                      );
                     }}
                     key={index}
                   >
@@ -377,9 +380,9 @@ const page = () => {
                         >
                           <div className='d-flex '>
                             <div className='moti-color'>
-                              <img
+                              <Image
                                 src={`${process.env.NEXT_PUBLIC_APP_IMAGE_API_URL}/${color?.imagePath}`}
-                                alt=''
+                                alt='colors'
                               />
                               <span className='color-name'>
                                 {color.colorName}{" "}
@@ -397,7 +400,7 @@ const page = () => {
                                 min={1}
                                 max={99999}
                                 onChange={(e) => {
-                                  let qty = parseInt(e.target.value);
+                                  const qty = parseInt(e.target.value);
                                   if (qty < 0) {
                                     e.target.value = "";
                                   } else if (
@@ -423,7 +426,7 @@ const page = () => {
                     </div>
 
                     {authStatus === "authenticated" &&
-                      session?.user?.userType === "customer" && (
+                      userSession?.user?.userType === "customer" && (
                         <div className='action-btn-wrapper'>
                           <button
                             className='btn btn-saawree-outline'
@@ -436,7 +439,7 @@ const page = () => {
                           </a>
                           {/* <button className="btn btn-saawree-outline"><i className="bi bi-heart"></i></button>  */}
                           <a href='#' className='whatsapp'>
-                            <img src='img/whats-aap.png' alt='' />
+                            <Image src='img/whats-aap.png' alt='whatsapp' />
                           </a>
                         </div>
                       )}
@@ -462,7 +465,7 @@ const page = () => {
                         {response?.colorList?.map((color, index) => (
                           <div className='d-flex' key={color?.colorId}>
                             <div className='moti-color'>
-                              <img
+                              <Image
                                 src={`${process.env.NEXT_PUBLIC_APP_IMAGE_API_URL}/${color?.imagePath}`}
                                 alt=''
                               />
@@ -483,7 +486,7 @@ const page = () => {
                                 min={1}
                                 max={99999}
                                 onChange={(e) => {
-                                  let qty = parseInt(e.target.value);
+                                  const qty = parseInt(e.target.value);
                                   if (qty < 0) {
                                     e.target.value = "";
                                   } else if (
@@ -507,7 +510,7 @@ const page = () => {
                         ))}
                       </div>
                       {authStatus === "authenticated" &&
-                        session?.user?.userType === "customer" && (
+                        userSession?.user?.userType === "customer" && (
                           <div className='action-btn-wrapper'>
                             <button
                               className='btn btn-saawree-outline'
@@ -524,9 +527,9 @@ const page = () => {
                               Buy now
                             </div>
                             {/* <button className="btn btn-saawree-outline"><i className="bi bi-heart"></i></button>  */}
-                            <a href='#' className='whatsapp'>
-                              <img src='img/whats-aap.png' alt='' />
-                            </a>
+                            <Link href='#' className='whatsapp'>
+                              <Image src='img/whats-aap.png' alt='whatsapp' />
+                            </Link>
                           </div>
                         )}
                     </div>
@@ -653,7 +656,13 @@ const page = () => {
               <h1>YOU MAY ALSO LIKE THIS</h1>
             </div>
             <div className='title-septer'>
-              <img src={underlineIcon.src} alt='' />
+              <Image
+                src={underlineIcon.src}
+                alt='underline'
+                className='img-fluid'
+                width={100}
+                height={50}
+              />
             </div>
             <div className='kada-collections'>
               <Slider {...collectionSettings}>
@@ -777,4 +786,4 @@ const page = () => {
   );
 };
 
-export default page;
+export default Page;

@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 "use client";
 import { formatCurrency } from "@/core/helpers/helperFunctions";
 import { AgentPayoutRecord } from "@/core/models/agentModel";
@@ -19,7 +20,7 @@ import React, { useState } from "react";
 import { BsChevronDown, BsChevronUp } from "react-icons/bs";
 import { useImmer } from "use-immer";
 
-const page = () => {
+const Page = () => {
   const [globalFilterValue, setGlobalFilterValue] = useState<string>("");
   const [isFilter, setIsFilter] = useState<boolean>();
   const [filterQuery, setFilterQuery] = useState({});
@@ -48,7 +49,7 @@ const page = () => {
   });
 
   const updateSearchFilters = () => {
-    let filters: Filter[] = [];
+    const filters: Filter[] = [];
 
     // if (filterOption?.filterOrderStatusId != undefined) {
     //   filters.push({
@@ -67,7 +68,7 @@ const page = () => {
     // }
 
     if (filterOption?.filterDates != undefined) {
-      let orderDateFilters: Filter[] = [];
+      const orderDateFilters: Filter[] = [];
       if (filterOption?.filterDates?.[0] !== undefined) {
         const fromDate = toZonedTime(
           new Date(filterOption?.filterDates?.[0] as Date),
@@ -153,11 +154,11 @@ const page = () => {
       draft.pageSize = event.rows;
       draft.first = event.first;
       draft.sortField = event.sortField;
-      event.sortField && (draft.order = event.sortOrder === 1 ? "asc" : "desc");
-      event.sortField &&
-        (draft.orderBy = [
+      draft.order = event?.sortField && event.sortOrder === 1 ? "asc" : "desc";
+      draft.orderBy = [
+        event.sortField &&
           `${event.sortField} ${event.sortOrder === 1 ? "asc" : "desc"}`,
-        ]);
+      ];
     });
   };
 
@@ -382,4 +383,4 @@ const page = () => {
   );
 };
 
-export default page;
+export default Page;

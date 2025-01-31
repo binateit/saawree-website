@@ -1,3 +1,4 @@
+/* eslint-disable prefer-const */
 import React, { useEffect, useState } from "react";
 import { Button, Modal } from "react-bootstrap";
 import * as Yup from "yup";
@@ -30,7 +31,7 @@ const AddressModal: React.FC<Props> = ({
 }) => {
   const [stateList, setStateList] = useState<SelectOptionProps[]>([]);
   const [countryList, setCountryList] = useState<SelectOptionProps[]>([]);
-  const [selectedCountry, setSelectedCountry] = useState<number>();
+  // const [selectedCountry, setSelectedCountry] = useState<number>();
 
   const addressSchema = Yup.object().shape({
     addressLine1: Yup.string().required("Please enter addressLine 1"),
@@ -79,7 +80,6 @@ const AddressModal: React.FC<Props> = ({
 
       setSubmitting(true);
       try {
-        let result;
         if (isNotEmpty(initialValues?.id) && isEditMode) {
           const updateAddressPayload = {
             customerAddressId: initialValues?.id as number,
@@ -87,7 +87,7 @@ const AddressModal: React.FC<Props> = ({
             address: addressArray,
           };
 
-          let newAddress = updateAddressPayload?.address;
+          const newAddress = updateAddressPayload?.address;
           newAddress.stateName = stateList.find(
             (x) => x.value === newAddress.stateId
           )?.label;
@@ -96,9 +96,9 @@ const AddressModal: React.FC<Props> = ({
           )?.label;
           newAddress.addressId = initialValues?.address?.addressId as number;
 
-          result = await updateCustomerAddress(updateAddressPayload);
+          const result = await updateCustomerAddress(updateAddressPayload);
 
-          if (result.data.succeeded) {
+          if (result?.succeeded) {
             setSubmitting(true);
             toast.success("Customer edited updated successfully!");
             closeModal();
@@ -107,8 +107,12 @@ const AddressModal: React.FC<Props> = ({
             });
           } else {
             if (result.statusCode === 400) {
-              result.propertyResults.forEach((error: any) =>
-                setFieldError(camelize(error.propertyName), error.errorMessage)
+              result.propertyResults.forEach(
+                (error: { propertyName: string; errorMessage: string }) =>
+                  setFieldError(
+                    camelize(error.propertyName),
+                    error.errorMessage
+                  )
               );
               toast.error(result.exception);
             }
@@ -120,7 +124,7 @@ const AddressModal: React.FC<Props> = ({
             isDefault: false,
           };
 
-          let newAddress = createAddressPayload?.address;
+          const newAddress = createAddressPayload?.address;
           newAddress.stateName = stateList.find(
             (x) => x.value === newAddress.stateId
           )?.label;
@@ -128,9 +132,9 @@ const AddressModal: React.FC<Props> = ({
             (x) => x.value === newAddress.countryId
           )?.label;
 
-          result = await createCustomerAddress(createAddressPayload);
+          const result = await createCustomerAddress(createAddressPayload);
 
-          if (result.data.succeeded) {
+          if (result?.succeeded) {
             setSubmitting(true);
             toast.success("New address created successfully.");
             closeModal();
@@ -140,8 +144,12 @@ const AddressModal: React.FC<Props> = ({
             });
           } else {
             if (result.statusCode === 400) {
-              result.propertyResults.forEach((error) =>
-                setFieldError(camelize(error.propertyName), error.errorMessage)
+              result.propertyResults.forEach(
+                (error: { propertyName: string; errorMessage: string }) =>
+                  setFieldError(
+                    camelize(error.propertyName),
+                    error.errorMessage
+                  )
               );
             }
           }
@@ -164,22 +172,26 @@ const AddressModal: React.FC<Props> = ({
   });
 
   useEffect(() => {
-    let stateResult: any;
-    let countryResult: any;
     if (states) {
-      stateResult = states as State[];
-      let stateArray: any[] = [];
-      stateResult.map((item: any) => {
-        return stateArray.push({ value: item.id, label: item.name });
+      let stateResult = states as State[];
+      const stateArray: SelectOptionProps[] = [];
+      stateResult.map((item: State) => {
+        return stateArray.push({
+          value: item.id as number,
+          label: item.name as string,
+        });
       });
       setStateList(stateArray);
     }
 
     if (country) {
-      countryResult = country as Country[];
-      let countryArray: any[] = [];
-      countryResult?.map((item: any) => {
-        return countryArray.push({ value: item.id, label: item.name });
+      let countryResult = country as Country[];
+      const countryArray: SelectOptionProps[] = [];
+      countryResult?.map((item: Country) => {
+        return countryArray.push({
+          value: item.id as number,
+          label: item.name as string,
+        });
       });
       setCountryList(countryArray);
     }
@@ -255,8 +267,8 @@ const AddressModal: React.FC<Props> = ({
                   options={countryList}
                   component={CustomSelect}
                   placeholder='country'
-                  onDropDownChange={(e: any) => {
-                    setSelectedCountry(e.value);
+                  onDropDownChange={(e: { value: number }) => {
+                    // setSelectedCountry(e.value);
                     formik.setFieldValue("countryId", e.value);
                   }}
                 ></Field>

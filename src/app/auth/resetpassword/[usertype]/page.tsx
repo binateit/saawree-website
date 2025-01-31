@@ -1,10 +1,9 @@
 "use client";
 
-import React, { useState } from "react";
+import React from "react";
 import { Field, FormikProvider, useFormik } from "formik";
 import { toast } from "react-toastify";
 import * as Yup from "yup";
-import { Result } from "@/core/models/model";
 import { ResetPassword } from "@/core/models/authModel";
 import {
   resetAgentPassword,
@@ -32,14 +31,13 @@ const ResetPasswordPage = () => {
     initialValues: initialValues,
     validationSchema: passwordSchema,
 
-    onSubmit: async (formValues, { setFieldError, setSubmitting }) => {
+    onSubmit: async (formValues, { setSubmitting }) => {
       setSubmitting(true);
       try {
         const tokenFromURL = decodeURIComponent(token as string).replace(
           /\s/g,
           "+"
         );
-        let result: Result;
 
         const resetData: ResetPassword = {
           password: formValues.password,
@@ -47,7 +45,7 @@ const ResetPasswordPage = () => {
           token: tokenFromURL as string,
         };
 
-        result = pathname.includes("customer")
+        const result = pathname.includes("customer")
           ? await resetPassword(resetData)
           : await resetAgentPassword(resetData);
 

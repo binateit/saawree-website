@@ -1,11 +1,14 @@
 "use client";
-import { FileResult } from "@/core/models/saleOrderModel";
-import { GeneratePdf, getInvoiceById } from "@/core/requests/customerRoutes";
+// import { FileResult } from "@/core/models/saleOrderModel";
+import {
+  // GeneratePdf,
+  getInvoiceById,
+} from "@/core/requests/customerRoutes";
 import { useQuery } from "@tanstack/react-query";
 import { useSearchParams } from "next/navigation";
 import React from "react";
-import { toast } from "react-toastify";
-import { saveAs } from "file-saver";
+// import { toast } from "react-toastify";
+// import { saveAs } from "file-saver";
 import { formatCurrency } from "@/core/helpers/helperFunctions";
 import { DataTable } from "primereact/datatable";
 import { Column } from "primereact/column";
@@ -13,7 +16,7 @@ import { ColumnGroup } from "primereact/columngroup";
 import { Row } from "primereact/row";
 import { formatDate } from "date-fns";
 
-const page = () => {
+const Page = () => {
   const searchParams = useSearchParams();
   const invoiceId = searchParams.get("invoiceId");
 
@@ -24,19 +27,19 @@ const page = () => {
       enabled: !!invoiceId,
     }
   );
-  const Invoice_Download_URL = "invoices/downloadpdf";
-  const challanpdf = () => {
-    GeneratePdf(Number(invoiceId), Invoice_Download_URL).then((file) => {
-      let output = file as FileResult;
+  // const Invoice_Download_URL = "invoices/downloadpdf";
+  // const challanpdf = () => {
+  //   GeneratePdf(Number(invoiceId), Invoice_Download_URL).then((file) => {
+  //     const output = file as FileResult;
 
-      if (output.data) {
-        let url = window.URL.createObjectURL(output.data);
-        saveAs(url, output.name);
-      } else {
-        toast.error(file.exception);
-      }
-    });
-  };
+  //     if (output.data) {
+  //       const url = window.URL.createObjectURL(output.data);
+  //       saveAs(url, output.name);
+  //     } else {
+  //       toast.error(file.exception);
+  //     }
+  //   });
+  // };
   const footerGroup = (
     <ColumnGroup>
       <Row>
@@ -214,4 +217,4 @@ const page = () => {
   );
 };
 
-export default page;
+export default Page;

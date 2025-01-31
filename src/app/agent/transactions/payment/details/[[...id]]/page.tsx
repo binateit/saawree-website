@@ -13,7 +13,7 @@ import { DataTable } from "primereact/datatable";
 import { Column } from "primereact/column";
 import { formatCurrency } from "@/core/helpers/helperFunctions";
 import { formatDate } from "date-fns";
-const page = () => {
+const Page = () => {
   const searchParams = useSearchParams();
   const paymentId = searchParams.get("paymentId");
 
@@ -28,10 +28,10 @@ const page = () => {
   const Payment_Download_URL = "saleorders/saleorderpayment/downloadpdf";
   const challanpdf = () => {
     GeneratePdf(Number(paymentId), Payment_Download_URL).then((file) => {
-      let output = file as FileResult;
+      const output = file as FileResult;
 
       if (output?.data) {
-        let url = window.URL.createObjectURL(output?.data);
+        const url = window.URL.createObjectURL(output?.data);
         saveAs(url, output.name);
       } else {
         toast.error(file.exception);
@@ -159,4 +159,4 @@ const page = () => {
   );
 };
 
-export default page;
+export default Page;

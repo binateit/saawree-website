@@ -103,7 +103,7 @@ export type ProductsFilterOption = {
 export type ProductDetailsResponse = {
   id: number;
   name: string;
-  barcode?: any;
+  barcode?: string;
   description: string;
   productPrice: number;
   itemGroupId: number;
@@ -111,8 +111,8 @@ export type ProductDetailsResponse = {
   colorName: string;
   polishingTypeId: number;
   polishingTypeName: string;
-  unitId?: any;
-  unitName?: any;
+  unitId?: string;
+  unitName?: string;
   productGroupId: number;
   productGroupName: string;
   categoryId: number;

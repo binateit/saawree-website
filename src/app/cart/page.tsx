@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 "use client";
 import { formatCurrency } from "@/core/helpers/helperFunctions";
 import { CartDetails, Item, UpdateCartPayload } from "@/core/models/cartModel";
@@ -5,11 +6,10 @@ import underlineIcon from "@/assets/images/underlineIcon.png";
 import emptyCart from "@/assets/images/empty-cart.png";
 import {
   clearCart,
-  getCartDetails,
   removeCartItem,
   updateCartItems,
 } from "@/core/requests/cartRequests";
-import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
 import React, { useEffect, useState } from "react";
 import { BsDash, BsPlus, BsTrash } from "react-icons/bs";
 import { toast } from "react-toastify";
@@ -18,9 +18,10 @@ import { useRouter } from "next/navigation";
 import { useCartCount } from "@/core/context/useCartCount";
 import Link from "next/link";
 import ProductImage from "@/core/component/Products/ProductImage";
+import Image from "next/image";
 
-const page = () => {
-  const { data: session, status: authStatus } = useSession();
+const Page = () => {
+  const { status: authStatus } = useSession();
   const router = useRouter();
   const { setCartCount, cartCount, cartData } = useCartCount();
   const queryClient = useQueryClient();
@@ -68,7 +69,7 @@ const page = () => {
   }, [cartData]);
 
   const handleCartItemsUpdate = async () => {
-    let result: { cartId: number; quantity: number }[] = [];
+    const result: { cartId: number; quantity: number }[] = [];
     cartDetails?.items?.map((item) => {
       result.push({
         cartId: item.cartId,
@@ -110,6 +111,7 @@ const page = () => {
       }));
     } catch (error) {
       toast.error("Error updating product quantity. Please try again.");
+      console.log(error);
     }
   };
   const decreaseQuantity = async (item: Item) => {
@@ -117,16 +119,16 @@ const page = () => {
       const updatedCartDetails = cartDetails?.items?.map((cartItem) =>
         cartItem.cartId === item.cartId
           ? {
-            ...cartItem,
-            quantity: (cartItem?.quantity ?? 0) - 1,
-            subTotal:
-              (cartItem.productPrice ?? 0) * ((cartItem.quantity ?? 0) - 1),
-            discountAmount:
-              ((cartItem?.subTotal ?? 0) * (cartItem?.discountPercent ?? 0)) /
-              100,
-            taxAmount:
-              ((cartItem?.subTotal ?? 0) * (cartItem?.taxPercent ?? 0)) / 100,
-          }
+              ...cartItem,
+              quantity: (cartItem?.quantity ?? 0) - 1,
+              subTotal:
+                (cartItem.productPrice ?? 0) * ((cartItem.quantity ?? 0) - 1),
+              discountAmount:
+                ((cartItem?.subTotal ?? 0) * (cartItem?.discountPercent ?? 0)) /
+                100,
+              taxAmount:
+                ((cartItem?.subTotal ?? 0) * (cartItem?.taxPercent ?? 0)) / 100,
+            }
           : cartItem
       );
       setCartDetails((prevCartDetails: any) => ({
@@ -152,16 +154,16 @@ const page = () => {
     const updatedCartDetails = cartDetails?.items?.map((cartItem) =>
       cartItem.cartId === item.cartId
         ? {
-          ...cartItem,
-          quantity: (cartItem.quantity ?? 0) + 1,
-          subTotal:
-            (cartItem.productPrice ?? 0) * ((cartItem?.quantity ?? 0) + 1),
-          discountAmount:
-            ((cartItem?.subTotal ?? 0) * (cartItem?.discountPercent ?? 0)) /
-            100,
-          taxAmount:
-            ((cartItem?.subTotal ?? 0) * (cartItem?.taxPercent ?? 0)) / 100,
-        }
+            ...cartItem,
+            quantity: (cartItem.quantity ?? 0) + 1,
+            subTotal:
+              (cartItem.productPrice ?? 0) * ((cartItem?.quantity ?? 0) + 1),
+            discountAmount:
+              ((cartItem?.subTotal ?? 0) * (cartItem?.discountPercent ?? 0)) /
+              100,
+            taxAmount:
+              ((cartItem?.subTotal ?? 0) * (cartItem?.taxPercent ?? 0)) / 100,
+          }
         : cartItem
     );
     setCartDetails((prevCartDetails: any) => ({
@@ -193,31 +195,45 @@ const page = () => {
           <h1>YOUR SHIPPING CART</h1>
         </div>
         <div className='title-septer'>
-          <img src={underlineIcon.src} alt='' />
+          <Image src={underlineIcon.src} alt='' />
         </div>
 
         {(cartDetails?.items?.length as number) > 0 ? (
           <>
             <div className='cart-wraper'>
-              <div className="cart-wrapper-for-mobile d-md-none">
+              <div className='cart-wrapper-for-mobile d-md-none'>
                 {cartDetails?.items?.map((item) => (
-                  <div className="cart-item-mobile border mb-2" key={item?.cartId}>
-                    <div className="d-flex border">
-                      <div className="cart-product-image-mobile" style={{ flex: '0 0 100px' }}>
+                  <div
+                    className='cart-item-mobile border mb-2'
+                    key={item?.cartId}
+                  >
+                    <div className='d-flex border'>
+                      <div
+                        className='cart-product-image-mobile'
+                        style={{ flex: "0 0 100px" }}
+                      >
                         <ProductImage
                           url={`${process.env.NEXT_PUBLIC_APP_IMAGE_API_URL}/${item?.imagePath}`}
-                          className="fit-cover"
+                          className='fit-cover'
                         />
                       </div>
-                      <div className="cart-product-details-mobile p-2">
-                        <h6 className="mb-2">{item?.productName}</h6>
-                        <p className="mb-0">Unit : {formatCurrency(item?.productPrice)}</p>
-                        <p className="mb-0 font-weight-bold">Total : {formatCurrency(item?.subTotal)}</p>
-
+                      <div className='cart-product-details-mobile p-2'>
+                        <h6 className='mb-2'>{item?.productName}</h6>
+                        <p className='mb-0'>
+                          Unit : {formatCurrency(item?.productPrice)}
+                        </p>
+                        <p className='mb-0 font-weight-bold'>
+                          Total : {formatCurrency(item?.subTotal)}
+                        </p>
                       </div>
                     </div>
-                    <div className="d-flex p-2 align-items-center justify-content-between">
-                      <button className="btn btn-saawree" onClick={() => handleRemoveCartItem(item?.cartId)}>Remove</button>
+                    <div className='d-flex p-2 align-items-center justify-content-between'>
+                      <button
+                        className='btn btn-saawree'
+                        onClick={() => handleRemoveCartItem(item?.cartId)}
+                      >
+                        Remove
+                      </button>
                       <div className='quantity'>
                         <button
                           type='button'
@@ -257,10 +273,8 @@ const page = () => {
                     </div>
                   </div>
                 ))}
-
-
               </div>
-              <div className="cart-wraper-for-desktop d-none d-md-block">
+              <div className='cart-wraper-for-desktop d-none d-md-block'>
                 <table className='table table-bordered cart-btn'>
                   <thead>
                     <tr>
@@ -341,7 +355,9 @@ const page = () => {
               <div className='row'>
                 <div className='col-md-12'>
                   <div className='cart-pg-btn'>
-                    <Link href={'/'} className='btn btn-saawree'>Continue Shopping</Link>
+                    <Link href={"/"} className='btn btn-saawree'>
+                      Continue Shopping
+                    </Link>
                     <button
                       className='btn btn-saawree'
                       onClick={() => handleCartItemsUpdate()}
@@ -357,7 +373,7 @@ const page = () => {
                   </div>
                 </div>
               </div>
-              <div className="row justify-content-end mt-4">
+              <div className='row justify-content-end mt-4'>
                 <div className='col-md-6'>
                   <div className='cart-total'>
                     <h4>Cart Totals</h4>
@@ -420,7 +436,12 @@ const page = () => {
         ) : (
           <div className='titlehome'>
             <div className='empty-cart text-center py-5'>
-              <img src={emptyCart.src} width={100} className='img-fluid' />
+              <Image
+                src={emptyCart.src}
+                width={100}
+                className='img-fluid'
+                alt='cart'
+              />
               <h4 className='mt-2'>Your cart is currently empty.</h4>
               <Link href='/' className='btn btn-saawree mt-2'>
                 Continue Shopping
@@ -433,4 +454,4 @@ const page = () => {
   );
 };
 
-export default page;
+export default Page;

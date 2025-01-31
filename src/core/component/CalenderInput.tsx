@@ -1,12 +1,16 @@
 "use client";
-import React, { useState } from "react";
+import React from "react";
 import { Calendar } from "primereact/calendar";
 import { format, parse, isValid } from "date-fns";
 
 interface CalendarInputProps {
   value: Date | null;
   name: string;
-  setFieldValue: (field: string, value: any, shouldValidate?: boolean) => void;
+  setFieldValue: (
+    field: string,
+    value: string,
+    shouldValidate?: boolean
+  ) => void;
   placeholder?: string;
   className?: string;
   minDate?: Date; // Minimum selectable date
@@ -24,15 +28,16 @@ const CalendarInput: React.FC<CalendarInputProps> = ({
   maxDate,
   disabled,
 }) => {
-  const [typedValue, setTypedValue] = useState<string | null>(null);
+  // const [typedValue, setTypedValue] = useState<string | null>(null);
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const inputValue = e.target.value;
-    setTypedValue(inputValue); // Keep track of the typed value
+    // setTypedValue(inputValue); // Keep track of the typed value
 
     // Attempt to parse the input into a valid date
     const parsedDate = parse(inputValue, "dd-MM-yyyy", new Date());
     if (isValid(parsedDate)) {
-      setFieldValue(name, format(parsedDate, "yyyy-MM-dd"));
+      const newDate: string = format(parsedDate, "yyyy-MM-dd");
+      setFieldValue(name, newDate);
     } else {
       setFieldValue(name, ""); // Clear the value if the input is invalid
     }

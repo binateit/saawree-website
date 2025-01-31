@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 export type ID = undefined | null | number | string;
 export interface AuthModel {
   isGuestUser: boolean;
@@ -26,15 +27,15 @@ export interface UserModel {
   rateId?: number;
 }
 
-export type Result = {
+export type Result<T = string | number | any> = {
   succeeded: boolean;
   messages: string[];
-  data: any;
+  data: T;
   source: string;
   exception: string;
   errorCode: number;
   supportMessage: string | null;
-  statusCode: number;
+  statusCode: number | string;
   propertyResults: PropertyFailureResult[];
 };
 
@@ -46,7 +47,7 @@ export type ResultStatus = {
 export type PropertyFailureResult = {
   propertyName: string;
   errorMessage: string;
-  formattedMessagePlaceholderValues: { [key: string]: any };
+  formattedMessagePlaceholderValues: { [key: string]: string };
 };
 
 export type SelectOptionProps = {
@@ -130,7 +131,7 @@ export type Filter = {
   filters?: Array<Filter> | undefined;
   field?: string | undefined;
   operator?: string | undefined;
-  value?: any | undefined;
+  value?: string | number | boolean;
 };
 
 export type BaseFilter = {

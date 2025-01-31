@@ -1,4 +1,5 @@
-import axios, { AxiosResponse } from "axios";
+/* eslint-disable @typescript-eslint/no-explicit-any */
+import { AxiosResponse } from "axios";
 import axiosInstance from "../helpers/axiosInstance";
 import {
   CreateSaleOrderRequestModel,
@@ -67,31 +68,32 @@ const getSaleOrdersOfAgent = async (
     });
 };
 
-const GenerateChallanPdf = async (id: number): Promise<any | FileResult> => {
+const GenerateChallanPdf = async (id: number): Promise<FileResult> => {
   return await axiosInstance
     .get(`${CHALLAN_PDF_URL}/${id}`, {
       responseType: "blob",
     })
     .then(async (response: any) => {
+      console.log(response);
       if (response.type == "application/json") {
         const jsonData = await response.text();
         const errorData = JSON.parse(jsonData);
         return errorData;
       } else {
-        let filename = response.headers["content-disposition"]
+        const filename = response.headers["content-disposition"]
           .split(";")
-          .find((n: any) => n.includes("filename="))
+          .find((n: string) => n.includes("filename="))
           .replace("filename=", "")
           .trim();
 
-        var result: FileResult = {
+        const result: FileResult = {
           data: response.data,
           name: filename,
         };
         return result;
       }
     })
-    .catch((err: any) => {
+    .catch((err) => {
       return err;
     });
 };

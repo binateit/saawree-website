@@ -1,17 +1,16 @@
 "use client";
-import { formatDate } from "@/core/helpers/helperFunctions";
 import { getSalesOrderById } from "@/core/requests/saleOrderRequests";
 import { useQuery } from "@tanstack/react-query";
 import { useSession } from "next-auth/react";
 import Link from "next/link";
 import { useRouter, useSearchParams } from "next/navigation";
-import React, { FC } from "react";
+import React from "react";
 import { toast } from "react-toastify";
 import { BsShieldFillCheck } from "react-icons/bs";
 
 const ThankYouPage = () => {
   const navigate = useRouter();
-  const { data: session, status: authStatus } = useSession();
+  const { status: authStatus } = useSession();
   const searchParams = useSearchParams();
   const orderData = JSON.parse(searchParams.get("orderData") as string);
   const { data: orderDetails } = useQuery({
@@ -29,7 +28,7 @@ const ThankYouPage = () => {
     <section className='thankyou-page'>
       <div className='container'>
         <div className='inner-wrap-th'>
-        <BsShieldFillCheck font-size={60} className="text-success"/>
+          <BsShieldFillCheck font-size={60} className='text-success' />
           <h2 className='thank-title text-success mt-3'>Thank you</h2>
           <p className='ord-txt'>
             We are getting started on your order{" "}
@@ -38,10 +37,7 @@ const ThankYouPage = () => {
             {orderDetails?.email}.{" "}
           </p>
           <p className='btn-th'>
-            <Link
-              href=''
-              className='btn btn-saawree mr-2'
-            >
+            <Link href='' className='btn btn-saawree mr-2'>
               Track your order
             </Link>
             <Link href='/' className='btn btn-saawree'>
@@ -52,63 +48,64 @@ const ThankYouPage = () => {
         <h3 className='text-center od'>
           Order Details: {orderDetails?.orderNumber}
         </h3>
-        <div className="row justify-content-center">
-          <div className="col-md-6">
-          <div className='order-details-box bg-light'>
-          <div className='row'>
-            <div className='col-md-6'>
-              <div className='ord-details'>
-                <h5 className='th-ttl'>Email</h5>
-                <p className='th-dt'>{orderDetails?.email}</p>
-              </div>
+        <div className='row justify-content-center'>
+          <div className='col-md-6'>
+            <div className='order-details-box bg-light'>
+              <div className='row'>
+                <div className='col-md-6'>
+                  <div className='ord-details'>
+                    <h5 className='th-ttl'>Email</h5>
+                    <p className='th-dt'>{orderDetails?.email}</p>
+                  </div>
 
-              <div className='ord-details'>
-                <h5 className='th-ttl'>Payment Method</h5>
-                <p className='th-dt'>
-                  {orderDetails?.paymentList[0]?.paymentModeName}
-                </p>
-              </div>
+                  <div className='ord-details'>
+                    <h5 className='th-ttl'>Payment Method</h5>
+                    <p className='th-dt'>
+                      {orderDetails?.paymentList[0]?.paymentModeName}
+                    </p>
+                  </div>
 
-              <div className='ord-details'>
-                <h5 className='th-ttl'>Order Date</h5>
-                <p className='th-dt'>
-                  {" "}
-                  {/* {formatDate(orderDetails?.orderDate, "MMMM dd, yyyy")} */}
-                </p>
-              </div>
-            </div>
+                  <div className='ord-details'>
+                    <h5 className='th-ttl'>Order Date</h5>
+                    <p className='th-dt'>
+                      {" "}
+                      {/* {formatDate(orderDetails?.orderDate, "MMMM dd, yyyy")} */}
+                    </p>
+                  </div>
+                </div>
 
-            <div className='col-md-6'>
-              <div className='ord-details'>
-                <h5 className='th-ttl'>Delivery Address</h5>
-                <div className='billing-address'>
-                  <p className='con-pe-n'>
-                    <strong>{orderDetails?.customerName} </strong>
-                  </p>
-                  <p className='select-add'>
-                    {orderDetails?.shipAddressLine1},
-                    {orderDetails?.shipAddressLine2},
-                    {orderDetails?.shipCityName},{orderDetails?.shipStateName}
-                    {orderDetails?.shipCountryName}, {orderDetails?.shipZipCode}
-                  </p>
+                <div className='col-md-6'>
+                  <div className='ord-details'>
+                    <h5 className='th-ttl'>Delivery Address</h5>
+                    <div className='billing-address'>
+                      <p className='con-pe-n'>
+                        <strong>{orderDetails?.customerName} </strong>
+                      </p>
+                      <p className='select-add'>
+                        {orderDetails?.shipAddressLine1},
+                        {orderDetails?.shipAddressLine2},
+                        {orderDetails?.shipCityName},
+                        {orderDetails?.shipStateName}
+                        {orderDetails?.shipCountryName},{" "}
+                        {orderDetails?.shipZipCode}
+                      </p>
+                    </div>
+                  </div>
+
+                  <div className='ord-details'>
+                    <h5 className='th-ttl'>Contact Number</h5>
+                    <p className='th-dt'>
+                      {" "}
+                      {orderDetails?.mobileNumber
+                        ? `+91 ${orderDetails?.mobileNumber}`
+                        : "No Contact available"}
+                    </p>
+                  </div>
                 </div>
               </div>
-
-              <div className='ord-details'>
-                <h5 className='th-ttl'>Contact Number</h5>
-                <p className='th-dt'>
-                  {" "}
-                  {orderDetails?.mobileNumber
-                    ? `+91 ${orderDetails?.mobileNumber}`
-                    : "No Contact available"}
-                </p>
-              </div>
             </div>
           </div>
         </div>
-          </div>
-        </div>
-        
       </div>
     </section>
   );

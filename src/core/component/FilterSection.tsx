@@ -1,6 +1,6 @@
 import React from "react";
 import { BsChevronRight } from "react-icons/bs";
-import { CheckBoxFilter } from "../models/productModel";
+import { CategoryList, CheckBoxFilter } from "../models/productModel";
 // import { CategoryAnonymous } from "../models/productModel";
 
 interface FilterProps {
@@ -8,10 +8,10 @@ interface FilterProps {
   filterList?: CheckBoxFilter[];
   //   anonymous?: CategoryAnonymous[];
   onChange: (id: number) => void;
-  multiFilter?: any[];
+  multiFilter?: CategoryList[];
   selectedFilter: number[];
   type: string;
-  parentCategoryId?: any;
+  parentCategoryId?: number;
 }
 
 const FilterSection = ({

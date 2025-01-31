@@ -14,7 +14,7 @@ import { toast } from "react-toastify";
 import { saveAs } from "file-saver";
 import { formatDate } from "date-fns";
 
-const page = () => {
+const Page = () => {
   const searchParams = useSearchParams();
   const invoiceId = searchParams.get("invoiceId");
 
@@ -28,10 +28,10 @@ const page = () => {
   const Invoice_Download_URL = "invoices/downloadpdf";
   const challanpdf = () => {
     GeneratePdf(Number(invoiceId), Invoice_Download_URL).then((file) => {
-      let output = file as FileResult;
+      const output = file as FileResult;
 
       if (output.data) {
-        let url = window.URL.createObjectURL(output.data);
+        const url = window.URL.createObjectURL(output.data);
         saveAs(url, output.name);
       } else {
         toast.error(file.exception);
@@ -225,4 +225,4 @@ const page = () => {
   );
 };
 
-export default page;
+export default Page;

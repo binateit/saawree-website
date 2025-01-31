@@ -14,8 +14,8 @@ import {
   getProductColor,
   getProductGroupList,
 } from "@/core/requests/saleOrderRequests";
+import Image from "next/image";
 import React, { useEffect, useState } from "react";
-import { BsChevronDown, BsSearch } from "react-icons/bs";
 import Select from "react-select";
 
 const paginationFilter: PaginationFilter = {
@@ -48,10 +48,8 @@ const ProductSelection = ({ onSelect }: ProductSelectionProps) => {
   const [quantities, setQuantities] = useState<{ [colorId: number]: number }>(
     {}
   ); //state to store color quantity
-  const [error, setError] = useState<boolean>(false);
 
   useEffect(() => {
-    let result: any;
     const updatedPaginationFilter: PaginationFilter = {
       ...paginationFilter,
       advancedFilter: {
@@ -61,30 +59,33 @@ const ProductSelection = ({ onSelect }: ProductSelectionProps) => {
       },
     };
     getCategoryList(updatedPaginationFilter).then((v) => {
-      result = v.data as Category[];
-      let categoryArray: any[] = [];
-      result.map((item: any) => {
+      const result = v.data as Category[];
+      const categoryArray: SelectOptionProps[] = [];
+      result.map((item: Category) => {
         categoryArray.push({
-          value: item.id,
-          label: item.parentChildCategoryName,
+          value: item.id as number,
+          label: item?.parentCategoryName as string,
         });
       });
       setCategoryList(categoryArray);
     });
 
     getPolishingTypeList(paginationFilter).then((v) => {
-      result = v.data as PolishingType[];
-      let polishingTypeArray: any[] = [];
+      const result = v.data as PolishingType[];
+      const polishingTypeArray: SelectOptionProps[] = [];
       result
-        .filter((x: { name: string }) => x.name != "NA")
-        .map((item: any) => {
-          return polishingTypeArray.push({ value: item.id, label: item.name });
+        .filter((x: PolishingType) => x.name != "NA")
+        .map((item: PolishingType) => {
+          return polishingTypeArray.push({
+            value: item.id as number,
+            label: item.name as string,
+          });
         });
       setPolishingTypeList(polishingTypeArray);
     });
   }, [selectedCategory]);
 
-  const onCategoryChange = (e: any) => {
+  const onCategoryChange = (e: number) => {
     const updatedPaginationFilter: PaginationFilter = {
       ...paginationFilter,
       advancedFilter: {
@@ -94,7 +95,7 @@ const ProductSelection = ({ onSelect }: ProductSelectionProps) => {
           {
             field: "categoryId",
             operator: "eq",
-            value: e.value,
+            value: e,
           },
         ],
         logic: "and",
@@ -104,9 +105,12 @@ const ProductSelection = ({ onSelect }: ProductSelectionProps) => {
     getProductGroupList(updatedPaginationFilter)
       .then((response) => {
         const result = response.data as ProductGroup[];
-        let pgArray: any[] = [];
-        result.map((item: any) => {
-          return pgArray.push({ value: item.id, label: item.name });
+        const pgArray: SelectOptionProps[] = [];
+        result.map((item) => {
+          return pgArray.push({
+            value: item.id as number,
+            label: item.name as string,
+          });
         });
 
         setProductGroupList(pgArray);
@@ -120,18 +124,15 @@ const ProductSelection = ({ onSelect }: ProductSelectionProps) => {
     getProductColor(selectedProductGroup as number, polishId as number).then(
       (response) => {
         const result = response as ColorDetails[];
-        setColorList(result);
         if (result.length > 0) {
-          setError(false);
-        } else {
-          setError(true);
+          setColorList(result);
         }
       }
     );
   };
 
-  const handlePolishingChange = (e: any) => {
-    setPolishId(e.value);
+  const handlePolishingChange = (e: number) => {
+    setPolishId(e);
   };
 
   const handleQuantityChange = (colorId: number, quantity: number) => {
@@ -194,7 +195,7 @@ const ProductSelection = ({ onSelect }: ProductSelectionProps) => {
             placeholder='Select a Category'
             isMulti={false}
             onChange={(selectedOption) => {
-              onCategoryChange(selectedOption);
+              onCategoryChange(Number(selectedOption?.value));
               setSelectedCategory(selectedOption?.value as number);
             }}
             value={
@@ -232,7 +233,9 @@ const ProductSelection = ({ onSelect }: ProductSelectionProps) => {
             }
             name='polishIds'
             options={polishingTypeList}
-            onChange={(selectedPT) => handlePolishingChange(selectedPT)}
+            onChange={(selectedPT) =>
+              handlePolishingChange(Number(selectedPT?.value))
+            }
             placeholder='Select PolishingType'
           ></Select>
         </div>
@@ -250,13 +253,19 @@ const ProductSelection = ({ onSelect }: ProductSelectionProps) => {
         <div className='sales-order-select-colors mt-4 border p-4'>
           <div className='row'>
             {colorList?.map((color) => (
-              <div className='col-xl-3 col-lg-3 col-md-6 mb-3'>
+              <div
+                className='col-xl-3 col-lg-3 col-md-6 mb-3'
+                key={color?.colorId}
+              >
                 <div className='d-flex justify-content-between align-items-center'>
                   <label className='mb-0'>
                     <span className='mr-2 sales-order-color-options'>
-                      <img
+                      <Image
                         src={`${process.env.NEXT_PUBLIC_APP_IMAGE_API_URL}/${color?.imagePath}`}
                         // alt={color.colorName}
+                        width={20}
+                        height={20}
+                        alt='color'
                       />
                     </span>
                     {color.colorName}
@@ -267,7 +276,7 @@ const ProductSelection = ({ onSelect }: ProductSelectionProps) => {
                     className='form-control color-qnty-input'
                     value={quantities[color.colorId] || ""}
                     onChange={(e) => {
-                      let qty = parseInt(e.target.value);
+                      const qty = parseInt(e.target.value);
                       if (qty < 0) {
                         e.target.value = "";
                       } else if (qty > 99999) {

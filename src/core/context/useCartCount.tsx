@@ -4,6 +4,7 @@ import React, { createContext, useContext, useEffect, useState } from "react";
 import { getCartDetails } from "../requests/cartRequests";
 import { CartDetails } from "../models/cartModel";
 import { useSession } from "next-auth/react";
+import { Session } from "../models/model";
 
 interface CartCountContextType {
   cartCount: number | null;
@@ -25,14 +26,17 @@ export const CartCountProvider: React.FC<CartCountProviderProps> = ({
 }) => {
   const { data: session, status: authStatus } = useSession();
 
+  const userSession = session as Session;
+
   const [cartCount, setCount] = useState<number | null>(null);
   const [isBuyNow, setIsBuy] = useState<boolean>(false);
 
-  const { data: cartData, isLoading: cartDetailsLoading } = useQuery({
+  const { data: cartData } = useQuery({
     queryKey: ["cartDetails", isBuyNow],
     queryFn: () => getCartDetails(isBuyNow),
     enabled:
-      authStatus === "authenticated" && session?.user?.userType === "customer",
+      authStatus === "authenticated" &&
+      userSession?.user?.userType === "customer",
   });
 
   useEffect(() => {

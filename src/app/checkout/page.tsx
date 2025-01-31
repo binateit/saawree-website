@@ -6,7 +6,7 @@ import {
   PlaceOrderRSPayload,
 } from "@/core/models/cartModel";
 import { CustomerAddress } from "@/core/models/customerModel";
-import { Result } from "@/core/models/model";
+import { Result, Session } from "@/core/models/model";
 import {
   createRazorPay,
   placeOrderMTO,
@@ -25,8 +25,10 @@ import { RazorpayOrderOptions, useRazorpay } from "react-razorpay";
 import { toast } from "react-toastify";
 import paylater_icon from "@/assets/images/paylater_icon.jpg";
 import razorpay from "@/assets/images/razorpay.jpg";
-const page = () => {
+
+const CheckoutPage = () => {
   const { data: session, status: authStatus } = useSession();
+  const userSession = session as Session;
   const { Razorpay } = useRazorpay();
   const [isEditMode, setIsEditMode] = useState(false);
   const [isModalOpen, setModalOpen] = useState(false);
@@ -34,7 +36,7 @@ const page = () => {
   const [shipAddressId, setShipAddressId] = useState<number | null>(null);
   const { setCartCount, cartData, isBuyNow } = useCartCount();
   const [isRazorPaySelected, setIsRazorPaySelected] = useState(true);
-  const [paymentMode, setPaymentMode] = useState<Number>();
+  const [paymentMode, setPaymentMode] = useState<number>();
 
   const router = useRouter();
   if (authStatus === "unauthenticated") {
@@ -63,12 +65,11 @@ const page = () => {
     openModal();
   };
 
-  const { data: customerAddressList, isLoading: customerAddressLoading } =
-    useQuery({
-      queryKey: ["customerAddressList"],
-      queryFn: () => getCustomerAddress(),
-      refetchOnWindowFocus: false,
-    });
+  const { data: customerAddressList } = useQuery({
+    queryKey: ["customerAddressList"],
+    queryFn: () => getCustomerAddress(),
+    refetchOnWindowFocus: false,
+  });
 
   const addNewCustomerAdress = () => {
     setEditAddress({
@@ -103,7 +104,11 @@ const page = () => {
     }
   }, [isRazorPaySelected]);
 
-  const handlePayment = async (response: any) => {
+  const handlePayment = async (response: {
+    razorpay_payment_id: string;
+    razorpay_order_id: string;
+    razorpay_signature: string;
+  }) => {
     const { razorpay_payment_id, razorpay_order_id, razorpay_signature } =
       response;
     const razorpayData = {
@@ -112,9 +117,7 @@ const page = () => {
       razorPaySignature: razorpay_signature,
     };
 
-    let result: Result;
-    result = await createRazorPay(razorpayData);
-    console.log("result", result);
+    const result = await createRazorPay(razorpayData);
     if (result.succeeded) {
       const orderDataa = JSON.stringify(result?.data);
       router.push(`/thankyou?orderData=${orderDataa}`);
@@ -131,9 +134,9 @@ const page = () => {
       order_id: orderid,
       handler: handlePayment,
       prefill: {
-        email: session?.user?.emailAddress,
+        email: userSession?.user?.emailAddress,
         // contact: session?.user?.m,
-        name: session?.user?.firstName + " " + session?.user?.lastName,
+        name: userSession?.user?.firstName + " " + userSession?.user?.lastName,
       },
       theme: { color: "blue" },
       amount: cartData?.orderTotalTaxInclusive as number,
@@ -149,7 +152,7 @@ const page = () => {
     const rzpay = new Razorpay(options);
     rzpay.open();
 
-    rzpay.on("payment.failed", (response: any) => {
+    rzpay.on("payment.failed", () => {
       setCartCount(0);
       router.push("/payment-failed");
       queryClient.invalidateQueries({ queryKey: ["cartDetails"] });
@@ -205,7 +208,7 @@ const page = () => {
       shippingAddressId: shipAddressId as number,
       paymentModeId: paymentMode as number,
     };
-    cartData?.items[0]?.orderType === 1
+    return cartData?.items[0]?.orderType === 1
       ? placeOrderReadyStock(OrderDataRS)
       : placeOrder(orderData);
   };
@@ -266,7 +269,13 @@ const page = () => {
                 setIsRazorPaySelected(true);
               }}
             />
-            <Image src={razorpay?.src} alt='razorpay' width={100} height={50} />
+            <Image
+              src={razorpay?.src}
+              alt='razorpay'
+              className='img-fluid'
+              width={100}
+              height={50}
+            />
           </label>
           {/* {session?.user?.enableCredit && (
           <> */}
@@ -301,4 +310,4 @@ const page = () => {
     </>
   );
 };
-export default page;
+export default CheckoutPage;

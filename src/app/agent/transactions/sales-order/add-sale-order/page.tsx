@@ -3,11 +3,10 @@ import CustomSelect from "@/core/component/CustomSelect";
 import * as Yup from "yup";
 import { Field, FormikProvider, useFormik } from "formik";
 import React, { useEffect, useState } from "react";
-import { BsChevronDown, BsSearch, BsTrash } from "react-icons/bs";
+import { BsTrash } from "react-icons/bs";
 import { useQuery } from "@tanstack/react-query";
 import {
   createSalesOrder,
-  getCategoryList,
   getCustomerDetailsForSOById,
   getCustomerList,
 } from "@/core/requests/saleOrderRequests";
@@ -19,13 +18,7 @@ import {
   CustomerDetailforSOModel,
   CustomerListDropdown,
 } from "@/core/models/saleOrderModel";
-import {
-  PaginationFilter,
-  Product,
-  Result,
-  SelectOptionProps,
-} from "@/core/models/model";
-import { Calendar } from "primereact/calendar";
+import { Product, SelectOptionProps } from "@/core/models/model";
 import { format } from "date-fns";
 import ProductSelection from "@/core/component/Products/ProductSelection";
 import { useImmer } from "use-immer";
@@ -36,16 +29,8 @@ import { camelize, formatCurrency } from "@/core/helpers/helperFunctions";
 import { toast } from "react-toastify";
 import { useRouter } from "next/navigation";
 import ProductSearchbar from "@/core/component/Products/ProductSearchbar";
-const paginationFilter: PaginationFilter = {
-  pageNumber: 1,
-  pageSize: 500,
-  advancedFilter: {
-    field: "isActive",
-    operator: "eq",
-    value: true,
-  },
-};
-const page = () => {
+
+const Page = () => {
   const [saleOrderItems, updateSaleOrderItems] = useImmer<
     CreateSaleOrderItem[]
   >([]);
@@ -61,15 +46,6 @@ const page = () => {
   const [grandTotal, setGrandTotal] = useState(0);
   const [totalDiscount, setTotalDiscount] = useState(0);
   const [subTotal, setSubTotal] = useState(0);
-
-  const updatedPaginationFilter: PaginationFilter = {
-    ...paginationFilter,
-    advancedFilter: {
-      field: "isActive",
-      operator: "eq",
-      value: true,
-    },
-  };
 
   const saleOrderSchema = Yup.object().shape({});
   const initialValues = {
@@ -124,7 +100,6 @@ const page = () => {
           return;
         }
 
-        let result: Result;
         const requestData: CreateSaleOrderRequestModel = {
           saleOrderTypeId: 1, // Replace with actual value
           customerId: formik.values.customerId as number, // Taken from Formik or relevant state
@@ -142,7 +117,7 @@ const page = () => {
             })), // Transform `saleOrderItems` to match API expectations
         };
 
-        result = await createSalesOrder(requestData);
+        const result = await createSalesOrder(requestData);
         if (result.hasOwnProperty("succeeded") && result?.succeeded) {
           setSubmitting(true);
           toast.success("Sale order created successfully!");
@@ -167,18 +142,17 @@ const page = () => {
   });
 
   useEffect(() => {
-    let customerData: any;
     if (customer) {
-      customerData = customer as CustomerListDropdown[];
-      let customerArray: any[] = [];
-      customerData?.map((item: any) => {
+      const customerData = customer as CustomerListDropdown[];
+      const customerArray: SelectOptionProps[] = [];
+      customerData?.map((item: CustomerListDropdown) => {
         return customerArray.push({ value: item.id, label: item.name });
       });
       setCustomerList(customerArray);
     }
-  }, [isCustomerloading]);
+  }, [customer, isCustomerloading]);
 
-  const onCustomerChange = (e: any) => {
+  const onCustomerChange = (e: number) => {
     getCustomerDetailsForSOById(e).then((result: CustomerDetailforSOModel) => {
       setCustomerData(result);
 
@@ -261,10 +235,7 @@ const page = () => {
       }
     });
   };
-  const handleDelete = (
-    e: React.ChangeEvent<HTMLInputElement>,
-    rowNumber: number
-  ) => {
+  const handleDelete = (rowNumber: number) => {
     updateSaleOrderItems((draft) => {
       return draft.filter((item) => item.rowNumber !== rowNumber);
     });
@@ -286,7 +257,7 @@ const page = () => {
     updateSaleOrderItems((items) => {
       const item = items.find((t) => t.rowNumber === rowNumber);
       if (item) {
-        const { productPrice, quantity, discountPercent, taxPercent } = item;
+        const { productPrice, quantity, discountPercent } = item;
 
         const totals = calculateItemTotals(
           productPrice ?? 0,
@@ -373,8 +344,8 @@ const page = () => {
       <BsTrash
         fontSize={20}
         cursor={"pointer"}
-        onClick={(e: any) => {
-          handleDelete(e, rowData.rowNumber);
+        onClick={() => {
+          handleDelete(rowData.rowNumber);
         }}
       />
     );
@@ -405,6 +376,7 @@ const page = () => {
 
   return (
     <>
+      {errorMessage !== "" && <p>{errorMessage}</p>}
       <FormikProvider value={formik}>
         <form
           id='add_saleorder_form'
@@ -433,7 +405,7 @@ const page = () => {
                       options={customerList}
                       component={CustomSelect}
                       placeholder='customer'
-                      onDropDownChange={(e: any) => {
+                      onDropDownChange={(e: { value: number }) => {
                         formik.setFieldValue("customerId", e.value);
                         onCustomerChange(e.value);
                       }}
@@ -462,7 +434,7 @@ const page = () => {
                           component={CustomSelect}
                           name='shippingAddressId'
                           selectedValue={formik.values.shippingAddressId}
-                          onChange={(selected: any) =>
+                          onChange={(selected: { value: number }) =>
                             formik.setFieldValue(
                               "shippingAddressId",
                               selected?.value || null
@@ -628,4 +600,4 @@ const page = () => {
   );
 };
 
-export default page;
+export default Page;

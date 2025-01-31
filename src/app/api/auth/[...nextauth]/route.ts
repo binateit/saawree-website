@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import NextAuth, { User } from "next-auth";
 import CredentialsProvider from "next-auth/providers/credentials";
 import { signOut } from "next-auth/react";
@@ -23,7 +24,7 @@ const handler = NextAuth({
         username: { label: "Username", type: "text" },
         password: { label: "Password", type: "password" },
       },
-      async authorize(credentials, req) {
+      async authorize(credentials) {
         if (credentials === undefined) {
           return null;
         }
@@ -35,7 +36,7 @@ const handler = NextAuth({
           );
           if (loginResponse.succeeded && loginResponse.data.token) {
             // const customerData = await getUserByToken(loginResponse.data.token);
-            let user = {
+            const user = {
               token: loginResponse.data.token,
               tokenExpiryTime: loginResponse.data.tokenExpiryTime,
               refreshToken: loginResponse.data.refreshToken,
@@ -65,7 +66,7 @@ const handler = NextAuth({
         username: { label: "Username", type: "text" },
         password: { label: "Password", type: "password" },
       },
-      async authorize(credentials, req) {
+      async authorize(credentials) {
         if (credentials === undefined) {
           return null;
         }
@@ -78,10 +79,11 @@ const handler = NextAuth({
           if (loginResponse && loginResponse?.data?.token) {
             // const agentData = await getAgentByToken(loginResponse.token);
 
-            let agent = {
+            const agent = {
               token: loginResponse?.data?.token,
               refreshToken: loginResponse?.data?.refreshToken,
-              refreshTokenExpiryTime: loginResponse?.data?.refreshTokenExpiryTime,
+              refreshTokenExpiryTime:
+                loginResponse?.data?.refreshTokenExpiryTime,
               firstName: loginResponse?.data?.firstName,
               lastName: loginResponse?.data?.lastName,
               emailAddress: loginResponse?.data?.emailAddress,
@@ -89,7 +91,7 @@ const handler = NextAuth({
               userType: "agent",
               agentCode: loginResponse?.data?.agentCode,
             };
-            return agent as any;
+            return agent;
           } else {
             throw new Error("Invalid Credentials");
           }
@@ -116,12 +118,11 @@ const handler = NextAuth({
     async signIn() {
       return true;
     },
-    async redirect({ url, baseUrl }) {
+    async redirect({ baseUrl }: { baseUrl: string }) {
       return baseUrl;
     },
 
     async session({ session, token }: any) {
-      console.log("Session Callback - Token & Session:", token.user, session);
       if (token) {
         session.user = {
           token: token.user.token as string,
@@ -137,7 +138,7 @@ const handler = NextAuth({
       return session;
     },
     async jwt({ token, user }: any) {
-      debugger
+      debugger;
       console.log("JWT Callback - Incoming Token & Users:", token, user);
 
       if (user) {
@@ -179,7 +180,7 @@ const handler = NextAuth({
               await signOut({
                 redirect: false,
               });
-              redirect("/auth/login")
+              redirect("/auth/login");
               // router.push("");
             }
           }

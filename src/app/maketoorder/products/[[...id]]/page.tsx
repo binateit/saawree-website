@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 "use client";
 import FilterSection from "@/core/component/FilterSection";
 import ProductGridCard from "@/core/component/Products/ProductGridCard";
@@ -17,8 +18,11 @@ import { BsFilter, BsGrid, BsListUl } from "react-icons/bs";
 import noProductImage from "@/assets/images/no-products-available.png";
 import { useImmer } from "use-immer";
 import pageTitleBgImage from "../../../../assets/images/page-title-bg2.jpg";
+import { Session } from "@/core/models/model";
+import Image from "next/image";
+import Loading from "@/app/loading";
 
-const page = () => {
+const Page = () => {
   const searchParams = useSearchParams();
   const categoryId = searchParams.get("categoryId");
   const subCategoryName = searchParams.get("subCategoryName");
@@ -64,11 +68,7 @@ const page = () => {
       ? sortOptions
       : sortOptions?.filter((item) => item.show === "always");
 
-  const {
-    data: response,
-    isLoading,
-    refetch,
-  } = useQuery({
+  const { data: response, isLoading } = useQuery({
     queryKey: [
       "geMakeToOrderProductRecords",
       paginationFilters,
@@ -98,7 +98,7 @@ const page = () => {
   });
 
   useEffect(() => {
-    let mulitiFilter: any = [];
+    const mulitiFilter: any = [];
     categoryList?.map((t) =>
       mulitiFilter.push({
         id: t?.id,
@@ -109,10 +109,10 @@ const page = () => {
       })
     );
     setCategoryFilterList(mulitiFilter);
-  }, [isCategoryListLoading]);
+  }, [categoryList, isCategoryListLoading]);
 
   const handleCategoryChange = (id: number) => {
-    let catList = [...selectedFilters?.categoryIds];
+    const catList = [...selectedFilters?.categoryIds];
     if (catList?.includes(id)) {
       return setSelectedFilters({
         ...selectedFilters,
@@ -141,33 +141,22 @@ const page = () => {
   };
 
   const onSort = (value: string) => {
-    let newOrderBy = [];
+    const newOrderBy: string[] = [];
     newOrderBy.push(value);
     setPaginationFilters((draft) => {
-      draft.pageNumber, draft.pageSize, (draft.orderBy = newOrderBy);
+      return draft.pageNumber, draft.pageSize, (draft.orderBy = newOrderBy);
     });
   };
-  if (isCategoryListLoading || isLoading)
-    return (
-      <div className='full-page-loader'>
-        <div className='loader_box'>
-          <div className='loader-logo'>
-            <img
-              src='https://saawree.com/images/logo4.png'
-              alt='Loader Logo'
-              width='100%'
-            />
-          </div>
-          {/* <p className="loding-content text-center">Loading...</p> */}
-          <div className='progress mt-5'>
-            <div className='progress-value'></div>
-          </div>
-        </div>
-      </div>
-    );
+  if (isCategoryListLoading || isLoading) return <Loading />;
   return (
     <>
-      <section className='page-title-box' style={{backgroundColor:'rgb(0, 0, 0, 0.5)', backgroundImage:`url(${pageTitleBgImage.src})`}}>
+      <section
+        className='page-title-box'
+        style={{
+          backgroundColor: "rgb(0, 0, 0, 0.5)",
+          backgroundImage: `url(${pageTitleBgImage.src})`,
+        }}
+      >
         <div className='container'>
           <h1 className='page-title'>{subCategoryName}</h1>
         </div>
@@ -187,7 +176,7 @@ const page = () => {
                   multiFilter={categoryFilterList}
                   onChange={handleCategoryChange}
                   selectedFilter={selectedFilters?.categoryIds || []}
-                  parentCategoryId={categoryId}
+                  parentCategoryId={Number(categoryId)}
                 />
               </div>
             </div>
@@ -232,7 +221,7 @@ const page = () => {
               {response?.data?.length === 0 ? (
                 <div className='empty-list text-center py-10'>
                   {/* <BsPatchExclamationFill size={60} className='img-fluid text-muted' /> */}
-                  <img src={noProductImage.src} width={300} />
+                  <Image src={noProductImage.src} width={300} alt='noProduct' />
                   <h4 className='mt-2 text-muted'>No Products Found.</h4>
                   <p>Your search did not match any products</p>
                   <p>Please ty again.</p>
@@ -256,7 +245,7 @@ const page = () => {
                           >
                             <ProductGridCard
                               product={product}
-                              session={session}
+                              session={session as Session}
                               type={"mto"}
                             />
                           </div>
@@ -269,7 +258,7 @@ const page = () => {
                         <div key={product?.productId}>
                           <ProductListCard
                             product={product}
-                            session={session}
+                            session={session as Session}
                             type={"mto"}
                           />
                         </div>
@@ -294,4 +283,4 @@ const page = () => {
   );
 };
 
-export default page;
+export default Page;

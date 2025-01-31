@@ -113,7 +113,7 @@ export type SaleOrderDto = {
   id: number;
   orderNumber: string;
   orderDate: string;
-  expectedShipmentDate?: any;
+  expectedShipmentDate?: string;
   saleOrderStatusName: string;
   paymentStatusName: string;
   orderTotal: number;
@@ -125,6 +125,7 @@ export type SalesOrderQueryListResponse = Response<Array<SaleOrderDto>>;
 export type FileResult = {
   data: Blob;
   name: string;
+  exception?: string;
 };
 
 export interface StatusList {
@@ -166,13 +167,13 @@ export type Category = {
   hasChild?: boolean;
   printName?: string;
   statusId?: number;
-  uploadImage?: any;
+  uploadImage?: string;
   hsnCode?: number;
   taxRateId?: number;
   categoryImagePath?: string;
   imagePath?: string;
   isFeatured?: boolean;
-  uploadBannerImage?: any;
+  uploadBannerImage?: string;
   bannerImagePath?: string;
   banImagePath?: string;
   parentChildCategoryName?: string;
@@ -202,11 +203,11 @@ export type PolishingType = {
 export type PolishingTypeQueryResponse = Response<Array<PolishingType>>;
 
 export type ProductGroup = {
-  id?: ID;
+  id?: number;
   name?: string;
   description?: string;
   isActive?: boolean;
-  productGroupImage?: any;
+  productGroupImage?: string;
   statusId?: number;
   imagePath?: string;
   categoryId?: number;
@@ -221,11 +222,17 @@ export type ProductGroup = {
   secondaryCategory?: number[];
   designNumberId?: number;
   designNumber?: string;
-  secondaryCategories?: any;
+  secondaryCategories?: SecondaryCategories[];
   purchasePrice?: number;
   vendorId?: string;
   productImagePath?: string;
   availabilityTypeId?: number;
+};
+
+export type SecondaryCategories = {
+  productGroupId: number;
+  categoryId: number;
+  categoryName: string;
 };
 
 export type ProductGroupQueryResponse = Response<Array<ProductGroup>>;

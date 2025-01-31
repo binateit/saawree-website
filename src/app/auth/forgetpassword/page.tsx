@@ -4,7 +4,6 @@ import { Field, FormikProvider, useFormik } from "formik";
 import { useSearchParams } from "next/navigation";
 import { toast } from "react-toastify";
 import * as Yup from "yup";
-import { Result } from "@/core/models/model";
 import { camelize } from "@/core/helpers/helperFunctions";
 import {
   forgotAgentPassword,
@@ -33,13 +32,10 @@ const ForgotPassword = () => {
     onSubmit: async (formValues, { setFieldError, setSubmitting }) => {
       setSubmitting(true);
       try {
-        let result: Result;
-        result =
+        const result =
           userType === "customer"
             ? await forgotPassword(formValues)
             : await forgotAgentPassword(formValues);
-
-        console.log(result);
         if (result.succeeded) {
           setSubmitting(true);
           setAlertMessage(

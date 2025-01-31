@@ -1,17 +1,10 @@
 "use client";
-import React, { useState } from "react";
-import Overview from "./overview";
-import ProfileDetails from "./profile/page";
-import SaleOrder from "./transactions/SaleOrder";
+import React from "react";
 import { useQuery } from "@tanstack/react-query";
 import { getRecordById } from "@/core/requests/customerRoutes";
-import { useSession } from "next-auth/react";
-import { getUserByToken } from "@/core/requests/authRequests";
 import { formatCurrency } from "@/core/helpers/helperFunctions";
 
-const page = () => {
-  const { data: session } = useSession();
-
+const Page = () => {
   const { data: customerOverview, isLoading: customerOverviewLoading } =
     useQuery({
       queryKey: ["customerOverviewRec"],
@@ -95,4 +88,4 @@ const page = () => {
   );
 };
 
-export default page;
+export default Page;

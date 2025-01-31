@@ -15,16 +15,14 @@ import Link from "next/link";
 import { useSearchParams } from "next/navigation";
 import { Dropdown } from "primereact/dropdown";
 import React, { useEffect, useState } from "react";
-import {
-  BsFilter,
-  BsGrid,
-  BsListUl,
-  BsPatchExclamationFill,
-} from "react-icons/bs";
+import { BsFilter, BsGrid, BsListUl } from "react-icons/bs";
 import noProductImage from "@/assets/images/no-products-available.png";
 import { useImmer } from "use-immer";
+import Image from "next/image";
+import { Session } from "@/core/models/model";
+import Loading from "@/app/loading";
 
-const page = () => {
+const Page = () => {
   const searchParams = useSearchParams();
 
   const { data: session } = useSession();
@@ -37,7 +35,11 @@ const page = () => {
 
   const [polishList, setPolishList] = useState<CheckBoxFilter[]>([]);
 
-  const [selectedFilters, setSelectedFilters] = useState<any>({
+  const [selectedFilters, setSelectedFilters] = useState<{
+    categoryIds: number[] | undefined;
+    polishingTypeIds: number[] | undefined;
+    colorIds: number[] | undefined;
+  }>({
     categoryIds: [],
     polishingTypeIds: [],
     colorIds: [],
@@ -55,7 +57,7 @@ const page = () => {
     orderBy: [],
   });
 
-  const categoryId = searchParams.get("categoryId");
+  // const categoryId = searchParams.get("categoryId");
   const categoryName = searchParams.get("categoryName");
 
   const sortOptions = [
@@ -88,20 +90,20 @@ const page = () => {
         ...selectedFilters,
         ...paginationFilters,
         colorIds:
-          selectedFilters.colorIds?.length >= 1
+          (selectedFilters?.colorIds?.length as number) >= 1
             ? selectedFilters?.colorIds
             : undefined,
         polishingTypeIds:
-          selectedFilters.polishingTypeIds?.length >= 1
+          (selectedFilters.polishingTypeIds?.length as number) >= 1
             ? selectedFilters?.polishingTypeIds
             : undefined,
         categoryIds:
-          selectedFilters.categoryIds?.length >= 1
+          (selectedFilters.categoryIds?.length as number) >= 1
             ? selectedFilters?.categoryIds
-            : [categoryId ? Number(categoryId) : undefined],
+            : undefined,
         orderBy:
           paginationFilters.orderBy?.length >= 1 &&
-            paginationFilters.orderBy[0] !== undefined
+          paginationFilters.orderBy[0] !== undefined
             ? paginationFilters?.orderBy
             : undefined,
       });
@@ -125,20 +127,20 @@ const page = () => {
   });
 
   useEffect(() => {
-    let result: any = [];
+    const result: { id: number; name: string }[] = [];
     polishTypeList?.map((t) =>
-      result.push({ ...polishList, id: t.id, name: t.name })
+      result.push({ ...polishList, id: t.id as number, name: t.name as string })
     );
 
-    let colors: any = [];
+    const colors: { id: number; name: string }[] = [];
     colorTypeList?.map((t) =>
       colors.push({ ...colorList, id: t.id, name: t.printName })
     );
-    let mulitiFilter: any = [];
+    const mulitiFilter: CategoryList[] = [];
     categoryList?.map((t) =>
       mulitiFilter.push({
-        id: t.id,
-        name: t.name,
+        id: t.id as number,
+        name: t.name as string,
         isParent: t.isParent,
         parentCategoryId: t.parentCategoryId,
         hasChild: t.hasChild,
@@ -147,11 +149,20 @@ const page = () => {
     setColorList(colors);
     setPolishList(result);
     setCategoryFilterList(mulitiFilter);
-  }, [isPolishTypeListLoading, isColorTypeListLoading, isCategoryListLoading]);
+  }, [
+    isPolishTypeListLoading,
+    isColorTypeListLoading,
+    isCategoryListLoading,
+    polishTypeList,
+    colorTypeList,
+    categoryList,
+    polishList,
+    colorList,
+  ]);
 
   const handleCategoryChange = (id: number) => {
-    let catList = [...selectedFilters?.categoryIds];
-    if (catList.includes(id)) {
+    const catList = selectedFilters?.categoryIds;
+    if (catList?.includes(id)) {
       return setSelectedFilters({
         ...selectedFilters,
         categoryIds: catList.filter((item) => item !== id),
@@ -159,7 +170,7 @@ const page = () => {
     } else {
       categoryFilterList?.map((item: { id: number }) => {
         if (item?.id === id) {
-          catList.push(id);
+          catList?.push(id);
           return setSelectedFilters({
             ...selectedFilters,
             categoryIds: catList,
@@ -169,16 +180,16 @@ const page = () => {
     }
   };
   const handlePolishChange = (id: number) => {
-    let poList = [...selectedFilters?.polishingTypeIds];
-    if (poList.includes(id)) {
+    const poList = selectedFilters?.polishingTypeIds;
+    if (poList?.includes(id)) {
       return setSelectedFilters({
         ...selectedFilters,
-        polishingTypeIds: poList.filter((item) => item !== id),
+        polishingTypeIds: poList?.filter((item) => item !== id),
       });
     } else {
       polishList?.map((item: { id: number }) => {
         if (item?.id === id) {
-          poList.push(id);
+          poList?.push(id);
           return setSelectedFilters({
             ...selectedFilters,
             polishingTypeIds: poList,
@@ -188,16 +199,16 @@ const page = () => {
     }
   };
   const handleColorChange = (id: number) => {
-    let cList = [...selectedFilters?.colorIds];
-    if (cList.includes(id)) {
+    const cList = selectedFilters?.colorIds;
+    if (cList?.includes(id)) {
       return setSelectedFilters({
         ...selectedFilters,
-        colorIds: cList.filter((item) => item !== id),
+        colorIds: cList?.filter((item) => item !== id),
       });
     } else {
       colorList?.map((item: { id: number }) => {
         if (item?.id === id) {
-          cList.push(id);
+          cList?.push(id);
           return setSelectedFilters({
             ...selectedFilters,
             colorIds: cList,
@@ -215,10 +226,10 @@ const page = () => {
   };
 
   const onSort = (value: string) => {
-    let newOrderBy = [];
+    const newOrderBy: string[] = [];
     newOrderBy.push(value);
     setPaginationFilters((draft) => {
-      draft.pageNumber, draft.pageSize, (draft.orderBy = newOrderBy);
+      return draft.pageNumber, draft.pageSize, (draft.orderBy = newOrderBy);
     });
   };
   if (
@@ -227,23 +238,7 @@ const page = () => {
     isColorTypeListLoading ||
     isLoading
   )
-    return (
-      <div className='full-page-loader'>
-        <div className='loader_box'>
-          <div className='loader-logo'>
-            <img
-              src='https://saawree.com/images/logo4.png'
-              alt='Loader Logo'
-              width='100%'
-            />
-          </div>
-          {/* <p className="loding-content text-center">Loading...</p> */}
-          <div className='progress mt-5'>
-            <div className='progress-value'></div>
-          </div>
-        </div>
-      </div>
-    );
+    return <Loading />;
 
   return (
     <>
@@ -323,10 +318,9 @@ const page = () => {
               </div>
 
               {response?.data?.length === 0 ? (
-
                 <div className='empty-list text-center py-10'>
                   {/* <BsPatchExclamationFill size={60} className='img-fluid text-muted' /> */}
-                  <img src={noProductImage.src} width={300}/>
+                  <Image src={noProductImage.src} width={300} alt='noProduct' />
                   <h4 className='mt-2 text-muted'>No Products Found.</h4>
                   <p>Your search did not match any products</p>
                   <p>Please ty again.</p>
@@ -334,7 +328,6 @@ const page = () => {
                     Clear Filter
                   </Link>
                 </div>
-
               ) : (
                 <>
                   {viewType === "grid" && (
@@ -346,7 +339,7 @@ const page = () => {
                         >
                           <ProductGridCard
                             product={product}
-                            session={session}
+                            session={session as Session}
                             type={"rds"}
                           />
                         </div>
@@ -359,7 +352,7 @@ const page = () => {
                         <>
                           <ProductListCard
                             product={product}
-                            session={session}
+                            session={session as Session}
                             type={"rds"}
                           />
                         </>
@@ -384,4 +377,4 @@ const page = () => {
   );
 };
 
-export default page;
+export default Page;

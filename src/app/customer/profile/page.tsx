@@ -1,6 +1,6 @@
 "use client";
 import CalendarInput from "@/core/component/CalenderInput";
-import { formatDate, isNotEmpty } from "@/core/helpers/helperFunctions";
+import { formatDate } from "@/core/helpers/helperFunctions";
 import { EditCustomerProfile } from "@/core/models/customerModel";
 import { toast } from "react-toastify";
 import { userToken } from "@/core/models/model";
@@ -36,7 +36,7 @@ const ProfileDetails = () => {
     refetch: customerProfileRefetch,
   } = useQuery({
     queryKey: ["userByToken"],
-    queryFn: () => getUserProfileByToken(session?.user?.token),
+    queryFn: () => getUserProfileByToken(sessionData?.token),
     refetchOnWindowFocus: false,
   });
   const formik = useFormik({
@@ -57,7 +57,7 @@ const ProfileDetails = () => {
     },
     validationSchema: editProfileSchema,
 
-    onSubmit: async (formValues, { setFieldError, setSubmitting }) => {
+    onSubmit: async (formValues, { setSubmitting }) => {
       setSubmitting(true);
       try {
         const profilePayload: EditCustomerProfile = {
@@ -79,9 +79,9 @@ const ProfileDetails = () => {
             formValues?.lastName) as string,
           dateOfAnniversary: formValues.dateOfAnniversary as string,
         };
-        let result;
-        result = await updateCustomerProfile(profilePayload);
-        console.log(result);
+
+        const result = await updateCustomerProfile(profilePayload);
+
         if (result.succeeded) {
           toast.success("Customer is updated successfully.");
           customerProfileRefetch();
@@ -97,18 +97,19 @@ const ProfileDetails = () => {
     if (formik.values.firstName && formik.values.lastName) {
       combinations.push(`${formik.values.firstName} ${formik.values.lastName}`);
       combinations.push(`${formik.values.lastName} ${formik.values.firstName}`);
-      customerProfile?.contactPerson !== null
-        ? formik.setFieldValue("contactPerson", customerProfile?.contactPerson)
-        : formik.setFieldValue(
-            "contactPerson",
-            `${formik.values.lastName} ${formik.values.firstName}`
-          );
-      customerProfile?.printName !== null
-        ? formik.setFieldValue("contactPerson", customerProfile?.printName)
-        : formik.setFieldValue(
-            "printName",
-            `${formik.values.firstName} ${formik.values.lastName}`
-          );
+      formik.setFieldValue(
+        "contactPerson",
+        customerProfile?.contactPerson !== null
+          ? customerProfile?.contactPerson
+          : `${formik.values.lastName} ${formik.values.firstName}`
+      );
+
+      formik.setFieldValue(
+        "contactPerson",
+        customerProfile?.printName !== null
+          ? customerProfile?.printName
+          : `${formik.values.firstName} ${formik.values.lastName}`
+      );
     }
     if (formik.values.companyName) {
       combinations.push(`${formik.values.companyName}`);
@@ -118,6 +119,7 @@ const ProfileDetails = () => {
 
   useEffect(() => {
     generateCombinations();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [
     formik.values.firstName,
     formik.values.lastName,

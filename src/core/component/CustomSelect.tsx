@@ -1,8 +1,9 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { FieldInputProps, FieldProps, FormikProps, FormikValues } from "formik";
 import React from "react";
 import Select, { MultiValue, SingleValue } from "react-select";
 import { Options, PropsValue } from "react-select";
-import { SelectOptionProps } from "./SelectOptionProps";
+import { SelectOptionProps } from "../models/model";
 
 interface Option {
   label: string;
@@ -15,7 +16,7 @@ interface CustomSelectProps extends FieldProps {
   className?: string;
   placeholder?: string;
   disabled?: boolean;
-  selectedValue?: any;
+  selectedValue?: number;
 
   // options:OptionsOrGroups<Options<SelectOptionProps> ,GroupBase<Options<SelectOptionProps>>>
   onDropDownChange?: (
@@ -26,7 +27,7 @@ interface CustomSelectProps extends FieldProps {
 const onSelectChange = (
   option: PropsValue<Option>,
   isMulti: boolean,
-  field: FieldInputProps<any>,
+  field: FieldInputProps<{ name: string }>,
   form: FormikProps<FormikValues>
 ) => {
   form.setFieldValue(
@@ -52,14 +53,15 @@ export function CustomSelect({
     if (options) {
       return isMulti
         ? options.filter(
-            (option: { value: any }) =>
-              selectedValue && selectedValue.indexOf(option.value) >= 0
+            (option: { value: number }) =>
+              selectedValue &&
+              (selectedValue as unknown as number[]).indexOf(option.value) >= 0
           )
         : options.find(
-            (option: { value: any }) => option.value === selectedValue
+            (option: { value: number }) => option.value === selectedValue
           );
     } else {
-      return isMulti ? [] : ("" as any);
+      return isMulti ? [] : ("" as string);
     }
   };
 

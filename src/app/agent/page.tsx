@@ -1,18 +1,20 @@
 "use client";
-import React, { useState } from "react";
+import React from "react";
 import { useQuery } from "@tanstack/react-query";
-import { useSession } from "next-auth/react";
 import { getRecordById } from "@/core/requests/agentRequests";
 import { formatCurrency } from "@/core/helpers/helperFunctions";
+import Loading from "../loading";
 
-const page = () => {
-  const { data: session } = useSession();
-
+const Page = () => {
   const { data: agentOverview, isLoading: agentOverviewLoading } = useQuery({
     queryKey: ["agentOverviewRec"],
     queryFn: () => getRecordById(),
     refetchOnWindowFocus: false,
   });
+
+  if (agentOverviewLoading) {
+    return <Loading />;
+  }
 
   return (
     <div className='card shadow rounded'>
@@ -56,4 +58,4 @@ const page = () => {
   );
 };
 
-export default page;
+export default Page;

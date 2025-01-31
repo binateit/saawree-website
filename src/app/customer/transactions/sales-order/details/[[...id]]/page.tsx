@@ -9,11 +9,11 @@ import { useQuery } from "@tanstack/react-query";
 import { useSearchParams } from "next/navigation";
 import { Column } from "primereact/column";
 import { DataTable } from "primereact/datatable";
-import React, { useEffect } from "react";
+import React from "react";
 import { toast } from "react-toastify";
 import { saveAs } from "file-saver";
 
-const page = () => {
+const Page = () => {
   const searchParams = useSearchParams();
   const saleOrderId = searchParams.get("saleOrderId");
 
@@ -25,10 +25,10 @@ const page = () => {
 
   const challanpdf = () => {
     GenerateChallanPdf(Number(saleOrderId)).then((file) => {
-      let output = file as FileResult;
+      const output = file as FileResult;
 
       if (output.data) {
-        let url = window.URL.createObjectURL(output.data);
+        const url = window.URL.createObjectURL(output.data);
         saveAs(url, output.name);
       } else {
         toast.error(file.exception);
@@ -72,7 +72,10 @@ const page = () => {
                 <span>
                   {" "}
                   {(isOrderPlaced?.length || 0 > 0) &&
-                    formatDate(isOrderPlaced?.[0]?.statusDate, "dd MMM yyyy")}
+                    formatDate(
+                      isOrderPlaced?.[0]?.statusDate as string,
+                      "dd MMM yyyy"
+                    )}
                 </span>
               </p>
             </div>
@@ -84,7 +87,10 @@ const page = () => {
                 <span>
                   {" "}
                   {(isOrderPlaced?.length || 0 > 0) &&
-                    formatDate(isOrderPlaced?.[0]?.statusDate, "dd MMM yyyy")}
+                    formatDate(
+                      isOrderPlaced?.[0]?.statusDate as string,
+                      "dd MMM yyyy"
+                    )}
                 </span>
               </p>
             </div>
@@ -101,7 +107,10 @@ const page = () => {
                   <span>
                     {" "}
                     {(isCancelled?.length || 0 > 0) &&
-                      formatDate(isPacked?.[0]?.statusDate, "dd MMM yyyy")}
+                      formatDate(
+                        isPacked?.[0]?.statusDate as string,
+                        "dd MMM yyyy"
+                      )}
                   </span>
                 </p>
               </div>
@@ -122,7 +131,10 @@ const page = () => {
                 <span>
                   {" "}
                   {(isPacked?.length || 0 > 0) &&
-                    formatDate(isPacked?.[0]?.statusDate, "dd MMM yyyy")}
+                    formatDate(
+                      isPacked?.[0]?.statusDate as string,
+                      "dd MMM yyyy"
+                    )}
                 </span>
               </p>
               <div className='hoverd-details'>
@@ -139,7 +151,10 @@ const page = () => {
                               {packing?.saleOrderStatusName}
                             </p>
                             <p className='mt-0'>
-                              {formatDate(packing?.statusDate, "dd MMM yyyy")}
+                              {formatDate(
+                                packing?.statusDate as string,
+                                "dd MMM yyyy"
+                              )}
                             </p>
                           </div>
                         </li>
@@ -164,7 +179,10 @@ const page = () => {
                 <span>
                   {" "}
                   {(isShipped?.length || 0 > 0) &&
-                    formatDate(isShipped?.[0]?.statusDate, "dd MMM yyyy")}
+                    formatDate(
+                      isShipped?.[0]?.statusDate as string,
+                      "dd MMM yyyy"
+                    )}
                 </span>
               </p>
               <div className='hoverd-details'>
@@ -181,7 +199,10 @@ const page = () => {
                               {shipping?.saleOrderStatusName}
                             </p>
                             <p className='mt-0'>
-                              {formatDate(shipping?.statusDate, "dd MMM yyyy")}
+                              {formatDate(
+                                shipping?.statusDate as string,
+                                "dd MMM yyyy"
+                              )}
                             </p>
                           </div>
                         </li>
@@ -205,7 +226,10 @@ const page = () => {
                 <br />
                 <span>
                   {(isDelivered?.length || 0) > 0 &&
-                    formatDate(isDelivered?.[0]?.statusDate, "dd MMM yyyy")}
+                    formatDate(
+                      isDelivered?.[0]?.statusDate as string,
+                      "dd MMM yyyy"
+                    )}
                 </span>
               </p>
               <div className='hoverd-details'>
@@ -222,7 +246,10 @@ const page = () => {
                               {deliver?.saleOrderStatusName}
                             </p>
                             <p className='mt-0'>
-                              {formatDate(deliver?.statusDate, "dd MMM yyyy")}
+                              {formatDate(
+                                deliver?.statusDate as string,
+                                "dd MMM yyyy"
+                              )}
                             </p>
                           </div>
                         </li>
@@ -331,4 +358,4 @@ const page = () => {
   );
 };
 
-export default page;
+export default Page;

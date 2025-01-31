@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import axios, { AxiosResponse } from "axios";
 import { ID, PaginationFilter, Result } from "../models/model";
 import {
@@ -27,7 +28,6 @@ const CHANGE_PASSWORD_URL = `${API_URL}/customers/change-password`;
 const Customer_Accounting_URL = `${API_URL}/customers/accounting`;
 const Invoice_URL = `${API_URL}/invoices/my-invoices`;
 const Invoice_By_Id_URL = `${API_URL}/invoices`;
-const Invoice_Download_URL = `${API_URL}/invoices/downloadpdf`;
 const Payment_Records_URL = `${API_URL}/paymentreceived/my-payments`;
 const Payment_Records_Details_URL = `${API_URL}/saleorders/saleorderpayment`;
 
@@ -176,20 +176,20 @@ const GeneratePdf = async (
         const errorData = JSON.parse(jsonData);
         return errorData;
       } else {
-        let filename = response.headers["content-disposition"]
+        const filename = response.headers["content-disposition"]
           .split(";")
           .find((n: any) => n.includes("filename="))
           .replace("filename=", "")
           .trim();
 
-        var result: FileResult = {
+        const result: FileResult = {
           data: response.data,
           name: filename,
         };
         return result;
       }
     })
-    .catch((err: any) => {
+    .catch((err) => {
       return err;
     });
 };

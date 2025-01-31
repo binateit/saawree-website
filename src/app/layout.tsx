@@ -1,7 +1,6 @@
-import Head from "next/head";
-import "@/assets/bootstrap/bootstrap.min.css";
-import "@/assets/fontawesome/css/all.min.css";
-import "@/assets/slik/slick.css";
+import "../../public/bootstrap/bootstrap.min.css";
+// import "@/assets/fontawesome/css/all.min.css";
+// import "@/assets/slik/slick.css";
 import "@/assets/css/navbar.css";
 import Header from "@/component/Header";
 import Footer from "@/component/Footer";
@@ -15,7 +14,17 @@ import { CartCountProvider } from "@/core/context/useCartCount";
 import "./globals.css";
 import { Suspense } from "react";
 import Loading from "./loading";
+// import { Metadata } from "next";
+// export const metadata: Metadata = {
+//   title: "CDN Example",
+//   description: "Demonstrating CDN integration",
 
+//   other: {
+//     // External CSS CDN
+//     link: "https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.9.0/css/all.min.css",
+//     // External JavaScript CDN
+//   },
+// };
 export default async function RootLayout({
   children,
 }: Readonly<{
@@ -23,24 +32,11 @@ export default async function RootLayout({
 }>) {
   return (
     <html lang='en'>
-      <Head>
-        <title></title>
+      <head>
+        <title>Index</title>
         <meta name='viewport' content='width=device-width, initial-scale=1.0' />
-
-        <link
-          rel='stylesheet'
-          href='https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.9.0/css/all.min.css'
-        />
-        <link
-          rel='stylesheet'
-          href='https://cdn.jsdelivr.net/npm/bootstrap-icons@1.3.0/font/bootstrap-icons.css'
-        />
-        {/* <link
-          rel='stylesheet'
-          type='text/css'
-          href='//cdn.jsdelivr.net/npm/slick-carousel@1.8.1/slick/slick.css'
-        /> */}
-      </Head>
+        {/* <link rel='stylesheet' href='/bootstrap/bootstrap.min.css' /> */}
+      </head>
       <SessionProvider>
         <QueryProvider>
           <CartCountProvider>

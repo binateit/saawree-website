@@ -1,14 +1,12 @@
 "use client";
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 import finalLogo from "@/assets/images/finalLogo.png";
 import appleStore from "@/assets/images/appleStore.png";
 import playStore from "@/assets/images/playStore.png";
 import {
-  BsApple,
   BsBoxArrowRight,
   BsCart,
   BsChevronDown,
-  BsGooglePlay,
   BsList,
   BsSearch,
   BsSpeedometer2,
@@ -16,19 +14,21 @@ import {
 import { signOut, useSession } from "next-auth/react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { Offcanvas } from "react-bootstrap/";
 import { useQuery } from "@tanstack/react-query";
 import { getMenuCategories } from "@/core/requests/homeRequests";
 import { useCartCount } from "@/core/context/useCartCount";
 import { Sidebar } from "primereact/sidebar";
+import Image from "next/image";
+import { Session } from "@/core/models/model";
 
 const Header = () => {
   const { data: session, status: authStatus } = useSession();
 
+  const UserSession = session as Session;
+
   const [show, setShow] = useState(false);
   const { cartCount } = useCartCount();
 
-  const [isHamburgerClicked, setIsHamburgerClicked] = useState(false);
   const [closeSubMenu, setCloseSubMenu] = useState(false);
   const [openDropDown, setOpenDropDown] = useState({
     display: false,
@@ -51,8 +51,8 @@ const Header = () => {
         <div className='container header-container text-right'>
           {authStatus === "authenticated" ? (
             <div className='d-flex justify-content-end'>
-              Welcome {session?.user?.firstName} -{" "}
-              <Link href={`/${session?.user?.userType}`} className='pl-2'>
+              Welcome {UserSession?.user?.firstName} -{" "}
+              <Link href={`/${UserSession?.user?.userType}`} className='pl-2'>
                 <BsSpeedometer2 fontSize={18} /> Dashboard
               </Link>{" "}
               <div
@@ -84,7 +84,13 @@ const Header = () => {
                   <i className='fas fa-bars fa-1x'></i>
                 </span>
                 <Link href='/'>
-                  <img src={finalLogo.src} className='img-logo' alt='Saawree' />
+                  <Image
+                    src={finalLogo.src}
+                    className='img-logo img-fluid'
+                    alt='Saawree'
+                    height={200}
+                    width={200}
+                  />
                 </Link>
               </div>
             </div>
@@ -211,7 +217,6 @@ const Header = () => {
                                         <Link
                                           href={`/maketoorder/products?subCategoryName=${subCat.n}&categoryId=${subCat?.id}`}
                                           onClick={() => {
-                                            setIsHamburgerClicked(false);
                                             setCloseSubMenu(!closeSubMenu);
                                           }}
                                         >
@@ -238,9 +243,6 @@ const Header = () => {
                                                 <Link
                                                   href={`/maketoorder/products?subCategoryName=${ssubCat.n}&categoryId=${ssubCat?.id}`}
                                                   onClick={() => {
-                                                    setIsHamburgerClicked(
-                                                      false
-                                                    );
                                                     setCloseSubMenu(
                                                       !closeSubMenu
                                                     );
@@ -294,10 +296,22 @@ const Header = () => {
             <div className='hb-right'>
               {/* <span>Download App</span> */}
               <a href='#'>
-                <img src={appleStore.src} className='app-icon' alt='appstore' />
+                <Image
+                  src={appleStore.src}
+                  className='app-icon img-fluid'
+                  alt='appstore'
+                  width={30}
+                  height={30}
+                />
               </a>
               <a href=''>
-                <img src={playStore.src} className='app-icon' alt='playstore' />
+                <Image
+                  src={playStore.src}
+                  className='app-icon img-fluid'
+                  alt='playstore'
+                  width={30}
+                  height={30}
+                />
               </a>
 
               {/* <a href=''>

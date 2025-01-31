@@ -96,7 +96,7 @@ export type AgentPaymentRecords = {
   paymentModeName: string;
   isAdvance: boolean;
   usedAmount: number;
-  advanceAmountLeft?: any;
+  advanceAmountLeft?: number;
 };
 
 export type AgentPaymentQueryResponse = Response<Array<AgentPaymentRecords>>;

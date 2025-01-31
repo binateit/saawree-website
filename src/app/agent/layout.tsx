@@ -2,7 +2,7 @@
 import Link from "next/link";
 import React, { useState } from "react";
 
-const layout = ({
+const Layout = ({
   children,
 }: Readonly<{
   children: React.ReactNode;
@@ -34,9 +34,10 @@ const layout = ({
                     className={`font-weight-bold small text-uppercase py-3 px-3 nav-link-item ${
                       showRightPanel == "profile" ? "shadow active" : ""
                     }`}
-                    onClick={() =>
-                      setShowDropDown({ name: "profile", display: true })
-                    }
+                    onClick={() => {
+                      setShowDropDown({ name: "profile", display: true });
+                      setShowRightPanel("profile");
+                    }}
                   >
                     Profile
                   </div>
@@ -68,9 +69,10 @@ const layout = ({
                 <li className='mb-2 shadow tab-has-dropdown nav-link cursor-pointer'>
                   <div
                     className='font-weight-bold small text-uppercase py-3 px-3'
-                    onClick={() =>
-                      setShowDropDown({ name: "transaction", display: true })
-                    }
+                    onClick={() => {
+                      setShowDropDown({ name: "transaction", display: true });
+                      setShowRightPanel("transaction");
+                    }}
                   >
                     Transaction
                   </div>
@@ -133,4 +135,4 @@ const layout = ({
   );
 };
 
-export default layout;
+export default Layout;

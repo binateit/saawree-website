@@ -13,6 +13,7 @@ import "slick-carousel/slick/slick.css";
 import "slick-carousel/slick/slick-theme.css";
 import { useRouter } from "next/navigation";
 import ProductImage from "@/core/component/Products/ProductImage";
+import Loading from "./loading";
 
 export default function Home() {
   const { data: session, status } = useSession();
@@ -22,26 +23,9 @@ export default function Home() {
     queryFn: () => getHomePage(),
   });
 
-  if (homePageLoading)
-    return (
-      <div className='full-page-loader'>
-        <div className='loader_box'>
-          <div className='loader-logo'>
-            <img
-              src='https://saawree.com/images/logo4.png'
-              alt='Loader Logo'
-              width='100%'
-            />
-          </div>
-          {/* <p className="loding-content text-center">Loading...</p> */}
-          <div className='progress mt-5'>
-            <div className='progress-value'></div>
-          </div>
-        </div>
-      </div>
-    );
+  if (homePageLoading) return <Loading />;
 
-  var collectionSettings = {
+  const collectionSettings = {
     dots: false,
     swipeToSlide: true,
     draggable: true,
@@ -77,7 +61,7 @@ export default function Home() {
     ],
   };
 
-  var newArrivalsSettings = {
+  const newArrivalsSettings = {
     dots: false,
     swipeToSlide: true,
     draggable: true,
@@ -113,7 +97,7 @@ export default function Home() {
     ],
   };
 
-  var testimonials = {
+  const testimonials = {
     dots: false,
     swipeToSlide: true,
     draggable: true,
@@ -149,11 +133,11 @@ export default function Home() {
             <>
               <ProductImage
                 url={`${process.env.NEXT_PUBLIC_APP_IMAGE_API_URL}/${prodData?.wip}`}
-                className={"w-100 desk"}
+                className={"w-100 desk img-fluid"}
               />
               <ProductImage
                 url={`${process.env.NEXT_PUBLIC_APP_IMAGE_API_URL}/${prodData?.mip}`}
-                className={"w-100 mob"}
+                className={"w-100 mob img-fluid"}
               />
               <div className='carousel-caption center-content'>
                 <h2>{prodData?.t}</h2>
@@ -172,7 +156,13 @@ export default function Home() {
             <h1>OUR CATEGORY</h1>
           </div>
           <div className='title-septer'>
-            <img src={underlineIcon.src} alt='' />
+            <Image
+              src={underlineIcon.src}
+              alt=''
+              className='img-fluid'
+              width={100}
+              height={50}
+            />
           </div>
           <div className='categ-bar d-flex flex-wrap justify-content-center'>
             {homePageData?.fc?.map((cat) => (
@@ -201,7 +191,13 @@ export default function Home() {
             <h1>NEW ARRIVALS</h1>
           </div>
           <div className='title-septer'>
-            <img src={underlineIcon?.src} alt='' />
+            <Image
+              src={underlineIcon?.src}
+              className='img-fluid'
+              width={100}
+              height={50}
+              alt=''
+            />
           </div>
           {homePageData?.nal?.map((newArraival, index) => (
             <div className='row mt-2' key={index}>
@@ -382,7 +378,13 @@ export default function Home() {
               <h1>{collection?.n}</h1>
             </div>
             <div className='title-septer'>
-              <img src={underlineIcon?.src} alt='' />
+              <Image
+                src={underlineIcon?.src}
+                alt=''
+                className='img-fluid'
+                width={100}
+                height={50}
+              />
             </div>
 
             <div className='kada-collections'>
@@ -498,10 +500,16 @@ export default function Home() {
             <h1>Testimonials</h1>
           </div>
           <div className='title-septer'>
-            <img src={underlineIcon?.src} alt='' />
+            <Image
+              src={underlineIcon?.src}
+              alt=''
+              className='img-fluid'
+              width={100}
+              height={50}
+            />
           </div>
           <Slider {...testimonials}>
-          {homePageData?.tt?.map((testimonial, index) => (
+            {homePageData?.tt?.map((testimonial, index) => (
               <div className='clients-list' key={index}>
                 <div className='clients-img'>
                   <Image
@@ -509,7 +517,7 @@ export default function Home() {
                     width={100}
                     height={100}
                     alt='testimonials'
-                    className="rounded-circle"
+                    className='rounded-circle'
                   />
                 </div>
                 <div className='clients-feedback'>{testimonial?.desc}</div>

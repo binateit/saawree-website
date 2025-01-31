@@ -11,7 +11,7 @@ const camelize = (value: string) => {
 const formatCurrency = (value: number | undefined) =>
   value?.toLocaleString("en-IN", { style: "currency", currency: "INR" });
 
-const formatDate = (rowData: any, dateFormat: string) => {
+const formatDate = (rowData: string, dateFormat: string) => {
   const date = new Date(rowData);
   return format(date, dateFormat);
 };
@@ -25,14 +25,14 @@ function urlExists(url: string, callback: (status: boolean) => void) {
     callback(status.ok);
   });
 }
-const generateOptions = (enumObject: any) => {
-  return Object.keys(enumObject)
-    .filter((key) => !isNaN(Number(enumObject[key])))
-    .map((key) => ({
-      value: enumObject[key],
-      label: key.replace(/([A-Z])/g, " $1").trim(),
-    }));
-};
+// const generateOptions = (enumObject) => {
+//   return Object.keys(enumObject || {})
+//     .filter((key) => !isNaN(Number(enumObject?.[key])))
+//     .map((key) => ({
+//       value: enumObject?.[key],
+//       label: key.replace(/([A-Z])/g, " $1").trim(),
+//     }));
+// };
 
 const dateOptions = [
   {
@@ -126,5 +126,5 @@ export {
   isNotEmpty,
   urlExists,
   dateOptions,
-  generateOptions,
+  // generateOptions,
 };

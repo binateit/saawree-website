@@ -1,10 +1,8 @@
 import { AxiosResponse } from "axios";
 import axiosInstance from "../helpers/axiosInstance";
-import { Register } from "../models/authModel";
 import {
   ContactUsPayload,
   CountryQueryResponse,
-  PaginationFilter,
   Result,
   StateQueryResponse,
 } from "../models/model";

@@ -1,5 +1,5 @@
-import axios, { AxiosResponse } from "axios";
-import { ID, PaginationFilter, Result } from "../models/model";
+import { AxiosResponse } from "axios";
+import { PaginationFilter, Result } from "../models/model";
 import axiosInstance from "../helpers/axiosInstance";
 import {
   AgentCommissionQueryResponse,
@@ -27,7 +27,7 @@ const Payment_Records_URL = `${API_URL}/paymentreceived/agent-customer-payment`;
 const Payout_Records_URL = `${API_URL}/agentpayout/my-payouts`;
 const Commission_Records_URL = `${API_URL}/agentcommission/my-commission`;
 
-const getRecordById = async (id?: ID | undefined): Promise<AgentRecord> => {
+const getRecordById = async (): Promise<AgentRecord> => {
   return axiosInstance
     .get(`${Agent_Record_URL}`)
     .then((response: AxiosResponse<AgentRecord>) => response.data)

@@ -7,7 +7,7 @@ import React from "react";
 import { toast } from "react-toastify";
 import * as Yup from "yup";
 
-const page = () => {
+const Page = () => {
   const navigate = useRouter();
 
   const passwordSchema = Yup.object().shape({
@@ -30,8 +30,8 @@ const page = () => {
     onSubmit: async (formValues, { setSubmitting }) => {
       setSubmitting(true);
       try {
-        // let result: Result;
-        let result = await changePassword(formValues);
+        // const result: Result;
+        const result = await changePassword(formValues);
         if (result.succeeded) {
           toast.success("Password changed successfully.");
           signOut();
@@ -132,4 +132,4 @@ const page = () => {
   );
 };
 
-export default page;
+export default Page;

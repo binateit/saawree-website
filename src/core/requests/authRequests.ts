@@ -6,6 +6,7 @@ import {
   ForgotPassword,
   RefeshTokenResponse,
   RefreshToken,
+  RegistationResponse,
   Register,
   ResendOTP,
   ResetPassword,
@@ -32,7 +33,9 @@ const AGENT_FORGOT_PASSWORD_URL = `${API_URL}/agent/forgot-password`;
 const RESET_PASSWORD_URL = `${API_URL}/customers/reset-password`;
 const RESET_AGENT_PASSWORD_URL = `${API_URL}/agent/reset-password`;
 
-const registerCustomer = async (register: Register): Promise<Result> => {
+const registerCustomer = async (
+  register: Register
+): Promise<RegistationResponse> => {
   const headers = {
     tenant: "ho",
   };
@@ -59,9 +62,9 @@ const registerCustomer = async (register: Register): Promise<Result> => {
       { headers: headers }
     )
 
-    .then((response: AxiosResponse<Result>) => response.data)
-    .then((response: Result) => response)
-    .catch((err: Result) => {
+    .then((response: AxiosResponse<RegistationResponse>) => response.data)
+    .then((response: RegistationResponse) => response)
+    .catch((err) => {
       return err;
     });
 };

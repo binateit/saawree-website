@@ -1,36 +1,33 @@
 "use client";
-import React, { useState } from "react";
+import React from "react";
 import logo4 from "@/assets/images/logo4.png";
 import paymentOpt from "@/assets/images/paymentOpt.png";
-import {
-  BsArrowBarUp,
-  BsEnvelope,
-  BsGeoAlt,
-  BsTelephone,
-} from "react-icons/bs";
+import { BsEnvelope, BsGeoAlt, BsTelephone } from "react-icons/bs";
 import Link from "next/link";
 import { useSession } from "next-auth/react";
+import Image from "next/image";
+import { Session } from "@/core/models/model";
 
 const Footer = () => {
   const { data: session, status: authStatus } = useSession();
-  const [visible, setVisible] = useState(false);
+  const userSession = session as Session;
+  // const [visible, setVisible] = useState(false);
 
-  const toggleVisible = () => {
-    const scrolled = document.documentElement.scrollTop;
-    if (scrolled > 300) {
-      setVisible(true);
-    } else if (scrolled <= 300) {
-      setVisible(false);
-    }
-  };
-  const scrollToTop = () => {
-    window.scrollTo({
-      top: 0,
-      behavior: "smooth",
-      /* you can also use 'auto' behaviour
-         in place of 'smooth' */
-    });
-  };
+  // const toggleVisible = () => {
+  //   const scrolled = document.documentElement.scrollTop;
+  //   if (scrolled > 300) {
+  //     setVisible(true);
+  //   } else if (scrolled <= 300) {
+  //     setVisible(false);
+  //   }
+  // };
+  // const scrollToTop = () => {
+  //   window.scrollTo({
+  //     top: 0,
+  //     behavior: "smooth",
+
+  //   });
+  // };
   // document.addEventListener("scroll", toggleVisible);
 
   return (
@@ -41,7 +38,13 @@ const Footer = () => {
             <div className='row'>
               <div className='col-md-3 col-lg-3'>
                 <div className='footer-widget'>
-                  <img src={logo4.src} className='footer-logo' alt='Saawree' />
+                  <Image
+                    src={logo4.src}
+                    className='footer-logo img-fluid'
+                    alt='Saawree'
+                    height={100}
+                    width={100}
+                  />
                   <p className='footer-dec'>
                     Saawree Jewellers, The Leading Imitation Jewellery
                     Manufacturers In India An elegant piece of jewellery never
@@ -93,7 +96,7 @@ const Footer = () => {
                     <ul>
                       <li className='footer-list'>
                         {authStatus === "authenticated" ? (
-                          <Link href={`/${session?.user?.userType}`}>
+                          <Link href={`/${userSession?.user?.userType}`}>
                             My Account
                           </Link>
                         ) : (
@@ -106,7 +109,7 @@ const Footer = () => {
                       <li className='footer-list'>
                         {authStatus === "authenticated" ? (
                           <Link
-                            href={`/${session?.user?.userType}/transactions/sales-order`}
+                            href={`/${userSession?.user?.userType}/transactions/sales-order`}
                           >
                             My Order
                           </Link>
@@ -144,7 +147,13 @@ const Footer = () => {
                     </div>
                   </div>
                   <div className='payment-opt'>
-                    <img src={paymentOpt.src} alt='' />
+                    <Image
+                      src={paymentOpt.src}
+                      alt='paymentOptions'
+                      className='img-fluid'
+                      width={200}
+                      height={100}
+                    />
                   </div>
                 </div>
               </div>
@@ -168,14 +177,14 @@ const Footer = () => {
           </div>
         </div>
       </footer>
-      <div
+      {/* <div
         className='backtotop'
         id='myBtn'
         onClick={() => scrollToTop()}
         style={{ display: visible ? "block" : "none" }}
       >
         <BsArrowBarUp />
-      </div>
+      </div> */}
     </>
   );
 };

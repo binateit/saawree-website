@@ -144,7 +144,7 @@ export type InvoiceDetails = {
   billCityName: string;
   billStateId: number;
   billZipCode: string;
-  billStateName?: any;
+  billStateName?: string;
   billCountryId: number;
   billCountryName: string;
   shipAddressLine1: string;
@@ -169,13 +169,20 @@ export type InvoiceDetails = {
   totalDiscountedPrice: number;
   totalTaxAmount: number;
   totalOtherCharges: number;
-  gstNumber?: any;
+  gstNumber?: string;
   notes: string;
   placeOfSupplyId: number;
   placeOfSupplyName: string;
   itemList: ItemList[];
-  paymentList: any[];
-  otherCharges: any[];
+  // paymentList: any[];
+  otherCharges: OtherChargesDto[];
+};
+
+export type OtherChargesDto = {
+  id: number;
+  label: string;
+  amount: number;
+  isDeleted: boolean;
 };
 export type ItemList = {
   invoiceItemId: number;
@@ -247,7 +254,7 @@ export type CustomerDetailForPaymentDto = {
 
 export type CustomerDetails = {
   id: number;
-  appVendorId?: any;
+  appVendorId?: string;
   firstName: string;
   lastName: string;
   companyName: string;
@@ -260,14 +267,14 @@ export type CustomerDetails = {
   whatsappNumber: string;
   dateOfBirth: string;
   dateOfAnniversary: string;
-  lstNumber?: any;
-  cstNumber?: any;
-  gstNumber?: any;
+  lstNumber?: string;
+  cstNumber?: string;
+  gstNumber?: string;
   panNumber: string;
   aadharNumber: string;
   gstRegistrationTypeId: number;
   gstRegistrationTypeName: string;
-  termId?: any;
+  termId?: number;
   creditLimitInAmount: number;
   discountPercent: number;
   applyGST: boolean;
@@ -275,21 +282,21 @@ export type CustomerDetails = {
   rateTypeName: string;
   isInternal: boolean;
   tenantTypeId: number;
-  linkedTenantId?: any;
+  linkedTenantId?: number;
   userName: string;
   billingAddress: BillingAddress;
   shippingAddress: BillingAddress;
   additionalAddress: AdditionalAddress;
   agentId: number;
   enableLogin: boolean;
-  imagePath?: any;
-  placeOfSupplyId?: any;
-  placeOfSupplyName?: any;
+  imagePath?: string;
+  placeOfSupplyId?: number;
+  placeOfSupplyName?: string;
   userId: string;
   accountStatusId: number;
   accountStatusName: string;
   enableCredit: boolean;
-  customerCode?: any;
+  customerCode?: string;
   isVerified: boolean;
   customerSaleOrderTransactionHistories: CustomerSaleOrderTransactionHistory[];
   customerSaleOrders: CustomerSaleOrderTransactionHistory[];
@@ -302,7 +309,7 @@ export type CustomerPayment = {
   amountReceived: number;
   isAdvance: boolean;
   referenceNumber: string;
-  advanceAmountLeft?: any;
+  advanceAmountLeft?: number;
   paymentDate: string;
 };
 export type CustomerInvoice = {
@@ -329,8 +336,8 @@ export type AdditionalAddress = {
   city: string;
   stateId: number;
   stateName: string;
-  countryId?: any;
-  countryName?: any;
+  countryId?: number;
+  countryName?: string;
   zipCode: string;
   phoneNumber: string;
   displayAddress: string;

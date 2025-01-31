@@ -1,14 +1,17 @@
+import Image from "next/image";
 import React from "react";
-
+import logo4 from "@/assets/images/logo4.png";
 const Loading = () => {
   return (
     <div className='full-page-loader'>
       <div className='loader_box'>
         <div className='loader-logo'>
-          <img
-            src='https://saawree.com/images/logo4.png'
-            alt='Loader Logo'
-            width='100%'
+          <Image
+            src={logo4.src}
+            className='img-fluid'
+            alt='Loader Logo img-fluid'
+            width={50}
+            height={50}
           />
         </div>
         {/* <p className="loding-content text-center">Loading...</p> */}

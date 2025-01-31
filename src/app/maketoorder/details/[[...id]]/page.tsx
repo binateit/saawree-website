@@ -1,6 +1,7 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 "use client";
 import { formatCurrency, urlExists } from "@/core/helpers/helperFunctions";
-import { SelectOptionProps } from "@/core/models/model";
+import { SelectOptionProps, Session } from "@/core/models/model";
 import underlineIcon from "@/assets/images/underlineIcon.png";
 import {
   getMaketoOrderProductDetails,
@@ -10,12 +11,10 @@ import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { useSession } from "next-auth/react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { Dropdown } from "primereact/dropdown";
-import React, { useEffect, useState } from "react";
+import React, { FC, useEffect, useState } from "react";
 import Image from "next/image";
-import { BsCart, BsDownload, BsHeart } from "react-icons/bs";
-import { Carousel } from "primereact/carousel";
+import { BsCart, BsDownload } from "react-icons/bs";
 import InnerImageZoom from "react-inner-image-zoom";
-
 import "react-inner-image-zoom/lib/InnerImageZoom/styles.css";
 import { Dialog } from "primereact/dialog";
 import { ProductColor } from "@/core/models/productModel";
@@ -29,14 +28,15 @@ import Slider from "react-slick";
 import "slick-carousel/slick/slick.css";
 import "slick-carousel/slick/slick-theme.css";
 import Link from "next/link";
+import Loading from "@/app/loading";
 
-const page = () => {
+const Page: FC = () => {
   const { data: session, status: authStatus } = useSession();
+  const userSession = session as Session;
   const router = useRouter();
   const { setCartCount, cartCount, setIsBuyNow } = useCartCount();
   const [visible, setVisible] = useState(false);
   const searchParams = useSearchParams();
-  const [selectedProductId, setSelectedProductId] = useState<number>();
   const [selectedColors, setSelectedColors] = useState<ProductColor[]>([]);
   const productId = searchParams.get("productId");
   const [mainProductImage, setMainProductImage] = useState<{
@@ -56,7 +56,7 @@ const page = () => {
   });
   const queryClient = useQueryClient();
   useEffect(() => {
-    let polishTypes: any = [];
+    const polishTypes: any = [];
     response?.polishingTypeList?.map((ptype) => {
       return polishTypes.push({
         name: ptype?.polishingTypeName,
@@ -134,11 +134,11 @@ const page = () => {
   };
   const handleAddToCart = async (isBuyNow: boolean) => {
     try {
-      if (session?.user?.token === undefined) {
+      if (userSession?.user?.token === undefined) {
         router.push("/auth/login");
       } else {
-        if (session?.user?.token && response && selectedColors.length > 0) {
-          let updatedItems: Items[] = selectedColors.map((color) => ({
+        if (userSession?.user?.token && response && selectedColors.length > 0) {
+          const updatedItems: Items[] = selectedColors.map((color) => ({
             productId: color.productId as number,
             quantity: color.quantity as number,
           }));
@@ -165,12 +165,13 @@ const page = () => {
           return false;
         }
       }
-    } catch (error) {
+    } catch (err) {
       toast.error("An error occurred while adding item to cart");
+      console.log(err);
     }
   };
 
-  var collectionSettings = {
+  const collectionSettings = {
     dots: false,
     swipeToSlide: true,
     draggable: true,
@@ -206,7 +207,7 @@ const page = () => {
     ],
   };
 
-  var productImagesThumbnails = {
+  const productImagesThumbnails = {
     dots: false,
     swipeToSlide: true,
     draggable: true,
@@ -242,6 +243,7 @@ const page = () => {
     ],
   };
 
+  if (isProductDetailsLoading) return <Loading />;
   return (
     <section className='product-details'>
       <div className='container'>
@@ -295,11 +297,13 @@ const page = () => {
                       data-gallery='thumb'
                       className='is-active'
                       onClick={() => {
-                        mainProductImage?.mainImage &&
+                        return (
+                          mainProductImage?.mainImage &&
                           setMainProductImage({
                             mainImage: pi?.mediumImagePath,
                             zoomedImage: pi?.zoomImagePath,
-                          });
+                          })
+                        );
                       }}
                       key={index}
                     >
@@ -411,16 +415,11 @@ const page = () => {
                         >
                           <div className='d-flex'>
                             <div className='moti-color'>
-                              <img
+                              <Image
                                 src={`${process.env.NEXT_PUBLIC_APP_IMAGE_API_URL}/${color?.imagePath}`}
                                 alt=''
                               />
-                              <span
-                                className='color-name'
-                                onClick={() =>
-                                  setSelectedProductId(color.productId)
-                                }
-                              >
+                              <span className='color-name'>
                                 {color.colorName}{" "}
                               </span>
                             </div>
@@ -434,7 +433,7 @@ const page = () => {
                                 min={1}
                                 max={99999}
                                 onChange={(e) => {
-                                  let qty = parseInt(e.target.value);
+                                  const qty = parseInt(e.target.value);
                                   if (qty < 0) {
                                     e.target.value = "";
                                   } else if (qty > 99999) {
@@ -475,9 +474,9 @@ const page = () => {
                         {response?.colorList?.map((color, index) => (
                           <div className='d-flex' key={color?.colorId}>
                             <div className='moti-color'>
-                              <img
+                              <Image
                                 src={`${process.env.NEXT_PUBLIC_APP_IMAGE_API_URL}/${color?.imagePath}`}
-                                alt=''
+                                alt='color'
                               />
                               <span className='color-name'>
                                 {color.colorName}{" "}
@@ -494,7 +493,7 @@ const page = () => {
                                   min={1}
                                   max={99999}
                                   onChange={(e) => {
-                                    let qty = parseInt(e.target.value);
+                                    const qty = parseInt(e.target.value);
                                     if (qty < 0) {
                                       e.target.value = "";
                                     } else if (qty > 99999) {
@@ -518,7 +517,7 @@ const page = () => {
                 )}
 
                 {authStatus === "authenticated" &&
-                  session?.user?.userType === "customer" && (
+                  userSession?.user?.userType === "customer" && (
                     <div className='action-btn-wrapper mt-10'>
                       <button
                         className='btn btn-saawree-outline'
@@ -538,7 +537,7 @@ const page = () => {
                       </div>
                       {/* <button className="btn btn-saawree-outline"><i className="bi bi-heart"></i></button>  */}
                       <a href='#' className='whatsapp'>
-                        <img src='img/whats-aap.png' alt='' />
+                        <Image src='img/whats-aap.png' alt='whats-app' />
                       </a>
                     </div>
                   )}
@@ -562,8 +561,9 @@ const page = () => {
                   onClick={() => setVisibleTab("description")}
                 >
                   <button
-                    className={`nav-link ${visibleTab == "description" ? "active" : ""
-                      }`}
+                    className={`nav-link ${
+                      visibleTab == "description" ? "active" : ""
+                    }`}
                     id='description-tab'
                     data-toggle='tab'
                     data-target='#description'
@@ -583,8 +583,9 @@ const page = () => {
                   onClick={() => setVisibleTab("policy")}
                 >
                   <button
-                    className={`nav-link ${visibleTab == "policy" ? "active" : ""
-                      }`}
+                    className={`nav-link ${
+                      visibleTab == "policy" ? "active" : ""
+                    }`}
                     id='policy-tab'
                     data-toggle='tab'
                     data-target='#policy'
@@ -599,8 +600,9 @@ const page = () => {
               </ul>
               <div className='tab-content' id='myTabContent'>
                 <div
-                  className={`tab-pane fade ${visibleTab == "description" ? "show active" : ""
-                    } `}
+                  className={`tab-pane fade ${
+                    visibleTab == "description" ? "show active" : ""
+                  } `}
                   id='description'
                   role='tabpanel'
                   aria-labelledby='description-tab'
@@ -608,8 +610,9 @@ const page = () => {
                   {response?.description}
                 </div>
                 <div
-                  className={`tab-pane fade ${visibleTab == "policy" ? "show active" : ""
-                    } `}
+                  className={`tab-pane fade ${
+                    visibleTab == "policy" ? "show active" : ""
+                  } `}
                   id='policy'
                   role='tabpanel'
                   aria-labelledby='policy-tab'
@@ -659,7 +662,13 @@ const page = () => {
               <h1>YOU MAY ALSO LIKE THIS</h1>
             </div>
             <div className='title-septer'>
-              <img src={underlineIcon.src} alt='underlineIcon' />
+              <Image
+                src={underlineIcon.src}
+                alt='underlineIcon'
+                className='img-fluid'
+                width={100}
+                height={50}
+              />
             </div>
             <div className='kada-collections'>
               {/* <Carousel
@@ -784,4 +793,4 @@ const page = () => {
   );
 };
 
-export default page;
+export default Page;

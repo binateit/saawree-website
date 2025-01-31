@@ -1,5 +1,4 @@
-import { ID } from "./model";
-
+/* eslint-disable @typescript-eslint/no-explicit-any */
 //Register Model
 export type Register = {
   firstName?: string;
@@ -154,4 +153,33 @@ export type UserProfile = {
   userId: string;
   website?: string;
   whatsappNumber?: string;
+};
+
+export type RegistationResponse = {
+  messages: string[];
+  succeeded: boolean;
+  data: Data;
+};
+export type Data = {
+  statusCode: number;
+  message: string;
+  isVerificationProcessPending: boolean;
+  userId: string;
+  customerVerificationData: CustomerVerificationData;
+};
+export type CustomerVerificationData = {
+  mobileNumber: string;
+  emailAddress: string;
+  agentCode: string;
+  firstName: string;
+  lastName: string;
+  companyName: string;
+  addressLine1: string;
+  addressLine2: string;
+  countryId: number;
+  countryName: string;
+  stateId: number;
+  stateName: string;
+  city: string;
+  zipCode: string;
 };

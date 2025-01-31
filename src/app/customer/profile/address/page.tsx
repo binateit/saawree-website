@@ -12,19 +12,17 @@ import { useQuery } from "@tanstack/react-query";
 import React, { useState } from "react";
 import { toast } from "react-toastify";
 
-const page = () => {
+const Page = () => {
   const [isEditMode, setIsEditMode] = useState(false);
   const [isModalOpen, setModalOpen] = useState(false);
   const [editAddress, setEditAddress] = useState<CustomerAddress>();
   const [addressToDelete, setAddressToDelete] = useState<number>();
-  const [refetch, setRefetch] = useState(false);
   const [showConfirmationModal, setShowConfirmationModal] = useState(false);
-  const { data: customerAddressList, isLoading: customerAddressLoading } =
-    useQuery({
-      queryKey: ["customerAddressList"],
-      queryFn: () => getCustomerAddress(),
-      refetchOnWindowFocus: false,
-    });
+  const { data: customerAddressList } = useQuery({
+    queryKey: ["customerAddressList"],
+    queryFn: () => getCustomerAddress(),
+    refetchOnWindowFocus: false,
+  });
   const openModal = () => {
     setModalOpen(true);
   };
@@ -71,11 +69,10 @@ const page = () => {
 
   const handleConfirm = async (e: number) => {
     try {
-      let result: Result;
-      result = (await deleteCustomerAddress(e)) as Result;
+      const result = (await deleteCustomerAddress(e)) as Result;
       if (result.succeeded) {
         toast.success("Address deleted successfully.");
-        setRefetch(true);
+        // setRefetch(true);
       } else {
         if (result.statusCode === 400) {
           toast.error(result.exception);
@@ -100,7 +97,10 @@ const page = () => {
             {customerAddressList
               ?.filter((type) => type?.addressTypeId !== 0)
               .map((address) => (
-                <div className='col-xl-6 col-lg-6 col-md-12 mb-3'>
+                <div
+                  className='col-xl-6 col-lg-6 col-md-12 mb-3'
+                  key={address?.addressId}
+                >
                   <div className='p-2 profile-address mb-2'>
                     <h6 className='mb-2'>{`${address?.addressTypeName} Address`}</h6>
                     <p className='mb-2'>{address?.displayAddress}</p>
@@ -154,4 +154,4 @@ const page = () => {
   );
 };
 
-export default page;
+export default Page;

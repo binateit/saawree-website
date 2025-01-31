@@ -2,9 +2,9 @@
 import { signIn } from "next-auth/react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import React, { useRef, useState } from "react";
+import React, { useState } from "react";
 
-const page = () => {
+const Page = () => {
   const [alertMessage, setAlertMessage] = useState<string | null>(null);
   const [userType, setUserType] = useState<string | null>("customer");
   const [email, setEmail] = useState<string>("");
@@ -120,4 +120,4 @@ const page = () => {
   );
 };
 
-export default page;
+export default Page;

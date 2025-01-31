@@ -4,7 +4,7 @@ import { useCartCount } from "@/core/context/useCartCount";
 import { formatCurrency } from "@/core/helpers/helperFunctions";
 import React from "react";
 
-const layout = ({
+const Layout = ({
   children,
 }: Readonly<{
   children: React.ReactNode;
@@ -26,7 +26,7 @@ const layout = ({
                 <div className='order-sumry-heading'>
                   <h3 className='form-heading1'>Order Summry</h3>
                   {/* <p className="extr-opt">Have an account? <a href="#">Log in</a></p>  */}
-                  {cartData?.items?.map((item, index) => (
+                  {cartData?.items?.map((item) => (
                     <div
                       className='order-row d-flex align-items-center justify-content-between'
                       key={item?.cartId}
@@ -93,4 +93,4 @@ const layout = ({
   );
 };
 
-export default layout;
+export default Layout;

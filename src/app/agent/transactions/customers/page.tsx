@@ -15,7 +15,7 @@ import React, { useState } from "react";
 import { BsChevronDown, BsChevronUp } from "react-icons/bs";
 import { useImmer } from "use-immer";
 
-const page = () => {
+const Page = () => {
   const [isFilter, setIsFilter] = useState<boolean>();
   const [filterQuery, setFilterQuery] = useState({});
   const [globalFilterValue, setGlobalFilterValue] = useState<string>("");
@@ -46,7 +46,7 @@ const page = () => {
   });
 
   const updateSearchFilters = () => {
-    let filters: Filter[] = [];
+    const filters: Filter[] = [];
 
     if (filterOption?.filterPrintName != undefined) {
       filters.push({
@@ -122,17 +122,17 @@ const page = () => {
       draft.pageSize = event.rows;
       draft.first = event.first;
       draft.sortField = event.sortField;
-      event.sortField && (draft.order = event.sortOrder === 1 ? "asc" : "desc");
-      event.sortField &&
-        (draft.orderBy = [
+      draft.order = event?.sortField && event.sortOrder === 1 ? "asc" : "desc";
+      draft.orderBy = [
+        event.sortField &&
           `${event.sortField} ${event.sortOrder === 1 ? "asc" : "desc"}`,
-        ]);
+      ];
     });
   };
 
   const filteredData = customersListResponse?.data?.filter(
     (item: CustomersOfAgent) =>
-      Object.values(item).some((value: any) => {
+      Object.values(item).some((value) => {
         return (
           typeof value === "string" &&
           value.toLowerCase().includes(globalFilterValue.toLowerCase())
@@ -345,4 +345,4 @@ const page = () => {
   );
 };
 
-export default page;
+export default Page;

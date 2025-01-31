@@ -8,7 +8,7 @@ import { Column } from "primereact/column";
 import { DataTable } from "primereact/datatable";
 import React from "react";
 
-const page = () => {
+const Page = () => {
   const searchParams = useSearchParams();
   const customerId = searchParams.get("customerId");
 
@@ -201,4 +201,4 @@ const page = () => {
   );
 };
 
-export default page;
+export default Page;

@@ -1,8 +1,9 @@
 "use client";
 import { useState } from "react";
-import ValidateOTPPage from "../validateotp/page";
-import Registration from "../register/page";
 import CompleteRegistrationPage from "../completeregistration/page";
+import Registration from "../register/Register";
+import ValidateOTPPage from "../validateotp/ValidateOTPPage";
+import Head from "next/head";
 
 const RegistrationProcessPage = () => {
   const [step, setStep] = useState<number>(1);
@@ -10,6 +11,9 @@ const RegistrationProcessPage = () => {
 
   return (
     <>
+      <Head>
+        <title>Registration</title>
+      </Head>
       {step === 1 && (
         <Registration updateStep={setStep} setUserId={setUserId} />
       )}

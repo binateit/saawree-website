@@ -4,14 +4,11 @@ import React from "react";
 import * as Yup from "yup";
 import { camelize } from "@/core/helpers/helperFunctions";
 import { Field, FormikProvider, useFormik } from "formik";
-import { ContactUsPayload, Result } from "@/core/models/model";
-import { useRouter } from "next/navigation";
+import { ContactUsPayload } from "@/core/models/model";
 import { toast } from "react-toastify";
 import { contactUsRequest } from "@/core/requests/requests";
 
-const page = () => {
-  const router = useRouter();
-
+const Page = () => {
   const contactSchema = Yup.object().shape({
     fullName: Yup.string()
       .matches(
@@ -47,29 +44,29 @@ const page = () => {
     onSubmit: async (formValues, { setFieldError, setSubmitting }) => {
       setSubmitting(true);
       try {
-        let result: Result;
         const payload: ContactUsPayload = {
           name: formValues?.fullName,
           mobileNumber: formValues?.mobileNumber,
           email: formValues?.emailAddress,
           message: formValues?.message,
         };
-        result = await contactUsRequest(payload);
+        const result = await contactUsRequest(payload);
         if (result?.succeeded) {
           toast.success(
             "Thank you for contacting us. Our team will shortly get back to you"
           );
         } else {
-          if (result.data.statusCode === 400) {
+          if (result.statusCode === 400) {
             result.data.propertyResults.map(
-              (error: any) =>
-                setFieldError(camelize(error.propertyName), error.errorMessage),
+              (error: { succeeded: string; errorMessage: string }) =>
+                setFieldError(camelize(error.succeeded), error.errorMessage),
               toast.error("Error while creating registration")
             );
           }
         }
       } catch (ex) {
         toast.error("Error while creating registration");
+        console.log(ex);
       }
     },
   });
@@ -254,4 +251,4 @@ const page = () => {
   );
 };
 
-export default page;
+export default Page;
