@@ -6,7 +6,8 @@ import { BsEnvelope, BsGeoAlt, BsTelephone } from "react-icons/bs";
 import Link from "next/link";
 import { useSession } from "next-auth/react";
 import Image from "next/image";
-import { Session } from "@/core/models/model";
+import { Session } from "next-auth";
+
 
 const Footer = () => {
   const { data: session, status: authStatus } = useSession();

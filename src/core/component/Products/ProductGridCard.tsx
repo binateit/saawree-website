@@ -5,7 +5,7 @@ import { useRouter } from "next/navigation";
 import React from "react";
 import { BsCart } from "react-icons/bs";
 import ProductImage from "./ProductImage";
-import { Session } from "../../models/model";
+import { Session } from "next-auth";
 
 interface ProductsProps {
   product: ProductList | MakeToOrderProduct;

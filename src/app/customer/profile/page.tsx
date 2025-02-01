@@ -3,7 +3,6 @@ import CalendarInput from "@/core/component/CalenderInput";
 import { formatDate } from "@/core/helpers/helperFunctions";
 import { EditCustomerProfile } from "@/core/models/customerModel";
 import { toast } from "react-toastify";
-import { userToken } from "@/core/models/model";
 import { updateCustomerProfile } from "@/core/requests/customerRoutes";
 import { Field, FormikProvider, useFormik } from "formik";
 import { useSession } from "next-auth/react";
@@ -12,6 +11,7 @@ import * as Yup from "yup";
 import { useQuery } from "@tanstack/react-query";
 import { getUserProfileByToken } from "@/core/requests/authRequests";
 import CustomSelect from "@/core/component/CustomSelect";
+import { User } from "next-auth";
 
 const ProfileDetails = () => {
   const [editMode, setEditMode] = useState<boolean>();
@@ -28,7 +28,7 @@ const ProfileDetails = () => {
     faxNumber: Yup.string(),
     dateOfAnniversary: Yup.string(),
   });
-  const sessionData = session?.user as userToken;
+  const sessionData = session?.user as User;
 
   const {
     data: customerProfile,
@@ -61,7 +61,6 @@ const ProfileDetails = () => {
       setSubmitting(true);
       try {
         const profilePayload: EditCustomerProfile = {
-          userId: sessionData?.userId,
           firstName: formValues.firstName as string,
           lastName: formValues.lastName as string,
           companyName: formValues.companyName as string,

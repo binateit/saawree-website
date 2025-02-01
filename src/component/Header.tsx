@@ -19,7 +19,8 @@ import { getMenuCategories } from "@/core/requests/homeRequests";
 import { useCartCount } from "@/core/context/useCartCount";
 import { Sidebar } from "primereact/sidebar";
 import Image from "next/image";
-import { Session } from "@/core/models/model";
+import { Session } from "next-auth";
+
 
 const Header = () => {
   const { data: session, status: authStatus } = useSession();

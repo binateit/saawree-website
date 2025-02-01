@@ -19,8 +19,8 @@ import { BsFilter, BsGrid, BsListUl } from "react-icons/bs";
 import noProductImage from "@/assets/images/no-products-available.png";
 import { useImmer } from "use-immer";
 import Image from "next/image";
-import { Session } from "@/core/models/model";
 import Loading from "@/app/loading";
+import { Session } from "next-auth";
 
 const Page = () => {
   const searchParams = useSearchParams();

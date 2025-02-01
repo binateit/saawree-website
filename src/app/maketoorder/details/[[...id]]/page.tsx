@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 "use client";
 import { formatCurrency, urlExists } from "@/core/helpers/helperFunctions";
-import { SelectOptionProps, Session } from "@/core/models/model";
+import { SelectOptionProps } from "@/core/models/model";
 import underlineIcon from "@/assets/images/underlineIcon.png";
 import {
   getMaketoOrderProductDetails,
@@ -29,6 +29,7 @@ import "slick-carousel/slick/slick.css";
 import "slick-carousel/slick/slick-theme.css";
 import Link from "next/link";
 import Loading from "@/app/loading";
+import { Session } from "next-auth";
 
 const Page: FC = () => {
   const { data: session, status: authStatus } = useSession();

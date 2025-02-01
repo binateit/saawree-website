@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 "use client";
 import { formatCurrency, urlExists } from "@/core/helpers/helperFunctions";
-import { SelectOptionProps, Session } from "@/core/models/model";
+import { SelectOptionProps } from "@/core/models/model";
 import underlineIcon from "@/assets/images/underlineIcon.png";
 import {
   getReadyStockRecomendedProducts,
@@ -28,6 +28,7 @@ import "slick-carousel/slick/slick-theme.css";
 import productImagePlaceholder from "@/assets/images/productImagePlaceHolder.jpg";
 import ProductImage from "@/core/component/Products/ProductImage";
 import Link from "next/link";
+import { Session } from "next-auth";
 
 const Page = () => {
   const { data: session, status: authStatus } = useSession();

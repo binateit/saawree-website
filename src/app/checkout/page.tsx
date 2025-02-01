@@ -6,7 +6,7 @@ import {
   PlaceOrderRSPayload,
 } from "@/core/models/cartModel";
 import { CustomerAddress } from "@/core/models/customerModel";
-import { Result, Session } from "@/core/models/model";
+import { Result } from "@/core/models/model";
 import {
   createRazorPay,
   placeOrderMTO,
@@ -25,6 +25,7 @@ import { RazorpayOrderOptions, useRazorpay } from "react-razorpay";
 import { toast } from "react-toastify";
 import paylater_icon from "@/assets/images/paylater_icon.jpg";
 import razorpay from "@/assets/images/razorpay.jpg";
+import { Session } from "next-auth";
 
 const CheckoutPage = () => {
   const { data: session, status: authStatus } = useSession();

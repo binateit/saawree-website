@@ -4,7 +4,8 @@ import React, { createContext, useContext, useEffect, useState } from "react";
 import { getCartDetails } from "../requests/cartRequests";
 import { CartDetails } from "../models/cartModel";
 import { useSession } from "next-auth/react";
-import { Session } from "../models/model";
+import { Session } from "next-auth";
+
 
 interface CartCountContextType {
   cartCount: number | null;
