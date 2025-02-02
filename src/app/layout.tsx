@@ -14,6 +14,7 @@ import { CartCountProvider } from "@/core/context/useCartCount";
 import "./globals.css";
 import { Suspense } from "react";
 import Loading from "./loading";
+import { SpeedInsights } from "@vercel/speed-insights/next"
 // import { Metadata } from "next";
 // export const metadata: Metadata = {
 //   title: "CDN Example",
@@ -37,20 +38,22 @@ export default async function RootLayout({
         <meta name='viewport' content='width=device-width, initial-scale=1.0' />
         {/* <link rel='stylesheet' href='/bootstrap/bootstrap.min.css' /> */}
       </head>
-      <SessionProvider>
-        <QueryProvider>
-          <CartCountProvider>
-            <PrimeReactProvider>
-              <body>
+
+      <body>
+        <SessionProvider>
+          <QueryProvider>
+            <CartCountProvider>
+              <PrimeReactProvider>
+                <SpeedInsights />
                 <Header />
                 <Suspense fallback={<Loading />}>{children}</Suspense>
                 <Footer />
                 <ToastContainer />
-              </body>
-            </PrimeReactProvider>
-          </CartCountProvider>
-        </QueryProvider>
-      </SessionProvider>
+              </PrimeReactProvider>
+            </CartCountProvider>
+          </QueryProvider>
+        </SessionProvider>
+      </body>
     </html>
   );
 }
