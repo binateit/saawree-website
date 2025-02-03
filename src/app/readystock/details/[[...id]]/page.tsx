@@ -13,7 +13,7 @@ import { useRouter, useSearchParams } from "next/navigation";
 import { Dropdown } from "primereact/dropdown";
 import React, { useEffect, useState } from "react";
 import Image from "next/image";
-import { BsCart } from "react-icons/bs";
+import { BsCart, BsWhatsapp } from "react-icons/bs";
 import InnerImageZoom from "react-inner-image-zoom";
 import "react-inner-image-zoom/lib/InnerImageZoom/styles.css";
 import { Dialog } from "primereact/dialog";
@@ -383,6 +383,8 @@ const Page = () => {
                               <Image
                                 src={`${process.env.NEXT_PUBLIC_APP_IMAGE_API_URL}/${color?.imagePath}`}
                                 alt='colors'
+                                width={20}
+                                height={20}
                               />
                               <span className='color-name'>
                                 {color.colorName}{" "}
@@ -439,7 +441,7 @@ const Page = () => {
                           </a>
                           {/* <button className="btn btn-saawree-outline"><i className="bi bi-heart"></i></button>  */}
                           <a href='#' className='whatsapp'>
-                            <Image src='img/whats-aap.png' alt='whatsapp' />
+                            <BsWhatsapp fontSize={25} color='green' />
                           </a>
                         </div>
                       )}
@@ -467,7 +469,9 @@ const Page = () => {
                             <div className='moti-color'>
                               <Image
                                 src={`${process.env.NEXT_PUBLIC_APP_IMAGE_API_URL}/${color?.imagePath}`}
-                                alt=''
+                                alt='colors'
+                                width={20}
+                                height={20}
                               />
                               <span className='color-name'>
                                 {color.colorName}{" "}
@@ -527,9 +531,9 @@ const Page = () => {
                               Buy now
                             </div>
                             {/* <button className="btn btn-saawree-outline"><i className="bi bi-heart"></i></button>  */}
-                            <Link href='#' className='whatsapp'>
-                              <Image src='img/whats-aap.png' alt='whatsapp' />
-                            </Link>
+                            <a href='#' className='whatsapp'>
+                              <BsWhatsapp fontSize={25} color='green' />
+                            </a>
                           </div>
                         )}
                     </div>

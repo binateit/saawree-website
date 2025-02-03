@@ -153,11 +153,11 @@ const Page = () => {
     isPolishTypeListLoading,
     isColorTypeListLoading,
     isCategoryListLoading,
-    polishTypeList,
-    colorTypeList,
-    categoryList,
-    polishList,
-    colorList,
+    // polishTypeList,
+    // colorTypeList,
+    // categoryList,
+    // polishList,
+    // colorList,
   ]);
 
   const handleCategoryChange = (id: number) => {

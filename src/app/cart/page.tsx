@@ -195,7 +195,7 @@ const Page = () => {
           <h1>YOUR SHIPPING CART</h1>
         </div>
         <div className='title-septer'>
-          <Image src={underlineIcon.src} alt='' />
+          <Image src={underlineIcon.src} alt='' width={120} height={20} />
         </div>
 
         {(cartDetails?.items?.length as number) > 0 ? (
@@ -439,6 +439,7 @@ const Page = () => {
               <Image
                 src={emptyCart.src}
                 width={100}
+                height={100}
                 className='img-fluid'
                 alt='cart'
               />

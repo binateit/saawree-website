@@ -13,7 +13,7 @@ import { useRouter, useSearchParams } from "next/navigation";
 import { Dropdown } from "primereact/dropdown";
 import React, { FC, useEffect, useState } from "react";
 import Image from "next/image";
-import { BsCart, BsDownload } from "react-icons/bs";
+import { BsCart, BsDownload, BsWhatsapp } from "react-icons/bs";
 import InnerImageZoom from "react-inner-image-zoom";
 import "react-inner-image-zoom/lib/InnerImageZoom/styles.css";
 import { Dialog } from "primereact/dialog";
@@ -418,6 +418,8 @@ const Page: FC = () => {
                               <Image
                                 src={`${process.env.NEXT_PUBLIC_APP_IMAGE_API_URL}/${color?.imagePath}`}
                                 alt=''
+                                width={20}
+                                height={20}
                               />
                               <span className='color-name'>
                                 {color.colorName}{" "}
@@ -477,6 +479,8 @@ const Page: FC = () => {
                               <Image
                                 src={`${process.env.NEXT_PUBLIC_APP_IMAGE_API_URL}/${color?.imagePath}`}
                                 alt='color'
+                                width={20}
+                                height={20}
                               />
                               <span className='color-name'>
                                 {color.colorName}{" "}
@@ -537,7 +541,7 @@ const Page: FC = () => {
                       </div>
                       {/* <button className="btn btn-saawree-outline"><i className="bi bi-heart"></i></button>  */}
                       <a href='#' className='whatsapp'>
-                        <Image src='img/whats-aap.png' alt='whats-app' />
+                        <BsWhatsapp fontSize={25} color='green' />
                       </a>
                     </div>
                   )}
