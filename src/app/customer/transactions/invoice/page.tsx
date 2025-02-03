@@ -154,11 +154,11 @@ const Page = () => {
       draft.pageSize = event.rows;
       draft.first = event.first;
       draft.sortField = event.sortField;
-      draft.order = event?.sortField && event.sortOrder === 1 ? "asc" : "desc";
-      draft.orderBy = [
-        event.sortField &&
+      event.sortField && (draft.order = event.sortOrder === 1 ? "asc" : "desc");
+      event.sortField &&
+        (draft.orderBy = [
           `${event.sortField} ${event.sortOrder === 1 ? "asc" : "desc"}`,
-      ];
+        ]);
     });
   };
 
@@ -332,6 +332,7 @@ const Page = () => {
             paginatorLeft={leftContent}
             onSort={onPageOrSortChange}
             onPage={onPageOrSortChange}
+            rowsPerPageOptions={[10, 20, 50, 100]}
             first={paginationModel.first}
             totalRecords={invoicesListResponse?.pagination?.totalCount}
             sortField={paginationModel.sortField}

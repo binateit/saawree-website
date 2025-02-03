@@ -29,6 +29,7 @@ export default function Home() {
     dots: false,
     swipeToSlide: true,
     draggable: true,
+    lazyLoad: true,
     arrows: false,
     infinite: false,
     speed: 500,
@@ -65,6 +66,7 @@ export default function Home() {
     dots: false,
     swipeToSlide: true,
     draggable: true,
+    lazyLoad: true,
     arrows: false,
     infinite: false,
     speed: 500,
@@ -160,8 +162,8 @@ export default function Home() {
               src={underlineIcon.src}
               alt=''
               className='img-fluid'
-              width={100}
-              height={50}
+              width={120}
+              height={20}
             />
           </div>
           <div className='categ-bar d-flex flex-wrap justify-content-center'>
@@ -194,8 +196,8 @@ export default function Home() {
             <Image
               src={underlineIcon?.src}
               className='img-fluid'
-              width={100}
-              height={50}
+              width={120}
+              height={20}
               alt=''
             />
           </div>
@@ -382,8 +384,8 @@ export default function Home() {
                 src={underlineIcon?.src}
                 alt=''
                 className='img-fluid'
-                width={100}
-                height={50}
+                width={120}
+                height={20}
               />
             </div>
 
@@ -504,8 +506,8 @@ export default function Home() {
               src={underlineIcon?.src}
               alt=''
               className='img-fluid'
-              width={100}
-              height={50}
+              width={120}
+              height={20}
             />
           </div>
           <Slider {...testimonials}>

@@ -143,8 +143,11 @@ const Page = () => {
   const onSort = (value: string) => {
     const newOrderBy: string[] = [];
     newOrderBy.push(value);
-    setPaginationFilters((draft) => {
-      return draft.pageNumber, draft.pageSize, (draft.orderBy = newOrderBy);
+    setPaginationFilters(() => {
+      return {
+        ...paginationFilters,
+        orderBy: newOrderBy,
+      };
     });
   };
   if (isCategoryListLoading || isLoading) return <Loading />;

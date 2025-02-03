@@ -1,3 +1,4 @@
+import axios from "axios";
 import { format } from "date-fns";
 
 const camelize = (value: string) => {
@@ -21,10 +22,42 @@ const isNotEmpty = (obj: unknown) => {
 };
 
 function urlExists(url: string, callback: (status: boolean) => void) {
-  fetch(url, { method: "head" }).then(function (status) {
+  fetch(url, { method: "get" }).then(function (status) {
     callback(status.ok);
   });
 }
+
+// function CheckImage(path: string) {
+//   axios
+//     .get(path)
+//     .then((res) => {
+//       console.log(res);
+//       return true;
+//     })
+//     .catch((err) => {
+//       console.log(err);
+//       return false;
+//     });
+// }
+const checkIfImageExists = (
+  url: string,
+  callback: (exists: boolean) => void
+) => {
+  const img = new Image();
+  img.src = url;
+
+  if (img.complete) {
+    callback(true);
+  } else {
+    img.onload = () => {
+      callback(true);
+    };
+
+    img.onerror = () => {
+      callback(false);
+    };
+  }
+};
 // const generateOptions = (enumObject) => {
 //   return Object.keys(enumObject || {})
 //     .filter((key) => !isNaN(Number(enumObject?.[key])))
@@ -126,5 +159,6 @@ export {
   isNotEmpty,
   urlExists,
   dateOptions,
+  checkIfImageExists,
   // generateOptions,
 };

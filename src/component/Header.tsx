@@ -21,7 +21,6 @@ import { Sidebar } from "primereact/sidebar";
 import Image from "next/image";
 import { Session } from "next-auth";
 
-
 const Header = () => {
   const { data: session, status: authStatus } = useSession();
 
@@ -68,7 +67,6 @@ const Header = () => {
               <Link href='/auth/login'>
                 <i className='bi bi-box-arrow-in-right'></i> Login
               </Link>{" "}
-              /
               <Link href='/auth/registrationprocess'>
                 <i className='bi bi-box-arrow-in-right'></i> Register
               </Link>

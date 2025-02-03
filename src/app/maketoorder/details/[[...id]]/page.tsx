@@ -393,18 +393,21 @@ const Page: FC = () => {
                         <div className='d-flex'>
                           <div className='moti-color options-title'>Colors</div>
                           {/* <div className='stock options-title'>Stock</div> */}
-                          <div className='color-quntity  options-title text-center'>
-                            Qty
-                          </div>
+                          {authStatus === "authenticated" && (
+                            <div className='color-quntity  options-title text-center'>
+                              Qty
+                            </div>
+                          )}
                         </div>
                       </div>
                       <div className='col-xl-6 col-lg-6 col-md-12 col-sm-6 d-none d-sm-block d-md-none d-lg-block'>
                         <div className='d-flex'>
                           <div className='moti-color options-title'>Colors</div>
-
-                          <div className='color-quntity  options-title text-center'>
-                            Qty
-                          </div>
+                          {authStatus === "authenticated" && (
+                            <div className='color-quntity  options-title text-center'>
+                              Qty
+                            </div>
+                          )}
                         </div>
                       </div>
                     </div>
@@ -427,68 +430,7 @@ const Page: FC = () => {
                               </span>
                             </div>
 
-                            <div className='color-quntity'>
-                              <input
-                                type='text'
-                                className='quntity-input'
-                                id={index.toString()}
-                                defaultValue={0}
-                                min={1}
-                                max={99999}
-                                onChange={(e) => {
-                                  const qty = parseInt(e.target.value);
-                                  if (qty < 0) {
-                                    e.target.value = "";
-                                  } else if (qty > 99999) {
-                                    e.target.value = "";
-                                  } else {
-                                    handleQuantityChange(
-                                      color.productId as number,
-                                      color.colorId as number,
-                                      qty
-                                    );
-                                  }
-                                }}
-                              />
-                            </div>
-                          </div>
-                        </div>
-                      ))}
-                    </div>
-                  </div>
-                ) : (
-                  <div className='row'>
-                    <div className='col-md-6'>
-                      <div className='product-color-options mt-4'>
-                        <div className='row option-heading'>
-                          <div className='col-md-12'>
-                            <div className='d-flex'>
-                              <div className='moti-color options-title'>
-                                Colors
-                              </div>
-
-                              <div className='color-quntity  options-title text-center'>
-                                Qty
-                              </div>
-                            </div>
-                          </div>
-                        </div>
-
-                        {response?.colorList?.map((color, index) => (
-                          <div className='d-flex' key={color?.colorId}>
-                            <div className='moti-color'>
-                              <Image
-                                src={`${process.env.NEXT_PUBLIC_APP_IMAGE_API_URL}/${color?.imagePath}`}
-                                alt='color'
-                                width={20}
-                                height={20}
-                              />
-                              <span className='color-name'>
-                                {color.colorName}{" "}
-                              </span>
-                            </div>
-
-                            <div className='color-quntity'>
+                            {authStatus === "authenticated" && (
                               <div className='color-quntity'>
                                 <input
                                   type='text'
@@ -513,7 +455,72 @@ const Page: FC = () => {
                                   }}
                                 />
                               </div>
+                            )}
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                ) : (
+                  <div className='row'>
+                    <div className='col-md-6'>
+                      <div className='product-color-options mt-4'>
+                        <div className='row option-heading'>
+                          <div className='col-md-12'>
+                            <div className='d-flex'>
+                              <div className='moti-color options-title'>
+                                Colors
+                              </div>
+
+                              {authStatus === "authenticated" && (
+                                <div className='color-quntity  options-title text-center'>
+                                  Qty
+                                </div>
+                              )}
                             </div>
+                          </div>
+                        </div>
+
+                        {response?.colorList?.map((color, index) => (
+                          <div className='d-flex' key={color?.colorId}>
+                            <div className='moti-color'>
+                              <Image
+                                src={`${process.env.NEXT_PUBLIC_APP_IMAGE_API_URL}/${color?.imagePath}`}
+                                alt='color'
+                                width={20}
+                                height={20}
+                              />
+                              <span className='color-name'>
+                                {color.colorName}{" "}
+                              </span>
+                            </div>
+
+                            {authStatus === "authenticated" && (
+                              <div className='color-quntity'>
+                                <input
+                                  type='text'
+                                  className='quntity-input'
+                                  id={index.toString()}
+                                  defaultValue={0}
+                                  min={1}
+                                  max={99999}
+                                  onChange={(e) => {
+                                    const qty = parseInt(e.target.value);
+                                    if (qty < 0) {
+                                      e.target.value = "";
+                                    } else if (qty > 99999) {
+                                      e.target.value = "";
+                                    } else {
+                                      handleQuantityChange(
+                                        color.productId as number,
+                                        color.colorId as number,
+                                        qty
+                                      );
+                                    }
+                                  }}
+                                />
+                              </div>
+                            )}
                           </div>
                         ))}
                       </div>
@@ -671,8 +678,8 @@ const Page: FC = () => {
                 src={underlineIcon.src}
                 alt='underlineIcon'
                 className='img-fluid'
-                width={100}
-                height={50}
+                width={120}
+                height={20}
               />
             </div>
             <div className='kada-collections'>
@@ -716,61 +723,65 @@ const Page: FC = () => {
               /> */}
 
               <Slider {...collectionSettings}>
-                {recomendedProducts?.data?.map((prodData) => (
-                  <Link
-                    href={`/maketoorder/details?productId=${prodData?.id}`}
-                    key={prodData?.id}
-                  >
-                    <div className='products-box'>
-                      <div className='inner-box-wraper'>
-                        <div className='prod-img1'>
-                          <ProductImage
-                            url={`${process.env.NEXT_PUBLIC_APP_IMAGE_API_URL}/${prodData?.id}`}
-                            className={"auto-fit"}
-                          />
-                        </div>
-                        <div className='prod-name1 text-dark'>
-                          {prodData?.productName} <br />{" "}
-                          <small className='text-dark'>
-                            Design Number: {prodData?.productGroupName}
-                          </small>
-                        </div>
-                        <div className='prod-rate1 d-flex justify-content-between align-items-center'>
-                          {!!session?.user ? (
-                            <>
-                              <div className='value'>
-                                <span className='seling'>
-                                  {formatCurrency(
-                                    prodData?.productPrice as number
-                                  )}
-                                </span>
-                              </div>
-                              <div
-                                className='cart-link'
-                                onClick={() =>
-                                  router.push(
-                                    `/maketoorder/details?productId=${prodData?.id}`
-                                  )
-                                }
-                              >
-                                <div className='act-btn'>
-                                  <BsCart fontSize={20} />
+                {recomendedProducts?.data
+                  ?.filter(
+                    (prodData) => prodData?.productId !== Number(productId)
+                  )
+                  .map((prodData) => (
+                    <Link
+                      href={`/maketoorder/details?productId=${prodData?.id}`}
+                      key={prodData?.id}
+                    >
+                      <div className='products-box'>
+                        <div className='inner-box-wraper'>
+                          <div className='prod-img1'>
+                            <ProductImage
+                              url={`${process.env.NEXT_PUBLIC_APP_IMAGE_API_URL}/${prodData?.id}`}
+                              className={"auto-fit"}
+                            />
+                          </div>
+                          <div className='prod-name1 text-dark'>
+                            {prodData?.productName} <br />{" "}
+                            <small className='text-dark'>
+                              Design Number: {prodData?.productGroupName}
+                            </small>
+                          </div>
+                          <div className='prod-rate1 d-flex justify-content-between align-items-center'>
+                            {!!session?.user ? (
+                              <>
+                                <div className='value'>
+                                  <span className='seling'>
+                                    {formatCurrency(
+                                      prodData?.productPrice as number
+                                    )}
+                                  </span>
                                 </div>
-                              </div>
-                            </>
-                          ) : (
-                            // <a href='#'>
-                            //   <button className='btn btn-small btn-saawree mt-2'>
-                            //     Login
-                            //   </button>
-                            // </a>
-                            ""
-                          )}
+                                <div
+                                  className='cart-link'
+                                  onClick={() =>
+                                    router.push(
+                                      `/maketoorder/details?productId=${prodData?.id}`
+                                    )
+                                  }
+                                >
+                                  <div className='act-btn'>
+                                    <BsCart fontSize={20} />
+                                  </div>
+                                </div>
+                              </>
+                            ) : (
+                              // <a href='#'>
+                              //   <button className='btn btn-small btn-saawree mt-2'>
+                              //     Login
+                              //   </button>
+                              // </a>
+                              ""
+                            )}
+                          </div>
                         </div>
                       </div>
-                    </div>
-                  </Link>
-                ))}
+                    </Link>
+                  ))}
               </Slider>
             </div>
           </div>

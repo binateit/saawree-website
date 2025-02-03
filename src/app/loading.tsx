@@ -10,8 +10,8 @@ const Loading = () => {
             src={logo4.src}
             className='img-fluid'
             alt='Loader Logo img-fluid'
-            width={50}
-            height={50}
+            width={150}
+            height={150}
           />
         </div>
         {/* <p className="loding-content text-center">Loading...</p> */}

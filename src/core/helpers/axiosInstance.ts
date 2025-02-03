@@ -8,7 +8,7 @@ import axios, {
 } from "axios";
 import { Session } from "next-auth";
 
-import { getSession } from "next-auth/react";
+import { getSession, signOut } from "next-auth/react";
 
 const API_URL = process.env.NEXT_PUBLIC_API_URL;
 
@@ -56,6 +56,7 @@ const onResponseError = async (
         return Promise.reject(error.response);
       }
       case 401: {
+        // signOut();
         return Promise.resolve(error.response);
       }
       case 403: {
@@ -66,7 +67,7 @@ const onResponseError = async (
       case 404: {
         // "Invalid request"
         //navigate('error/404')
-        return Promise.resolve(undefined);
+        return Promise.reject(error?.response);
       }
       case 500: {
         // "Server error"

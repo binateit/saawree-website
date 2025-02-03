@@ -374,6 +374,7 @@ const Page = () => {
             onSort={onPageOrSortChange}
             onPage={onPageOrSortChange}
             first={paginationModel.first}
+            rowsPerPageOptions={[10, 20, 50, 100]}
             totalRecords={saleOrderResponse?.pagination?.totalCount}
             sortField={paginationModel.sortField}
             sortOrder={paginationModel.sortOrder as SortOrder}

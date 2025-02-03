@@ -79,6 +79,7 @@ const Page = () => {
     session?.user !== undefined
       ? sortOptions
       : sortOptions.filter((item) => item.show === "always");
+
   const { data: response, isLoading } = useQuery({
     queryKey: [
       "getReadyStockProductRecords",
@@ -228,8 +229,11 @@ const Page = () => {
   const onSort = (value: string) => {
     const newOrderBy: string[] = [];
     newOrderBy.push(value);
-    setPaginationFilters((draft) => {
-      return draft.pageNumber, draft.pageSize, (draft.orderBy = newOrderBy);
+    setPaginationFilters(() => {
+      return {
+        ...paginationFilters,
+        orderBy: newOrderBy,
+      };
     });
   };
   if (
@@ -320,7 +324,12 @@ const Page = () => {
               {response?.data?.length === 0 ? (
                 <div className='empty-list text-center py-10'>
                   {/* <BsPatchExclamationFill size={60} className='img-fluid text-muted' /> */}
-                  <Image src={noProductImage.src} width={300} alt='noProduct' />
+                  <Image
+                    src={noProductImage.src}
+                    width={300}
+                    alt='noProduct'
+                    height={150}
+                  />
                   <h4 className='mt-2 text-muted'>No Products Found.</h4>
                   <p>Your search did not match any products</p>
                   <p>Please ty again.</p>
@@ -354,6 +363,7 @@ const Page = () => {
                             product={product}
                             session={session as Session}
                             type={"rds"}
+                            key={product?.productId}
                           />
                         </>
                       ))}

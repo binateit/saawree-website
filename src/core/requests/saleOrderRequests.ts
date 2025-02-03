@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import { AxiosResponse } from "axios";
+import { AxiosError, AxiosResponse } from "axios";
 import axiosInstance from "../helpers/axiosInstance";
 import {
   CreateSaleOrderRequestModel,
@@ -21,6 +21,7 @@ const SalesOrder_BYID_URL = `${API_URL}/saleorders`;
 const SalesOrder_FOR_CUSTOMER = `${API_URL}/saleorders/my-orders`;
 const SalesOrder_FOR_AGENT = `${API_URL}/saleorders/agent-orders`;
 const CHALLAN_PDF_URL = `${API_URL}/saleorders/downloadpdf`;
+const TRACK_SALES_ORDER = `${API_URL}/saleorders/track-order`;
 const SaleOrder_Status_LIST = `${API_URL}/status/get-sale-order-status`;
 const SaleOrderPayment_Status_List = `${API_URL}/status/get-payment-status`;
 const Customer_List_URL = `${API_URL}/customers/customer-by-agent-dropdown`;
@@ -207,6 +208,20 @@ const createSalesOrder = async (
       return err;
     });
 };
+
+const getOrderTracking = async (order: {
+  orderNumber: string;
+  mobileNumber: string;
+}): Promise<ISalesOrder> => {
+  return await axiosInstance
+    .post(`${TRACK_SALES_ORDER}`, order)
+    .then((response: AxiosResponse<ISalesOrder>) => response.data)
+    .then((response: ISalesOrder) => response)
+    .catch((err) => {
+      throw err;
+    });
+};
+
 export {
   getSalesOrderById,
   getSaleOrdersOfCustomer,
@@ -221,4 +236,5 @@ export {
   createSalesOrder,
   getProductColor,
   getSaleOrdersOfAgent,
+  getOrderTracking,
 };
