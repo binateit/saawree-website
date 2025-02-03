@@ -35,7 +35,6 @@ export type AgentProfile = {
   dateOfBirth: string;
   dateOfAnniversary: string;
   isActive: boolean;
-  userId: string;
   password: string;
   rateTypeId: number;
   rateTypeName: string;
@@ -44,7 +43,6 @@ export type AgentProfile = {
 };
 
 export type EditAgentProfile = {
-  userId: string;
   firstName: string;
   lastName: string;
   mobileNumber: string;

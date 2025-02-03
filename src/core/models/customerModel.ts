@@ -30,7 +30,6 @@ export interface CreateCustomerAddress {
 }
 
 export type EditCustomerProfile = {
-  userId: string;
   firstName: string;
   lastName: string;
   companyName: string;

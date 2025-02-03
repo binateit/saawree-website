@@ -36,7 +36,7 @@
     "src/app/auth/registrationprocess",
     "src/app/category/[[...id]]",
     "src/app/api/auth/[...nextauth]/route.tsk"
-  ],
+, "src/app/api/auth/auth.ts.bak"  ],
   "exclude": [
     "node_modules"
   ]

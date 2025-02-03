@@ -19,12 +19,9 @@ import {
   Country,
   SelectOptionProps,
   State,
-  userToken,
 } from "@/core/models/model";
-import { useSession } from "next-auth/react";
 
 const Page = () => {
-  const { data: session } = useSession();
   const [isEdit, setIsEdit] = useState(false);
   const [stateList, setStateList] = useState<SelectOptionProps[]>([]);
   const [countryList, setCountryList] = useState<SelectOptionProps[]>([]);
@@ -67,7 +64,6 @@ const Page = () => {
     refetchOnWindowFocus: false,
   });
 
-  const sessionData = session?.user as userToken;
 
   const formik = useFormik({
     enableReinitialize: true,
@@ -95,7 +91,6 @@ const Page = () => {
       setSubmitting(true);
       try {
         const profilePayload: EditAgentProfile = {
-          userId: sessionData?.userId,
           firstName: formValues?.firstName as string,
           lastName: formValues?.lastName as string,
           companyName: formValues?.companyName as string,
