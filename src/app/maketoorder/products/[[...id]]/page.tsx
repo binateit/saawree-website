@@ -94,7 +94,7 @@ const Page = () => {
 
   const { data: categoryList, isLoading: isCategoryListLoading } = useQuery({
     queryKey: ["categoryList", categoryId],
-    queryFn: () => getMTOCategoryList(categoryId ? Number(categoryId) : 0),
+    queryFn: () => getMTOCategoryList(),
   });
 
   useEffect(() => {

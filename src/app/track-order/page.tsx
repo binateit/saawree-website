@@ -216,7 +216,7 @@ const Page = () => {
                 className='img-fluid'
                 alt='cart'
               />
-              <h4 className='mt-2'>{error?.data?.exception}</h4>
+              <h4 className='mt-2'>No Record found for the given data</h4>
               <button
                 className='btn btn-saawree mt-2'
                 onClick={() => {

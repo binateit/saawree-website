@@ -52,13 +52,9 @@ const getProductById = async (id: number): Promise<Result | Product> => {
     });
 };
 
-const getMTOCategoryList = async (
-  parentCategoryId: number
-): Promise<Category[]> => {
+const getMTOCategoryList = async (): Promise<Category[]> => {
   return await axiosInstance
-    .post(`${MAKE_TO_ORDER_CATEGORY_LIST_URL}`, {
-      parentCategoryId: parentCategoryId,
-    })
+    .post(`${MAKE_TO_ORDER_CATEGORY_LIST_URL}`, {})
     .then((d: AxiosResponse<Category[]>) => {
       return d.data;
     })
