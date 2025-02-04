@@ -8,7 +8,7 @@ import axios, {
 } from "axios";
 import { Session } from "next-auth";
 
-import { getSession, signOut } from "next-auth/react";
+import { getSession } from "next-auth/react";
 
 const API_URL = process.env.NEXT_PUBLIC_API_URL;
 

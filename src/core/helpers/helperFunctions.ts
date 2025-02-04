@@ -1,4 +1,3 @@
-import axios from "axios";
 import { format } from "date-fns";
 
 const camelize = (value: string) => {

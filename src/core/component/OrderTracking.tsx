@@ -2,11 +2,11 @@ import React from "react";
 import { formatDate } from "../helpers/helperFunctions";
 import { SaleOrderStatusHistory } from "../models/saleOrderModel";
 
-interface IOrderStatus {
-  saleOrderStatusId: number;
-  saleOrderStatusName: string;
-  statusDate: string;
-}
+// interface IOrderStatus {
+//   saleOrderStatusId: number;
+//   saleOrderStatusName: string;
+//   statusDate: string;
+// }
 const OrderTracking = ({
   orderProgress,
 }: {
@@ -116,10 +116,9 @@ const OrderTracking = ({
                 <ul className='tracker-sublist'>
                   {isPacked
                     ?.sort(
-                      (a: IOrderStatus, b: IOrderStatus) =>
-                        a?.saleOrderStatusId - b?.saleOrderStatusId
+                      (a, b) => a?.saleOrderStatusId - b?.saleOrderStatusId
                     )
-                    .map((packing: IOrderStatus, index: number) => (
+                    .map((packing, index) => (
                       <li key={index}>
                         <div className='tracker-more-details'>
                           <p className='naration strong mt-0 mb-0'>
@@ -165,10 +164,9 @@ const OrderTracking = ({
                 <ul className='tracker-sublist'>
                   {isShipped
                     ?.sort(
-                      (a: IOrderStatus, b: IOrderStatus) =>
-                        a?.saleOrderStatusId - b?.saleOrderStatusId
+                      (a, b) => a?.saleOrderStatusId - b?.saleOrderStatusId
                     )
-                    .map((shipping: IOrderStatus, index: number) => (
+                    .map((shipping, index) => (
                       <li key={index}>
                         <div className='tracker-more-details'>
                           <p className='naration strong mt-0 mb-0'>
@@ -213,10 +211,9 @@ const OrderTracking = ({
                 <ul className='tracker-sublist'>
                   {isDelivered
                     ?.sort(
-                      (a: IOrderStatus, b: IOrderStatus) =>
-                        a?.saleOrderStatusId - b?.saleOrderStatusId
+                      (a, b) => a?.saleOrderStatusId - b?.saleOrderStatusId
                     )
-                    .map((deliver: IOrderStatus, index: number) => (
+                    .map((deliver, index) => (
                       <li key={index}>
                         <div className='tracker-more-details'>
                           <p className='naration strong mt-0 mb-0'>

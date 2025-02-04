@@ -37,7 +37,7 @@ const Page = () => {
   const [paginationModel, setPaginationModel] = useImmer<PaginationFilter>({
     first: 0,
     pageNumber: 1,
-    pageSize: 3,
+    pageSize: 10,
     sortField: "",
     sortOrder: -1,
     orderBy: [],
@@ -173,11 +173,14 @@ const Page = () => {
       draft.pageSize = event.rows;
       draft.first = event.first;
       draft.sortField = event.sortField;
-      event.sortField && (draft.order = event.sortOrder === 1 ? "asc" : "desc");
-      event.sortField &&
-        (draft.orderBy = [
-          `${event.sortField} ${event.sortOrder === 1 ? "asc" : "desc"}`,
-        ]);
+      draft.order = event.sortField
+        ? event.sortOrder === 1
+          ? "asc"
+          : "desc"
+        : undefined;
+      draft.orderBy = event.sortField
+        ? [`${event.sortField} ${event.sortOrder === 1 ? "asc" : "desc"}`]
+        : undefined;
     });
   };
 

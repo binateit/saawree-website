@@ -33,8 +33,7 @@ export default async function RootLayout({
               <PrimeReactProvider>
                 <SpeedInsights />
                 <Header />
-                {/* <Suspense fallback={<Loading />}>{children}</Suspense> */}
-                {children}
+                <Suspense fallback={<Loading />}>{children}</Suspense>
                 <Footer />
                 <ToastContainer />
               </PrimeReactProvider>

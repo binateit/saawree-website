@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import { AxiosError, AxiosResponse } from "axios";
+import { AxiosResponse } from "axios";
 import axiosInstance from "../helpers/axiosInstance";
 import {
   CreateSaleOrderRequestModel,

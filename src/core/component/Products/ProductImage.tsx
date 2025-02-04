@@ -1,5 +1,5 @@
 /* eslint-disable @next/next/no-img-element */
-import { checkIfImageExists, urlExists } from "@/core/helpers/helperFunctions";
+import { checkIfImageExists } from "@/core/helpers/helperFunctions";
 import React, { useEffect } from "react";
 import productImagePlaceholder from "@/assets/images/productImagePlaceHolder.jpg";
 

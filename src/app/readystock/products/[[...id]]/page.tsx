@@ -1,3 +1,5 @@
+/* eslint-disable-next-line react-hooks/exhaustive-deps */
+
 "use client";
 import FilterSection from "@/core/component/FilterSection";
 import ProductGridCard from "@/core/component/Products/ProductGridCard";

@@ -25,14 +25,19 @@ const handler = NextAuth({
         if (!credentials) return null;
 
         try {
-          const loginResponse = await login(credentials.username, credentials.password);
+          const loginResponse = await login(
+            credentials.username,
+            credentials.password
+          );
           if (loginResponse.succeeded && loginResponse.data.token) {
             return {
               id: "user-" + loginResponse.data.emailAddress, // Ensure 'id' exists
               token: loginResponse.data.token,
               tokenExpiryTime: loginResponse.data.tokenExpiryTime,
               refreshToken: loginResponse.data.refreshToken,
-              refreshTokenExpiryTime: new Date(loginResponse.data.refreshTokenExpiryTime), // Ensure Date type
+              refreshTokenExpiryTime: new Date(
+                loginResponse.data.refreshTokenExpiryTime
+              ), // Ensure Date type
               firstName: loginResponse.data.firstName,
               lastName: loginResponse.data.lastName,
               emailAddress: loginResponse.data.emailAddress,
@@ -59,14 +64,19 @@ const handler = NextAuth({
         if (!credentials) return null;
 
         try {
-          const loginResponse = await agentLogin(credentials.username, credentials.password);
+          const loginResponse = await agentLogin(
+            credentials.username,
+            credentials.password
+          );
           if (loginResponse?.data?.token) {
             return {
               id: "agent-" + loginResponse.data.emailAddress, // Ensure 'id' exists
               token: loginResponse.data.token,
               tokenExpiryTime: new Date(loginResponse.data.tokenExpiryTime),
               refreshToken: loginResponse.data.refreshToken,
-              refreshTokenExpiryTime: new Date(loginResponse.data.refreshTokenExpiryTime), // Ensure Date type
+              refreshTokenExpiryTime: new Date(
+                loginResponse.data.refreshTokenExpiryTime
+              ), // Ensure Date type
               firstName: loginResponse.data.firstName,
               lastName: loginResponse.data.lastName,
               emailAddress: loginResponse.data.emailAddress,
@@ -83,7 +93,6 @@ const handler = NextAuth({
         }
       },
     }),
-
   ],
   secret: process.env.JWT_SECRET, // Add this line
   session: {
@@ -106,7 +115,8 @@ const handler = NextAuth({
     },
 
     async session({ session, token }) {
-      if (token?.user && typeof token.user === "object") {  // Ensure token.user is an object
+      if (token?.user && typeof token.user === "object") {
+        // Ensure token.user is an object
         const user = token.user as {
           token: string;
           tokenExpiryTime: Date;
@@ -118,7 +128,7 @@ const handler = NextAuth({
           mobileNumber: string;
           userType: string;
         };
-    
+
         session.user = {
           token: user.token || "",
           tokenExpiryTime: user.tokenExpiryTime || new Date(),
@@ -145,11 +155,11 @@ const handler = NextAuth({
           userType: user.userType,
         };
       }
-    
+
       if (!token.user || typeof token.user !== "object") {
         token.user = {}; // Ensure it's an object
       }
-    
+
       const typedUser = token.user as {
         token?: string;
         refreshToken?: string;
@@ -159,29 +169,33 @@ const handler = NextAuth({
         emailAddress?: string;
         userType?: string;
       };
-    
+
       if (typedUser.token) {
         const decodedToken = jwt.decode(typedUser.token) as jwt.JwtPayload;
         if (decodedToken?.exp) {
           const expirationTime = new Date(decodedToken.exp * 1000);
           const currentTime = new Date();
-    
+
           if (expirationTime < currentTime) {
-            if (typedUser.refreshTokenExpiryTime && new Date(typedUser.refreshTokenExpiryTime) > currentTime) {
+            if (
+              typedUser.refreshTokenExpiryTime &&
+              new Date(typedUser.refreshTokenExpiryTime) > currentTime
+            ) {
               const refreshTokendetails: RefreshToken = {
                 token: typedUser.token,
                 refreshToken: typedUser.refreshToken || "",
               };
-    
+
               const response =
                 typedUser.userType === "customer"
                   ? await getRefreshToken(refreshTokendetails)
                   : await getAgentRefreshToken(refreshTokendetails);
-    
+
               if (response.data.token) {
                 typedUser.token = response.data.token;
                 typedUser.refreshToken = response.data.refreshToken;
-                typedUser.refreshTokenExpiryTime = response.data.refreshTokenExpiryTime;
+                typedUser.refreshTokenExpiryTime =
+                  response.data.refreshTokenExpiryTime;
               }
             } else {
               await signOut({ redirect: false });
@@ -190,9 +204,9 @@ const handler = NextAuth({
           }
         }
       }
-    
+
       return token;
-    }
+    },
   },
 
   cookies: {

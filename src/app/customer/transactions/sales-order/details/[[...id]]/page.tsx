@@ -1,9 +1,6 @@
 "use client";
 import { formatCurrency, formatDate } from "@/core/helpers/helperFunctions";
-import {
-  FileResult,
-  SaleOrderStatusHistory,
-} from "@/core/models/saleOrderModel";
+import { FileResult } from "@/core/models/saleOrderModel";
 import {
   GenerateChallanPdf,
   getSalesOrderById,

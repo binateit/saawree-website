@@ -154,11 +154,14 @@ const Page = () => {
       draft.pageSize = event.rows;
       draft.first = event.first;
       draft.sortField = event.sortField;
-      draft.order = event?.sortField && event.sortOrder === 1 ? "asc" : "desc";
-      draft.orderBy = [
-        event.sortField &&
-          `${event.sortField} ${event.sortOrder === 1 ? "asc" : "desc"}`,
-      ];
+      draft.order = event.sortField
+        ? event.sortOrder === 1
+          ? "asc"
+          : "desc"
+        : undefined;
+      draft.orderBy = event.sortField
+        ? [`${event.sortField} ${event.sortOrder === 1 ? "asc" : "desc"}`]
+        : undefined;
     });
   };
 

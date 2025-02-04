@@ -2,14 +2,11 @@
 import OrderTracking from "@/core/component/OrderTracking";
 import { getOrderTracking } from "@/core/requests/saleOrderRequests";
 import { useMutation } from "@tanstack/react-query";
-import { useRouter } from "next/navigation";
 import React, { useState } from "react";
-import Loading from "../loading";
 import { DataTable } from "primereact/datatable";
 import { Column } from "primereact/column";
 import { formatCurrency, formatDate } from "@/core/helpers/helperFunctions";
 import Image from "next/image";
-import Link from "next/link";
 import noProductImage from "@/assets/images/no-products-available.png";
 
 interface TrackOrderPayload {
@@ -18,7 +15,6 @@ interface TrackOrderPayload {
 }
 
 const Page = () => {
-  const router = useRouter();
   const [trackerInput, setTrackerInput] = useState<TrackOrderPayload>({
     orderNumber: "",
     mobileNumber: "",
