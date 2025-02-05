@@ -1,4 +1,5 @@
 "use client";
+import { useDebounce } from "use-debounce";
 import React, { useState } from "react";
 import finalLogo from "@/assets/images/finalLogo.png";
 import appleStore from "@/assets/images/appleStore.png";
@@ -14,16 +15,19 @@ import {
 import { signOut, useSession } from "next-auth/react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { useQuery } from "@tanstack/react-query";
+import { keepPreviousData, useQuery } from "@tanstack/react-query";
 import { getMenuCategories } from "@/core/requests/homeRequests";
 import { useCartCount } from "@/core/context/useCartCount";
 import { Sidebar } from "primereact/sidebar";
 import Image from "next/image";
 import { Session } from "next-auth";
 import customLoader from "@/core/component/shared/image-loader";
+import { getReadyStockProducts } from "@/core/requests/productsRequests";
 
 const Header = () => {
   const { data: session, status: authStatus } = useSession();
+  const [query, setQuery] = useState("");
+  const [debouncedQuery] = useDebounce(query, 300);
 
   const UserSession = session as Session;
 
@@ -46,6 +50,23 @@ const Header = () => {
     queryFn: () => getMenuCategories(),
   });
 
+  const queryResult = useQuery({
+    queryKey: ["search-product", debouncedQuery],
+    queryFn: async () => {
+      if (!debouncedQuery) return [];
+      const rows = await getReadyStockProducts({
+        advancedFilter: {
+          field: "name",
+          operator: "contains",
+          value: debouncedQuery,
+        },
+      });
+      return rows?.data;
+    },
+    staleTime: 300,
+    placeholderData: keepPreviousData,
+  });
+  console.log(queryResult?.data);
   return (
     <>
       <div className='top-header-bar'>
@@ -136,6 +157,11 @@ const Header = () => {
                     type='search'
                     placeholder='Search Products...'
                     className='form-control search-box'
+                    value={query}
+                    onChange={(e) => {
+                      const newValue = e.target.value;
+                      setQuery(newValue);
+                    }}
                     name=''
                   />
                   <input
