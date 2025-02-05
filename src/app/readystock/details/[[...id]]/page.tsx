@@ -1,6 +1,10 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 "use client";
-import { formatCurrency, urlExists } from "@/core/helpers/helperFunctions";
+import {
+  checkIfImageExists,
+  formatCurrency,
+  urlExists,
+} from "@/core/helpers/helperFunctions";
 import { SelectOptionProps } from "@/core/models/model";
 import underlineIcon from "@/assets/images/underlineIcon.png";
 import {
@@ -29,13 +33,15 @@ import productImagePlaceholder from "@/assets/images/productImagePlaceHolder.jpg
 import ProductImage from "@/core/component/Products/ProductImage";
 import Link from "next/link";
 import { Session } from "next-auth";
+import customLoader from "@/core/component/shared/image-loader";
 
 const Page = () => {
   const { data: session, status: authStatus } = useSession();
   const userSession = session as Session;
   const router = useRouter();
   const searchParams = useSearchParams();
-  const productId = searchParams.get("productId");
+  const defalutProductId = searchParams.get("productId");
+  const [productId, setProductId] = useState<number>(Number(defalutProductId));
   const [mainProductImage, setMainProductImage] = useState<{
     mainImage: string | undefined;
     zoomedImage: string | undefined;
@@ -56,6 +62,7 @@ const Page = () => {
   });
   useEffect(() => {
     const polishTypes: any = [];
+
     response?.polishingTypeList?.map((ptype) => {
       return polishTypes.push({
         name: ptype?.polishingTypeName,
@@ -63,27 +70,39 @@ const Page = () => {
       });
     });
     setPolishTypeList(polishTypes);
-    setPolishType(
-      polishTypes.filter(
-        (p: { name: string }) => p.name === response?.polishingTypeName
-      )[0]?.value
+    const selectedPolishType = polishTypes.filter(
+      (p: { name: string }) => p.name === response?.polishingTypeName
+    )[0]?.value;
+    setPolishType(selectedPolishType);
+    response?.polishingTypeList?.filter(
+      (p) => p.polishingTypeId === selectedPolishType
     );
-
     setMainProductImage({
       mainImage: response?.productImages?.[0]?.mediumImagePath || "",
       zoomedImage: response?.productImages?.[0]?.zoomImagePath || "",
     });
-    urlExists(
+
+    checkIfImageExists(
       `${process.env.NEXT_PUBLIC_APP_IMAGE_API_URL}/${response?.productImages?.[0]?.mediumImagePath}`,
-      function (status: number | boolean) {
-        if (status === 200) {
+      function (status) {
+        if (status) {
           console.log("image found");
         } else {
           setMainProductImage({ mainImage: undefined, zoomedImage: undefined });
         }
       }
     );
-  }, [response]);
+  }, [response, productId]);
+
+  useEffect(() => {
+    if (response) {
+      const selectedPolish = response?.polishingTypeList?.filter(
+        (t) => t.polishingTypeId === Number(polishType)
+      )[0];
+      setProductId(selectedPolish?.productId as number);
+    }
+    // refetch();
+  }, [polishType]);
 
   const { data: recomendedProducts } = useQuery({
     queryKey: ["geRecomendedRSProductRecords"],
@@ -244,6 +263,7 @@ const Page = () => {
                 >
                   {mainProductImage?.mainImage === undefined ? (
                     <Image
+                      loader={customLoader}
                       src={productImagePlaceholder?.src}
                       width={600}
                       height={600}
@@ -390,6 +410,7 @@ const Page = () => {
                           <div className='d-flex '>
                             <div className='moti-color'>
                               <Image
+                                loader={customLoader}
                                 src={`${process.env.NEXT_PUBLIC_APP_IMAGE_API_URL}/${color?.imagePath}`}
                                 alt='colors'
                                 width={20}
@@ -487,6 +508,7 @@ const Page = () => {
                           <div className='d-flex' key={color?.colorId}>
                             <div className='moti-color'>
                               <Image
+                                loader={customLoader}
                                 src={`${process.env.NEXT_PUBLIC_APP_IMAGE_API_URL}/${color?.imagePath}`}
                                 alt='colors'
                                 width={20}
@@ -683,6 +705,7 @@ const Page = () => {
             </div>
             <div className='title-septer'>
               <Image
+                loader={customLoader}
                 src={underlineIcon.src}
                 alt='underline'
                 className='img-fluid'

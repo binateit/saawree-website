@@ -25,6 +25,7 @@ import {
   PaginatorPageChangeEvent,
   PaginatorRowsPerPageDropdownOptions,
 } from "primereact/paginator";
+import customLoader from "@/core/component/shared/image-loader";
 
 const Page = () => {
   const searchParams = useSearchParams();
@@ -324,8 +325,9 @@ const Page = () => {
                   <span className='only-for-responsive'>
                     <BsFilter fontSize={18} />
                   </span>
-                  Showing {response?.data?.length} out of{" "}
-                  {response?.pagination?.totalCount} results
+                  Showing {paginationFilters?.first + 1} to{" "}
+                  {paginationFilters?.first + (response?.data?.length || 0)} of{" "}
+                  {response?.pagination?.totalCount} products
                 </div>
                 <div className='d-flex'>
                   {isLoading ? (
@@ -368,6 +370,7 @@ const Page = () => {
                 <div className='empty-list text-center py-10'>
                   {/* <BsPatchExclamationFill size={60} className='img-fluid text-muted' /> */}
                   <Image
+                    loader={customLoader}
                     src={noProductImage.src}
                     width={300}
                     height={300}
@@ -386,13 +389,9 @@ const Page = () => {
               ) : (
                 <>
                   {viewType === "grid" && (
-                    <div className='row'>
-                      {response?.data
-                        ?.filter(
-                          (product) =>
-                            product.availabilityTypeName !== "Ready Stock"
-                        )
-                        ?.map((product) => (
+                    <>
+                      <div className='row'>
+                        {response?.data?.map((product) => (
                           <div
                             className='col-6 col-sm-6 col-md-4 col-lg-4'
                             key={product?.productId}
@@ -404,7 +403,8 @@ const Page = () => {
                             />
                           </div>
                         ))}
-                    </div>
+                      </div>
+                    </>
                   )}
                   {viewType === "list" && (
                     <div className='products-list-wrap'>

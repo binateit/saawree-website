@@ -1,6 +1,10 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 "use client";
-import { formatCurrency, urlExists } from "@/core/helpers/helperFunctions";
+import {
+  checkIfImageExists,
+  formatCurrency,
+  urlExists,
+} from "@/core/helpers/helperFunctions";
 import { SelectOptionProps } from "@/core/models/model";
 import underlineIcon from "@/assets/images/underlineIcon.png";
 import {
@@ -30,6 +34,7 @@ import "slick-carousel/slick/slick-theme.css";
 import Link from "next/link";
 import Loading from "@/app/loading";
 import { Session } from "next-auth";
+import customLoader from "@/core/component/shared/image-loader";
 
 const Page: FC = () => {
   const { data: session, status: authStatus } = useSession();
@@ -39,7 +44,8 @@ const Page: FC = () => {
   const [visible, setVisible] = useState(false);
   const searchParams = useSearchParams();
   const [selectedColors, setSelectedColors] = useState<ProductColor[]>([]);
-  const productId = searchParams.get("productId");
+  const defalutProductId = searchParams.get("productId");
+  const [productId, setProductId] = useState<number>(Number(defalutProductId));
   const [mainProductImage, setMainProductImage] = useState<{
     mainImage: string | undefined;
     zoomedImage: string | undefined;
@@ -51,13 +57,19 @@ const Page: FC = () => {
   const [polishTypeList, setPolishTypeList] = useState<SelectOptionProps[]>([]);
   const [visibleTab, setVisibleTab] = useState<string>("description");
 
-  const { data: response, isLoading: isProductDetailsLoading } = useQuery({
-    queryKey: ["getMTOProductDetails"],
-    queryFn: () => getMaketoOrderProductDetails(Number(productId)),
+  const {
+    data: response,
+    isLoading: isProductDetailsLoading,
+    refetch,
+  } = useQuery({
+    queryKey: ["getMTOProductDetails", productId && productId],
+    queryFn: () => getMaketoOrderProductDetails(productId && productId),
   });
   const queryClient = useQueryClient();
+
   useEffect(() => {
     const polishTypes: any = [];
+
     response?.polishingTypeList?.map((ptype) => {
       return polishTypes.push({
         name: ptype?.polishingTypeName,
@@ -65,28 +77,39 @@ const Page: FC = () => {
       });
     });
     setPolishTypeList(polishTypes);
-    setPolishType(
-      polishTypes.filter(
-        (p: { name: string }) => p.name === response?.polishingTypeName
-      )[0]?.value
+    const selectedPolishType = polishTypes.filter(
+      (p: { name: string }) => p.name === response?.polishingTypeName
+    )[0]?.value;
+    setPolishType(selectedPolishType);
+    response?.polishingTypeList?.filter(
+      (p) => p.polishingTypeId === selectedPolishType
     );
-
     setMainProductImage({
       mainImage: response?.productImages?.[0]?.mediumImagePath || "",
       zoomedImage: response?.productImages?.[0]?.zoomImagePath || "",
     });
 
-    urlExists(
+    checkIfImageExists(
       `${process.env.NEXT_PUBLIC_APP_IMAGE_API_URL}/${response?.productImages?.[0]?.mediumImagePath}`,
-      function (status: any) {
-        if (status === 200) {
+      function (status) {
+        if (status) {
           console.log("image found");
         } else {
           setMainProductImage({ mainImage: undefined, zoomedImage: undefined });
         }
       }
     );
-  }, [response]);
+  }, [response, productId]);
+
+  useEffect(() => {
+    if (response) {
+      const selectedPolish = response?.polishingTypeList?.filter(
+        (t) => t.polishingTypeId === Number(polishType)
+      )[0];
+      setProductId(selectedPolish?.productId as number);
+    }
+    // refetch();
+  }, [polishType]);
 
   const { data: recomendedProducts } = useQuery({
     queryKey: ["geRecomendedMakeToOrderProductRecords", response],
@@ -243,7 +266,6 @@ const Page: FC = () => {
       },
     ],
   };
-
   if (isProductDetailsLoading) return <Loading />;
   return (
     <section className='product-details'>
@@ -259,6 +281,7 @@ const Page: FC = () => {
                 >
                   {mainProductImage?.mainImage === undefined ? (
                     <Image
+                      loader={customLoader}
                       src={productImagePlaceholder?.src}
                       width={600}
                       height={600}
@@ -420,8 +443,9 @@ const Page: FC = () => {
                           <div className='d-flex'>
                             <div className='moti-color'>
                               <Image
+                                loader={customLoader}
                                 src={`${process.env.NEXT_PUBLIC_APP_IMAGE_API_URL}/${color?.imagePath}`}
-                                alt=''
+                                alt='color'
                                 width={20}
                                 height={20}
                               />
@@ -485,6 +509,7 @@ const Page: FC = () => {
                           <div className='d-flex' key={color?.colorId}>
                             <div className='moti-color'>
                               <Image
+                                loader={customLoader}
                                 src={`${process.env.NEXT_PUBLIC_APP_IMAGE_API_URL}/${color?.imagePath}`}
                                 alt='color'
                                 width={20}
@@ -675,6 +700,7 @@ const Page: FC = () => {
             </div>
             <div className='title-septer'>
               <Image
+                loader={customLoader}
                 src={underlineIcon.src}
                 alt='underlineIcon'
                 className='img-fluid'

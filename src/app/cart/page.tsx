@@ -19,6 +19,7 @@ import { useCartCount } from "@/core/context/useCartCount";
 import Link from "next/link";
 import ProductImage from "@/core/component/Products/ProductImage";
 import Image from "next/image";
+import customLoader from "@/core/component/shared/image-loader";
 
 const Page = () => {
   const { status: authStatus } = useSession();
@@ -195,7 +196,13 @@ const Page = () => {
           <h1>YOUR SHIPPING CART</h1>
         </div>
         <div className='title-septer'>
-          <Image src={underlineIcon.src} alt='' width={120} height={20} />
+          <Image
+            loader={customLoader}
+            src={underlineIcon.src}
+            alt=''
+            width={120}
+            height={20}
+          />
         </div>
 
         {(cartDetails?.items?.length as number) > 0 ? (
@@ -437,6 +444,7 @@ const Page = () => {
           <div className='titlehome'>
             <div className='empty-cart text-center py-5'>
               <Image
+                loader={customLoader}
                 src={emptyCart.src}
                 width={100}
                 height={100}

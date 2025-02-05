@@ -7,7 +7,7 @@ import Link from "next/link";
 import { useSession } from "next-auth/react";
 import Image from "next/image";
 import { Session } from "next-auth";
-
+import customLoader from "@/core/component/shared/image-loader";
 
 const Footer = () => {
   const { data: session, status: authStatus } = useSession();
@@ -40,6 +40,7 @@ const Footer = () => {
               <div className='col-md-3 col-lg-3'>
                 <div className='footer-widget'>
                   <Image
+                    loader={customLoader}
                     src={logo4.src}
                     className='footer-logo img-fluid'
                     alt='Saawree'
@@ -149,6 +150,7 @@ const Footer = () => {
                   </div>
                   <div className='payment-opt'>
                     <Image
+                      loader={customLoader}
                       src={paymentOpt.src}
                       alt='paymentOptions'
                       className='img-fluid'

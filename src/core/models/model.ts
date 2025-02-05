@@ -53,6 +53,7 @@ export type PropertyFailureResult = {
 export type SelectOptionProps = {
   value: number;
   label: string;
+  name?: string;
 };
 
 export type SelectOption<T> = {

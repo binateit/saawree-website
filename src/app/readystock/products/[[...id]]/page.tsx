@@ -27,6 +27,7 @@ import {
   PaginatorPageChangeEvent,
   PaginatorRowsPerPageDropdownOptions,
 } from "primereact/paginator";
+import customLoader from "@/core/component/shared/image-loader";
 
 const Page = () => {
   const searchParams = useSearchParams();
@@ -434,8 +435,9 @@ const Page = () => {
                   <span className='only-for-responsive'>
                     <BsFilter fontSize={18} />
                   </span>
-                  Showing {response?.data?.length} out of{" "}
-                  {response?.pagination?.totalCount} results
+                  Showing {paginationFilters?.first + 1} to{" "}
+                  {paginationFilters?.first + (response?.data?.length || 0)} of{" "}
+                  {response?.pagination?.totalCount} products
                 </div>
                 <div className='d-flex'>
                   {isLoading ? (
@@ -479,6 +481,7 @@ const Page = () => {
                 <div className='empty-list text-center py-10'>
                   {/* <BsPatchExclamationFill size={60} className='img-fluid text-muted' /> */}
                   <Image
+                    loader={customLoader}
                     src={noProductImage.src}
                     width={300}
                     alt='noProduct'

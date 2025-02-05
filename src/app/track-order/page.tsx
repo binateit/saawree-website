@@ -8,6 +8,7 @@ import { Column } from "primereact/column";
 import { formatCurrency, formatDate } from "@/core/helpers/helperFunctions";
 import Image from "next/image";
 import noProductImage from "@/assets/images/no-products-available.png";
+import customLoader from "@/core/component/shared/image-loader";
 
 interface TrackOrderPayload {
   orderNumber: string;
@@ -210,6 +211,7 @@ const Page = () => {
           <div className='titlehome'>
             <div className='empty-cart text-center py-5'>
               <Image
+                loader={customLoader}
                 src={noProductImage.src}
                 width={100}
                 height={100}

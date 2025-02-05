@@ -20,6 +20,7 @@ import { useCartCount } from "@/core/context/useCartCount";
 import { Sidebar } from "primereact/sidebar";
 import Image from "next/image";
 import { Session } from "next-auth";
+import customLoader from "@/core/component/shared/image-loader";
 
 const Header = () => {
   const { data: session, status: authStatus } = useSession();
@@ -84,6 +85,7 @@ const Header = () => {
                 </span>
                 <Link href='/'>
                   <Image
+                    loader={customLoader}
                     src={finalLogo.src}
                     className='img-logo img-fluid'
                     alt='Saawree'
@@ -296,6 +298,7 @@ const Header = () => {
               {/* <span>Download App</span> */}
               <a href='#'>
                 <Image
+                  loader={customLoader}
                   src={appleStore.src}
                   className='app-icon img-fluid'
                   alt='appstore'
@@ -305,6 +308,7 @@ const Header = () => {
               </a>
               <a href=''>
                 <Image
+                  loader={customLoader}
                   src={playStore.src}
                   className='app-icon img-fluid'
                   alt='playstore'

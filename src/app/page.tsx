@@ -14,6 +14,7 @@ import "slick-carousel/slick/slick-theme.css";
 import { useRouter } from "next/navigation";
 import ProductImage from "@/core/component/Products/ProductImage";
 import Loading from "./loading";
+import customLoader from "@/core/component/shared/image-loader";
 
 export default function Home() {
   const { data: session, status } = useSession();
@@ -157,6 +158,7 @@ export default function Home() {
           </div>
           <div className='title-septer'>
             <Image
+              loader={customLoader}
               src={underlineIcon.src}
               alt=''
               className='img-fluid'
@@ -192,6 +194,7 @@ export default function Home() {
           </div>
           <div className='title-septer'>
             <Image
+              loader={customLoader}
               src={underlineIcon?.src}
               className='img-fluid'
               width={120}
@@ -379,6 +382,7 @@ export default function Home() {
             </div>
             <div className='title-septer'>
               <Image
+                loader={customLoader}
                 src={underlineIcon?.src}
                 alt=''
                 className='img-fluid'
@@ -501,6 +505,7 @@ export default function Home() {
           </div>
           <div className='title-septer'>
             <Image
+              loader={customLoader}
               src={underlineIcon?.src}
               alt=''
               className='img-fluid'
@@ -513,6 +518,7 @@ export default function Home() {
               <div className='clients-list' key={index}>
                 <div className='clients-img'>
                   <Image
+                    loader={customLoader}
                     src={`${process.env.NEXT_PUBLIC_APP_IMAGE_API_URL}/${testimonial?.ip}`}
                     width={100}
                     height={100}
