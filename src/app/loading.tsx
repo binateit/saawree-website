@@ -1,17 +1,20 @@
+"use client";
 import Image from "next/image";
 import React from "react";
 import logo4 from "@/assets/images/logo4.png";
+import customLoader from "@/core/component/shared/image-loader";
 const Loading = () => {
   return (
     <div className='full-page-loader'>
       <div className='loader_box'>
         <div className='loader-logo'>
           <Image
+            loader={customLoader}
             src={logo4.src}
             className='img-fluid'
             alt='Loader Logo img-fluid'
-            width={50}
-            height={50}
+            width={150}
+            height={150}
           />
         </div>
         {/* <p className="loding-content text-center">Loading...</p> */}

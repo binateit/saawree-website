@@ -90,10 +90,26 @@ export type MakeToOrderProduct = {
 export type MakeToOrderProductsQueryResponse = Response<
   Array<MakeToOrderProduct>
 >;
+export type Search = {
+  keyword?: string | undefined;
+  fields?: Array<string> | undefined;
+};
 
-export type ProductsFilterOption = {
-  pageNumber: number;
-  pageSize: number;
+export type Filter = {
+  logic?: string | undefined;
+  filters?: Array<Filter> | undefined;
+  field?: string | undefined;
+  operator?: string | undefined;
+  value?: string | undefined;
+};
+export type BaseFilter = {
+  keyword?: string | undefined;
+  advancedSearch?: Search | undefined;
+  advancedFilter?: Filter | undefined;
+};
+export type ProductsFilterOption = BaseFilter & {
+  pageNumber?: number;
+  pageSize?: number;
   orderBy?: string[];
   categoryIds?: number[];
   polishingTypeIds?: number[];

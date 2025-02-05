@@ -26,6 +26,7 @@ import { toast } from "react-toastify";
 import paylater_icon from "@/assets/images/paylater_icon.jpg";
 import razorpay from "@/assets/images/razorpay.jpg";
 import { Session } from "next-auth";
+import customLoader from "@/core/component/shared/image-loader";
 
 const CheckoutPage = () => {
   const { data: session, status: authStatus } = useSession();
@@ -271,6 +272,7 @@ const CheckoutPage = () => {
               }}
             />
             <Image
+              loader={customLoader}
               src={razorpay?.src}
               alt='razorpay'
               className='img-fluid'
@@ -288,6 +290,7 @@ const CheckoutPage = () => {
               onChange={() => setIsRazorPaySelected(false)}
             />
             <Image
+              loader={customLoader}
               src={paylater_icon?.src}
               alt='paylater'
               width={100}

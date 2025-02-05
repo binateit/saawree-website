@@ -1,3 +1,5 @@
+/* eslint-disable-next-line react-hooks/exhaustive-deps */
+
 "use client";
 import FilterSection from "@/core/component/FilterSection";
 import ProductGridCard from "@/core/component/Products/ProductGridCard";
@@ -11,7 +13,6 @@ import {
 } from "@/core/requests/productsRequests";
 import { useQuery } from "@tanstack/react-query";
 import { useSession } from "next-auth/react";
-import Link from "next/link";
 import { useSearchParams } from "next/navigation";
 import { Dropdown } from "primereact/dropdown";
 import React, { useEffect, useState } from "react";
@@ -21,6 +22,12 @@ import { useImmer } from "use-immer";
 import Image from "next/image";
 import Loading from "@/app/loading";
 import { Session } from "next-auth";
+import {
+  Paginator,
+  PaginatorPageChangeEvent,
+  PaginatorRowsPerPageDropdownOptions,
+} from "primereact/paginator";
+import customLoader from "@/core/component/shared/image-loader";
 
 const Page = () => {
   const searchParams = useSearchParams();
@@ -34,13 +41,13 @@ const Page = () => {
   );
 
   const [polishList, setPolishList] = useState<CheckBoxFilter[]>([]);
-
+  const categoryId = searchParams.get("categoryId");
   const [selectedFilters, setSelectedFilters] = useState<{
     categoryIds: number[] | undefined;
     polishingTypeIds: number[] | undefined;
     colorIds: number[] | undefined;
   }>({
-    categoryIds: [],
+    categoryIds: categoryId ? [Number(categoryId)] : undefined,
     polishingTypeIds: [],
     colorIds: [],
   });
@@ -51,10 +58,12 @@ const Page = () => {
     pageNumber: number;
     pageSize: number;
     orderBy: string[];
+    first: number;
   }>({
     pageNumber: 1,
     pageSize: 12,
     orderBy: [],
+    first: 0,
   });
 
   // const categoryId = searchParams.get("categoryId");
@@ -79,6 +88,7 @@ const Page = () => {
     session?.user !== undefined
       ? sortOptions
       : sortOptions.filter((item) => item.show === "always");
+
   const { data: response, isLoading } = useQuery({
     queryKey: [
       "getReadyStockProductRecords",
@@ -149,35 +159,135 @@ const Page = () => {
     setColorList(colors);
     setPolishList(result);
     setCategoryFilterList(mulitiFilter);
+    const parentCategorySelected = mulitiFilter?.filter(
+      (cat: CategoryList) =>
+        cat?.id === Number(categoryId) && cat?.hasChild === true
+    );
+
+    if (parentCategorySelected.length > 0) {
+      const allSubCat = mulitiFilter
+        ?.filter(
+          (item: CategoryList) => item?.parentCategoryId === Number(categoryId)
+        )
+        ?.map((cat: CategoryList) => cat?.id);
+      setSelectedFilters({
+        ...selectedFilters,
+        categoryIds: [...allSubCat, Number(categoryId)],
+      });
+    } else {
+      setSelectedFilters({
+        ...selectedFilters,
+        categoryIds: [Number(categoryId)],
+      });
+    }
   }, [
     isPolishTypeListLoading,
     isColorTypeListLoading,
     isCategoryListLoading,
-    polishTypeList,
-    colorTypeList,
-    categoryList,
-    polishList,
-    colorList,
+    // polishTypeList,
+    // colorTypeList,
+    // categoryList,
+    // polishList,
+    // colorList,
   ]);
 
-  const handleCategoryChange = (id: number) => {
+  const handleCategoryChange = (id: number, status: boolean) => {
     const catList = selectedFilters?.categoryIds;
-    if (catList?.includes(id)) {
-      return setSelectedFilters({
-        ...selectedFilters,
-        categoryIds: catList.filter((item) => item !== id),
-      });
+    const parentCategorySelected = categoryFilterList?.filter(
+      (cat) => cat?.id === id && cat?.hasChild === true
+    );
+
+    if (status) {
+      if (parentCategorySelected.length == 0) {
+        catList?.push(id);
+        return setSelectedFilters({
+          ...selectedFilters,
+          categoryIds: catList,
+        });
+      } else {
+        catList?.push(id);
+        categoryFilterList
+          ?.filter((item) => item?.parentCategoryId === id)
+          ?.map((cat) => catList?.push(cat?.id));
+
+        return setSelectedFilters({
+          ...selectedFilters,
+          categoryIds: catList,
+        });
+      }
     } else {
-      categoryFilterList?.map((item: { id: number }) => {
-        if (item?.id === id) {
-          catList?.push(id);
-          return setSelectedFilters({
-            ...selectedFilters,
-            categoryIds: catList,
+      if (parentCategorySelected.length == 0) {
+        return setSelectedFilters({
+          ...selectedFilters,
+          categoryIds: catList?.filter((x) => x != id),
+        });
+      } else {
+        const parentCategoryIndex = catList?.indexOf(id);
+        if (parentCategoryIndex || 0 > -1)
+          catList?.splice(parentCategoryIndex || 0, 1);
+
+        categoryFilterList
+          ?.filter((item) => item?.parentCategoryId === id)
+          ?.map((cat) => {
+            const a = catList?.indexOf(cat?.id);
+            if (a || 0 > -1) {
+              catList?.splice(a || 0, 1);
+            }
           });
-        }
-      });
+
+        return setSelectedFilters({
+          ...selectedFilters,
+          categoryIds: catList,
+        });
+      }
     }
+
+    // if (catList?.includes(id)) {
+    //   const allSubCat = categoryFilterList
+    //     ?.filter((item) => item?.parentCategoryId === id)
+    //     ?.map((cat) => cat?.id);
+    //   console.log(allSubCat);
+    //   return setSelectedFilters({
+    //     ...selectedFilters,
+    //     categoryIds: catList.filter((item, index) => item !== allSubCat[index]),
+    //   });
+    // } else {
+    //   if (parentCategorySelected?.length > 0) {
+    //     const allSubCat = categoryFilterList
+    //       ?.filter((item) => item?.parentCategoryId === id)
+    //       ?.map((cat) => cat?.id);
+    //     return setSelectedFilters({
+    //       ...selectedFilters,
+    //       categoryIds: [...allSubCat, id],
+    //     });
+    //   } else {
+    //     catList.push(id);
+    //     return setSelectedFilters({
+    //       ...selectedFilters,
+    //       categoryIds: catList,
+    //     });
+    //   }
+
+    //   // categoryFilterList?.map((item: CategoryList) => {
+    //   //   if (item?.id === id && item?.isParent === true) {
+    //   //     const allSubCat = categoryFilterList
+    //   //       ?.filter((item) => item?.parentCategoryId === id)
+    //   //       ?.map((cat) => cat?.id);
+    //   //     console.log("inside handle category", [...allSubCat, id]);
+    //   //     return setSelectedFilters({
+    //   //       ...selectedFilters,
+    //   //       categoryIds: [allSubCat, id],
+    //   //     });
+    //   //   } else {
+    //   //     console.log("inside handle category", [id]);
+    //   //     catList.push(id);
+    //   //     return setSelectedFilters({
+    //   //       ...selectedFilters,
+    //   //       categoryIds: catList,
+    //   //     });
+    //   //   }
+    //   // });
+    // }
   };
   const handlePolishChange = (id: number) => {
     const poList = selectedFilters?.polishingTypeIds;
@@ -218,25 +328,57 @@ const Page = () => {
     }
   };
 
-  const onLoadMore = () => {
+  const onPageOrSortChange = (event: PaginatorPageChangeEvent) => {
     setPaginationFilters((draft) => {
-      draft.pageNumber = paginationFilters?.pageNumber + 1;
-      draft.pageSize = 12;
+      draft.pageNumber =
+        event.page === undefined ? 1 : (event.page as number) + 1;
+      draft.pageSize = event.rows;
+      draft.first = event.first;
     });
+  };
+
+  const paginatorTemplate = {
+    layout:
+      "RowsPerPageDropdown PrevPageLink PageLinks NextPageLink CurrentPageReport",
+    RowsPerPageDropdown: (options: PaginatorRowsPerPageDropdownOptions) => {
+      const dropdownOptions = [
+        { label: 12, value: 12 },
+        { label: 20, value: 20 },
+      ];
+      return (
+        <div className='flex align-items-center'>
+          <React.Fragment>
+            <span
+              className='mx-1'
+              style={{ color: "var(--text-color)", userSelect: "none" }}
+            >
+              Products per page:{" "}
+            </span>
+            <Dropdown
+              value={options.value}
+              options={dropdownOptions}
+              onChange={options.onChange}
+            />
+          </React.Fragment>
+        </div>
+      );
+    },
   };
 
   const onSort = (value: string) => {
     const newOrderBy: string[] = [];
     newOrderBy.push(value);
-    setPaginationFilters((draft) => {
-      return draft.pageNumber, draft.pageSize, (draft.orderBy = newOrderBy);
+    setPaginationFilters(() => {
+      return {
+        ...paginationFilters,
+        orderBy: newOrderBy,
+      };
     });
   };
   if (
     isCategoryListLoading ||
     isPolishTypeListLoading ||
-    isColorTypeListLoading ||
-    isLoading
+    isColorTypeListLoading
   )
     return <Loading />;
 
@@ -255,13 +397,22 @@ const Page = () => {
                 <div className='close-filter'>
                   <i className='bi bi-x-circle'></i>
                 </div>
-                <FilterSection
-                  title='Filter by Category'
-                  type='multi'
-                  multiFilter={categoryFilterList}
-                  onChange={handleCategoryChange}
-                  selectedFilter={selectedFilters?.categoryIds || []}
-                />
+                {categoryFilterList
+                  ?.filter((cat) => cat?.parentCategoryId === null)
+                  .map((category) => (
+                    <FilterSection
+                      key={category?.id}
+                      title={`Filter by ${category?.name}`}
+                      type='multi'
+                      multiFilter={categoryFilterList?.filter(
+                        (c) => c.parentCategoryId === category?.id
+                      )}
+                      categoryList={categoryFilterList}
+                      onChange={handleCategoryChange}
+                      selectedFilter={selectedFilters?.categoryIds || []}
+                      parentCategoryId={Number(categoryId)}
+                    />
+                  ))}
                 <FilterSection
                   title='Polishing Type'
                   type='single'
@@ -284,49 +435,73 @@ const Page = () => {
                   <span className='only-for-responsive'>
                     <BsFilter fontSize={18} />
                   </span>
-                  Showing all {response?.data?.length} results
+                  Showing {paginationFilters?.first + 1} to{" "}
+                  {paginationFilters?.first + (response?.data?.length || 0)} of{" "}
+                  {response?.pagination?.totalCount} products
                 </div>
                 <div className='d-flex'>
-                  <div className='right-side-bar'>
-                    <label className='mr-2'>Sort by </label>
-                    <Dropdown
-                      value={
-                        paginationFilters?.orderBy?.[0] || sortList[0]?.value
-                      }
-                      onChange={(e) => onSort(e.value)}
-                      options={sortList}
-                      optionLabel='name'
-                      placeholder='Select options'
-                      panelClassName='custom-dropDown-panel'
-                    />
-                  </div>
-                  <div className='list-grid d-flex'>
-                    <div
-                      onClick={() => setViewType("grid")}
-                      className='list-grid-link'
-                    >
-                      <BsGrid cursor={"pointer"} />
-                    </div>
-                    <div
-                      onClick={() => setViewType("list")}
-                      className='list-grid-link'
-                    >
-                      <BsListUl cursor={"pointer"} />
-                    </div>
-                  </div>
+                  {isLoading ? (
+                    <Loading />
+                  ) : (
+                    <>
+                      <div className='right-side-bar'>
+                        <label className='mr-2'>Sort by </label>
+                        <Dropdown
+                          value={
+                            paginationFilters?.orderBy?.[0] ||
+                            sortList[0]?.value
+                          }
+                          onChange={(e) => onSort(e.value)}
+                          options={sortList}
+                          optionLabel='name'
+                          placeholder='Select options'
+                          panelClassName='custom-dropDown-panel'
+                        />
+                      </div>
+                      <div className='list-grid d-flex'>
+                        <div
+                          onClick={() => setViewType("grid")}
+                          className='list-grid-link'
+                        >
+                          <BsGrid cursor={"pointer"} />
+                        </div>
+                        <div
+                          onClick={() => setViewType("list")}
+                          className='list-grid-link'
+                        >
+                          <BsListUl cursor={"pointer"} />
+                        </div>
+                      </div>
+                    </>
+                  )}
                 </div>
               </div>
 
               {response?.data?.length === 0 ? (
                 <div className='empty-list text-center py-10'>
                   {/* <BsPatchExclamationFill size={60} className='img-fluid text-muted' /> */}
-                  <Image src={noProductImage.src} width={300} alt='noProduct' />
+                  <Image
+                    loader={customLoader}
+                    src={noProductImage.src}
+                    width={300}
+                    alt='noProduct'
+                    height={150}
+                  />
                   <h4 className='mt-2 text-muted'>No Products Found.</h4>
                   <p>Your search did not match any products</p>
                   <p>Please ty again.</p>
-                  <Link href='' className='btn btn-saawree mt-2'>
+                  <button
+                    className='btn btn-saawree mt-2'
+                    onClick={() =>
+                      setSelectedFilters({
+                        categoryIds: undefined,
+                        colorIds: undefined,
+                        polishingTypeIds: undefined,
+                      })
+                    }
+                  >
                     Clear Filter
-                  </Link>
+                  </button>
                 </div>
               ) : (
                 <>
@@ -354,19 +529,20 @@ const Page = () => {
                             product={product}
                             session={session as Session}
                             type={"rds"}
+                            key={product?.productId}
                           />
                         </>
                       ))}
                     </div>
                   )}
-                  <div className='load-more w-100 text-center mt-5'>
-                    <button
-                      className='btn btn-saawree-outline'
-                      onClick={onLoadMore}
-                    >
-                      Load More
-                    </button>
-                  </div>
+                  <Paginator
+                    template={paginatorTemplate}
+                    first={paginationFilters?.first}
+                    rows={paginationFilters?.pageSize}
+                    totalRecords={response?.pagination?.totalCount}
+                    rowsPerPageOptions={[12, 20, 30]}
+                    onPageChange={onPageOrSortChange}
+                  />
                 </>
               )}
             </div>

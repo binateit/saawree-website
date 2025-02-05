@@ -1,4 +1,5 @@
 "use client";
+import { useDebounce } from "use-debounce";
 import React, { useState } from "react";
 import finalLogo from "@/assets/images/finalLogo.png";
 import appleStore from "@/assets/images/appleStore.png";
@@ -14,20 +15,24 @@ import {
 import { signOut, useSession } from "next-auth/react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { useQuery } from "@tanstack/react-query";
+import { keepPreviousData, useQuery } from "@tanstack/react-query";
 import { getMenuCategories } from "@/core/requests/homeRequests";
 import { useCartCount } from "@/core/context/useCartCount";
 import { Sidebar } from "primereact/sidebar";
 import Image from "next/image";
 import { Session } from "next-auth";
-
+import customLoader from "@/core/component/shared/image-loader";
+import { getReadyStockProducts } from "@/core/requests/productsRequests";
 
 const Header = () => {
   const { data: session, status: authStatus } = useSession();
+  const [query, setQuery] = useState("");
+  const [debouncedQuery] = useDebounce(query, 300);
 
   const UserSession = session as Session;
 
   const [show, setShow] = useState(false);
+  const [showSearchDropDown, setShowDropDown] = useState(false);
   const { cartCount } = useCartCount();
 
   const [closeSubMenu, setCloseSubMenu] = useState(false);
@@ -45,6 +50,30 @@ const Header = () => {
     queryKey: ["menuCategoryData"],
     queryFn: () => getMenuCategories(),
   });
+
+  const queryResult = useQuery({
+    queryKey: ["search-product", debouncedQuery],
+    queryFn: async () => {
+      if (!debouncedQuery) return [];
+      const rows = await getReadyStockProducts({
+        advancedFilter: {
+          field: "name",
+          operator: "contains",
+          value: debouncedQuery,
+        },
+      });
+      return rows?.data;
+    },
+    staleTime: 300,
+    placeholderData: keepPreviousData,
+  });
+  const handleNavgation = (productId: number): void => {
+    navigate.push(`/readystock/details?productId=${productId}`);
+    setShowDropDown(false);
+    setQuery("");
+  };
+
+  console.log(UserSession?.user);
 
   return (
     <>
@@ -68,7 +97,6 @@ const Header = () => {
               <Link href='/auth/login'>
                 <i className='bi bi-box-arrow-in-right'></i> Login
               </Link>{" "}
-              /
               <Link href='/auth/registrationprocess'>
                 <i className='bi bi-box-arrow-in-right'></i> Register
               </Link>
@@ -86,6 +114,7 @@ const Header = () => {
                 </span>
                 <Link href='/'>
                   <Image
+                    loader={customLoader}
                     src={finalLogo.src}
                     className='img-logo img-fluid'
                     alt='Saawree'
@@ -99,7 +128,7 @@ const Header = () => {
               className='col-xl-8 col-lg-7 col-md-8 col-sm-12 d-none d-md-block order-3 order-md-2'
               id='product-search-bar'
             >
-              <form className='search-form'>
+              <form className='search-form position-relative'>
                 {/* <div className='up-in-toggle text-center mb-3'>
                   <span className='switch-btn'>
                     <input
@@ -136,7 +165,13 @@ const Header = () => {
                     type='search'
                     placeholder='Search Products...'
                     className='form-control search-box'
-                    name=''
+                    value={query}
+                    onChange={(e) => {
+                      const newValue = e.target.value;
+                      setQuery(newValue);
+                      setShowDropDown(newValue?.length > 1 ? true : false);
+                    }}
+                    name='product-search'
                   />
                   <input
                     type='submit'
@@ -144,6 +179,31 @@ const Header = () => {
                     value='search'
                     name=''
                   />
+                </div>
+
+                <div
+                  className={`global-search-results ${
+                    (queryResult?.data?.length || 0) > 0 ? "border shadow" : ""
+                  } position-absolute w-100 bg-white`}
+                >
+                  {showSearchDropDown &&
+                    ((queryResult?.data?.length || 0) > 0 ? (
+                      <div className='d-flex flex-column'>
+                        {queryResult?.data?.map((res) => (
+                          <div
+                            key={res?.productId}
+                            onClick={() => handleNavgation(res?.productId)}
+                            className='text-dark mb-0 border-bottom py-2 px-3'
+                          >
+                            {res?.productName}
+                          </div>
+                        ))}
+                      </div>
+                    ) : (
+                      <div className='global-empty-result text-center p-4'>
+                        <p className='mb-0'>No Result Found</p>
+                      </div>
+                    ))}
                 </div>
               </form>
             </div>
@@ -187,81 +247,92 @@ const Header = () => {
                         Home
                       </Link>
                     </li>
-                    <li className='has_dropdown'>
-                      <a href='#'>
-                        Make to Order <i className='fas fa-angle-down'></i>
-                      </a>
-                      <ul className='sub_menu'>
-                        {menuCategoryData?.mtoc
-                          ?.filter(
-                            (cat) => cat.isp === true && cat.pcid === null
-                          )
-                          .map((cat) => (
-                            <React.Fragment key={cat.id}>
-                              <li className='has_dropdown'>
-                                <Link
-                                  href={`/maketoorder/products?subCategoryName=${cat.n}&categoryId=${cat?.id}`}
-                                  onClick={() => setCloseSubMenu(!closeSubMenu)}
-                                >
-                                  {cat.n}
-                                  <i className='fas fa-angle-right' />
-                                </Link>
-                                <ul
-                                  className={
-                                    closeSubMenu ? "sub_menu open" : "sub_menu "
-                                  }
-                                >
-                                  {menuCategoryData?.mtoc
-                                    .filter((subCat) => subCat.pcid === cat.id)
-                                    .map((subCat, index) => (
-                                      <li key={index} className='has_dropdown'>
-                                        <Link
-                                          href={`/maketoorder/products?subCategoryName=${subCat.n}&categoryId=${subCat?.id}`}
-                                          onClick={() => {
-                                            setCloseSubMenu(!closeSubMenu);
-                                          }}
+                    {UserSession?.user?.isMakeToOrderEnabled && (
+                      <li className='has_dropdown'>
+                        <a href='#'>
+                          Make to Order <i className='fas fa-angle-down'></i>
+                        </a>
+                        <ul className='sub_menu'>
+                          {menuCategoryData?.mtoc
+                            ?.filter(
+                              (cat) => cat.isp === true && cat.pcid === null
+                            )
+                            .map((cat) => (
+                              <React.Fragment key={cat.id}>
+                                <li className='has_dropdown'>
+                                  <Link
+                                    href={`/maketoorder/products?subCategoryName=${cat.n}&categoryId=${cat?.id}`}
+                                    onClick={() =>
+                                      setCloseSubMenu(!closeSubMenu)
+                                    }
+                                  >
+                                    {cat.n}
+                                    <i className='fas fa-angle-right' />
+                                  </Link>
+                                  <ul
+                                    className={
+                                      closeSubMenu
+                                        ? "sub_menu open"
+                                        : "sub_menu "
+                                    }
+                                  >
+                                    {menuCategoryData?.mtoc
+                                      .filter(
+                                        (subCat) => subCat.pcid === cat.id
+                                      )
+                                      .map((subCat, index) => (
+                                        <li
+                                          key={index}
+                                          className='has_dropdown'
                                         >
-                                          {subCat.n}{" "}
-                                          <i className='fas fa-angle-right' />
-                                        </Link>
-                                        <ul
-                                          className={
-                                            closeSubMenu
-                                              ? "sub_menu row category-menu open"
-                                              : "sub_menu row category-menu "
-                                          }
-                                        >
-                                          {menuCategoryData?.mtoc
-                                            .filter(
-                                              (ssubCat) =>
-                                                ssubCat.pcid === subCat.id
-                                            )
-                                            .map((ssubCat, index) => (
-                                              <li
-                                                key={index}
-                                                className='sub-menu-col'
-                                              >
-                                                <Link
-                                                  href={`/maketoorder/products?subCategoryName=${ssubCat.n}&categoryId=${ssubCat?.id}`}
-                                                  onClick={() => {
-                                                    setCloseSubMenu(
-                                                      !closeSubMenu
-                                                    );
-                                                  }}
+                                          <Link
+                                            href={`/maketoorder/products?subCategoryName=${subCat.n}&categoryId=${subCat?.id}`}
+                                            onClick={() => {
+                                              setCloseSubMenu(!closeSubMenu);
+                                            }}
+                                          >
+                                            {subCat.n}{" "}
+                                            <i className='fas fa-angle-right' />
+                                          </Link>
+                                          <ul
+                                            className={
+                                              closeSubMenu
+                                                ? "sub_menu row category-menu open"
+                                                : "sub_menu row category-menu "
+                                            }
+                                          >
+                                            {menuCategoryData?.mtoc
+                                              .filter(
+                                                (ssubCat) =>
+                                                  ssubCat.pcid === subCat.id
+                                              )
+                                              .map((ssubCat, index) => (
+                                                <li
+                                                  key={index}
+                                                  className='sub-menu-col'
                                                 >
-                                                  {ssubCat.n}
-                                                </Link>
-                                              </li>
-                                            ))}
-                                        </ul>
-                                      </li>
-                                    ))}
-                                </ul>
-                              </li>
-                            </React.Fragment>
-                          ))}
-                      </ul>
-                    </li>
+                                                  <Link
+                                                    href={`/maketoorder/products?subCategoryName=${ssubCat.n}&categoryId=${ssubCat?.id}`}
+                                                    onClick={() => {
+                                                      setCloseSubMenu(
+                                                        !closeSubMenu
+                                                      );
+                                                    }}
+                                                  >
+                                                    {ssubCat.n}
+                                                  </Link>
+                                                </li>
+                                              ))}
+                                          </ul>
+                                        </li>
+                                      ))}
+                                  </ul>
+                                </li>
+                              </React.Fragment>
+                            ))}
+                        </ul>
+                      </li>
+                    )}
                     <li className='mega_menu_dropdown mega_menu_demo_2 has_dropdown'>
                       <a href='#'>
                         Ready Stock <i className='fas fa-angle-down'></i>
@@ -298,6 +369,7 @@ const Header = () => {
               {/* <span>Download App</span> */}
               <a href='#'>
                 <Image
+                  loader={customLoader}
                   src={appleStore.src}
                   className='app-icon img-fluid'
                   alt='appstore'
@@ -307,6 +379,7 @@ const Header = () => {
               </a>
               <a href=''>
                 <Image
+                  loader={customLoader}
                   src={playStore.src}
                   className='app-icon img-fluid'
                   alt='playstore'

@@ -25,7 +25,7 @@ const MAKE_TO_ORDER_CATEGORY_LIST_URL = `${API_URL}/category/category-list`;
 const PolishingType_LIST_URL = `${ADMIN_API_URL}/polishingtypes/list`;
 const Color_LIST_URL = `${ADMIN_API_URL}/colors/list`;
 const READY_STOCK_PRODUCTS = `${API_URL}/products/search-ready-stock`;
-const MAKE_TO_ORDER_PRODUCTS = `${API_URL}/productgroup/productgroup-list`;
+const MAKE_TO_ORDER_PRODUCTS = `${API_URL}/productgroup/search-make-to-order`;
 const MAKE_TO_ORDER_PRODUCTS_DETAILS = `${API_URL}/products/product-detail`;
 const RS_PRODUCTS_DETAILS = `${API_URL}/products/ready-stock-product-detail`;
 const Product_BY_ID_URL = `${API_URL}/products`;
@@ -52,13 +52,9 @@ const getProductById = async (id: number): Promise<Result | Product> => {
     });
 };
 
-const getMTOCategoryList = async (
-  parentCategoryId: number
-): Promise<Category[]> => {
+const getMTOCategoryList = async (): Promise<Category[]> => {
   return await axiosInstance
-    .post(`${MAKE_TO_ORDER_CATEGORY_LIST_URL}`, {
-      parentCategoryId: parentCategoryId,
-    })
+    .post(`${MAKE_TO_ORDER_CATEGORY_LIST_URL}`, {})
     .then((d: AxiosResponse<Category[]>) => {
       return d.data;
     })

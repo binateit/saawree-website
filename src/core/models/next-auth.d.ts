@@ -16,6 +16,7 @@ declare module "next-auth" {
     mobileNumber: string;
     userType: string;
     agentCode?: string; // Optional for agent users
+    isMakeToOrderEnabled?: boolean;
   }
 
   /**

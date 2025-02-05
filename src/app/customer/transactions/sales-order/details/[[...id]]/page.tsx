@@ -12,6 +12,7 @@ import { DataTable } from "primereact/datatable";
 import React from "react";
 import { toast } from "react-toastify";
 import { saveAs } from "file-saver";
+import OrderTracking from "@/core/component/OrderTracking";
 
 const Page = () => {
   const searchParams = useSearchParams();
@@ -36,231 +37,12 @@ const Page = () => {
     });
   };
 
-  const isOrderPlaced = orderDetails?.saleOrderStatusHistory?.filter(
-    (status) => status?.saleOrderStatusId === 1
-  );
-
-  const isCancelled = orderDetails?.saleOrderStatusHistory?.filter(
-    (status) => status?.saleOrderStatusId === 3
-  );
-  const isPacked = orderDetails?.saleOrderStatusHistory?.filter(
-    (status) =>
-      status?.saleOrderStatusId === 4 || status?.saleOrderStatusId === 5
-  );
-
-  const isShipped = orderDetails?.saleOrderStatusHistory?.filter(
-    (status) =>
-      status?.saleOrderStatusId === 6 || status?.saleOrderStatusId === 7
-  );
-
-  const isDelivered = orderDetails?.saleOrderStatusHistory?.filter(
-    (status) =>
-      status?.saleOrderStatusId === 8 || status?.saleOrderStatusId === 9
-  );
-
   if (isLoading) return <p>Loading....</p>;
   return (
     <>
-      <div className='card mb-3'>
-        <div className='card-body'>
-          <div className='d-flex justify-content-between flex-colomn-1200'>
-            <div className='order-tracking completed'>
-              <span className='is-complete'></span>
-              <p className='main-status-label'>
-                Order Created
-                <br />
-                <span>
-                  {" "}
-                  {(isOrderPlaced?.length || 0 > 0) &&
-                    formatDate(
-                      isOrderPlaced?.[0]?.statusDate as string,
-                      "dd MMM yyyy"
-                    )}
-                </span>
-              </p>
-            </div>
-            <div className='order-tracking completed'>
-              <span className='is-complete'></span>
-              <p className='main-status-label'>
-                Order Confirmed
-                <br />
-                <span>
-                  {" "}
-                  {(isOrderPlaced?.length || 0 > 0) &&
-                    formatDate(
-                      isOrderPlaced?.[0]?.statusDate as string,
-                      "dd MMM yyyy"
-                    )}
-                </span>
-              </p>
-            </div>
-            {(isCancelled?.length || 0 > 0) && (
-              <div
-                className={`order-tracking ${
-                  isCancelled?.length || 0 > 0 ? "completed" : ""
-                }`}
-              >
-                <span className='is-complete'></span>
-                <p>
-                  Order Cancelled
-                  <br />
-                  <span>
-                    {" "}
-                    {(isCancelled?.length || 0 > 0) &&
-                      formatDate(
-                        isPacked?.[0]?.statusDate as string,
-                        "dd MMM yyyy"
-                      )}
-                  </span>
-                </p>
-              </div>
-            )}
-            <div
-              className={`order-tracking ${
-                isPacked?.length || 0 > 0 ? "completed" : ""
-              }`}
-            >
-              <span className='is-complete'></span>
-              <p
-                className={`${
-                  isPacked?.length || 0 > 0 ? "main-status-label" : ""
-                }`}
-              >
-                Order Packed
-                <br />
-                <span>
-                  {" "}
-                  {(isPacked?.length || 0 > 0) &&
-                    formatDate(
-                      isPacked?.[0]?.statusDate as string,
-                      "dd MMM yyyy"
-                    )}
-                </span>
-              </p>
-              <div className='hoverd-details'>
-                {(isPacked?.length || 0 > 0) && (
-                  <ul className='tracker-sublist'>
-                    {isPacked
-                      ?.sort(
-                        (a, b) => a?.saleOrderStatusId - b?.saleOrderStatusId
-                      )
-                      .map((packing) => (
-                        <li key={packing?.saleOrderId}>
-                          <div className='tracker-more-details'>
-                            <p className='naration strong mt-0 mb-0'>
-                              {packing?.saleOrderStatusName}
-                            </p>
-                            <p className='mt-0'>
-                              {formatDate(
-                                packing?.statusDate as string,
-                                "dd MMM yyyy"
-                              )}
-                            </p>
-                          </div>
-                        </li>
-                      ))}
-                  </ul>
-                )}
-              </div>
-            </div>
-            <div
-              className={`order-tracking ${
-                (isShipped?.length || 0) > 0 ? "completed" : ""
-              }`}
-            >
-              <span className='is-complete'></span>
-              <p
-                className={`${
-                  (isShipped?.length || 0) > 0 ? "main-status-label" : ""
-                }`}
-              >
-                Order Shipped
-                <br />
-                <span>
-                  {" "}
-                  {(isShipped?.length || 0 > 0) &&
-                    formatDate(
-                      isShipped?.[0]?.statusDate as string,
-                      "dd MMM yyyy"
-                    )}
-                </span>
-              </p>
-              <div className='hoverd-details'>
-                {(isShipped?.length || 0) > 0 && (
-                  <ul className='tracker-sublist'>
-                    {isShipped
-                      ?.sort(
-                        (a, b) => a?.saleOrderStatusId - b?.saleOrderStatusId
-                      )
-                      .map((shipping) => (
-                        <li key={shipping?.saleOrderId}>
-                          <div className='tracker-more-details'>
-                            <p className='naration strong mt-0 mb-0'>
-                              {shipping?.saleOrderStatusName}
-                            </p>
-                            <p className='mt-0'>
-                              {formatDate(
-                                shipping?.statusDate as string,
-                                "dd MMM yyyy"
-                              )}
-                            </p>
-                          </div>
-                        </li>
-                      ))}
-                  </ul>
-                )}
-              </div>
-            </div>
-            <div
-              className={`order-tracking ${
-                (isDelivered?.length || 0) > 0 ? "completed" : ""
-              }`}
-            >
-              <span className='is-complete'></span>
-              <p
-                className={`${
-                  (isDelivered?.length || 0) > 0 ? "main-status-label" : ""
-                }`}
-              >
-                Order Delivered
-                <br />
-                <span>
-                  {(isDelivered?.length || 0) > 0 &&
-                    formatDate(
-                      isDelivered?.[0]?.statusDate as string,
-                      "dd MMM yyyy"
-                    )}
-                </span>
-              </p>
-              <div className='hoverd-details'>
-                {(isDelivered?.length || 0) > 0 && (
-                  <ul className='tracker-sublist'>
-                    {isDelivered
-                      ?.sort(
-                        (a, b) => a?.saleOrderStatusId - b?.saleOrderStatusId
-                      )
-                      .map((deliver) => (
-                        <li key={deliver?.saleOrderId}>
-                          <div className='tracker-more-details'>
-                            <p className='naration strong mt-0 mb-0'>
-                              {deliver?.saleOrderStatusName}
-                            </p>
-                            <p className='mt-0'>
-                              {formatDate(
-                                deliver?.statusDate as string,
-                                "dd MMM yyyy"
-                              )}
-                            </p>
-                          </div>
-                        </li>
-                      ))}
-                  </ul>
-                )}
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
+      <OrderTracking
+        orderProgress={orderDetails?.saleOrderStatusHistory || []}
+      />
 
       <div className='card mb-3'>
         <div className='card-header'>
@@ -294,8 +76,13 @@ const Page = () => {
             <div className='col-xl-4 col-lg-12 col-md-12 col-sm-12'>
               <div className='row'>
                 <div className='col-xl-6 col-lg-3 col-md-3 col-sm-4'>
-                  <label className='mb-0 font-weight-bold'>Date Added</label>
-                  {/* <p>{formatDate(orderDetails?.orderDate, "dd MMM yyyy")}</p> */}
+                  <label className='mb-0 font-weight-bold'>Order Date</label>
+                  <p>
+                    {formatDate(
+                      orderDetails?.orderDate as unknown as string,
+                      "dd MMM yyyy"
+                    )}
+                  </p>
                 </div>
                 <div className='col-xl-6 col-lg-3 col-md-3 col-sm-4'>
                   <label className='mb-0 font-weight-bold'>Order Status</label>
@@ -311,11 +98,11 @@ const Page = () => {
             </div>
           </div>
         </div>
-        <div className='card-footer text-right bg-white'>
+        {/* <div className='card-footer text-right bg-white'>
           <a href='payment-options.html' className='btn btn-saawree'>
             Pay Now
           </a>
-        </div>
+        </div> */}
       </div>
 
       <div className='card mb-3'>

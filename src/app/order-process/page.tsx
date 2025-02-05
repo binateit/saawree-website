@@ -1,8 +1,10 @@
+"use client";
 import React from "react";
 import underlineIcon from "@/assets/images/underlineIcon.png";
 // import { Accordion, Button, Card } from 'react-bootstrap';
 import { Accordion, AccordionTab } from "primereact/accordion";
 import Image from "next/image";
+import customLoader from "@/core/component/shared/image-loader";
 
 const Page = () => {
   return (
@@ -12,7 +14,14 @@ const Page = () => {
           <div className='titlehome mt-5'>
             <h1>Order Process</h1>
             <div className='title-septer'>
-              <Image src={underlineIcon.src} alt='underline' />
+              <Image
+                loader={customLoader}
+                src={underlineIcon?.src}
+                className='img-fluid'
+                width={120}
+                height={20}
+                alt='underline'
+              />
             </div>
           </div>
           <p className='text-center'>
@@ -115,7 +124,14 @@ const Page = () => {
           <div className='titlehome mt-5'>
             <h1>FAQs</h1>
             <div className='title-septer'>
-              <Image src={underlineIcon.src} alt='underline' />
+              <Image
+                loader={customLoader}
+                src={underlineIcon.src}
+                className='img-fluid'
+                width={120}
+                height={20}
+                alt='underline'
+              />
             </div>
           </div>
 

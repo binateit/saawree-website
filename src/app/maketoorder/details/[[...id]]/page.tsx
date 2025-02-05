@@ -1,6 +1,9 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 "use client";
-import { formatCurrency, urlExists } from "@/core/helpers/helperFunctions";
+import {
+  checkIfImageExists,
+  formatCurrency,
+} from "@/core/helpers/helperFunctions";
 import { SelectOptionProps } from "@/core/models/model";
 import underlineIcon from "@/assets/images/underlineIcon.png";
 import {
@@ -13,7 +16,7 @@ import { useRouter, useSearchParams } from "next/navigation";
 import { Dropdown } from "primereact/dropdown";
 import React, { FC, useEffect, useState } from "react";
 import Image from "next/image";
-import { BsCart, BsDownload } from "react-icons/bs";
+import { BsCart, BsDownload, BsWhatsapp } from "react-icons/bs";
 import InnerImageZoom from "react-inner-image-zoom";
 import "react-inner-image-zoom/lib/InnerImageZoom/styles.css";
 import { Dialog } from "primereact/dialog";
@@ -30,6 +33,7 @@ import "slick-carousel/slick/slick-theme.css";
 import Link from "next/link";
 import Loading from "@/app/loading";
 import { Session } from "next-auth";
+import customLoader from "@/core/component/shared/image-loader";
 
 const Page: FC = () => {
   const { data: session, status: authStatus } = useSession();
@@ -39,7 +43,8 @@ const Page: FC = () => {
   const [visible, setVisible] = useState(false);
   const searchParams = useSearchParams();
   const [selectedColors, setSelectedColors] = useState<ProductColor[]>([]);
-  const productId = searchParams.get("productId");
+  const defalutProductId = searchParams.get("productId");
+  const [productId, setProductId] = useState<number>(Number(defalutProductId));
   const [mainProductImage, setMainProductImage] = useState<{
     mainImage: string | undefined;
     zoomedImage: string | undefined;
@@ -52,12 +57,14 @@ const Page: FC = () => {
   const [visibleTab, setVisibleTab] = useState<string>("description");
 
   const { data: response, isLoading: isProductDetailsLoading } = useQuery({
-    queryKey: ["getMTOProductDetails"],
-    queryFn: () => getMaketoOrderProductDetails(Number(productId)),
+    queryKey: ["getMTOProductDetails", productId && productId],
+    queryFn: () => getMaketoOrderProductDetails(productId && productId),
   });
   const queryClient = useQueryClient();
+
   useEffect(() => {
     const polishTypes: any = [];
+
     response?.polishingTypeList?.map((ptype) => {
       return polishTypes.push({
         name: ptype?.polishingTypeName,
@@ -65,28 +72,39 @@ const Page: FC = () => {
       });
     });
     setPolishTypeList(polishTypes);
-    setPolishType(
-      polishTypes.filter(
-        (p: { name: string }) => p.name === response?.polishingTypeName
-      )[0]?.value
+    const selectedPolishType = polishTypes.filter(
+      (p: { name: string }) => p.name === response?.polishingTypeName
+    )[0]?.value;
+    setPolishType(selectedPolishType);
+    response?.polishingTypeList?.filter(
+      (p) => p.polishingTypeId === selectedPolishType
     );
-
     setMainProductImage({
       mainImage: response?.productImages?.[0]?.mediumImagePath || "",
       zoomedImage: response?.productImages?.[0]?.zoomImagePath || "",
     });
 
-    urlExists(
+    checkIfImageExists(
       `${process.env.NEXT_PUBLIC_APP_IMAGE_API_URL}/${response?.productImages?.[0]?.mediumImagePath}`,
-      function (status: any) {
-        if (status === 200) {
+      function (status) {
+        if (status) {
           console.log("image found");
         } else {
           setMainProductImage({ mainImage: undefined, zoomedImage: undefined });
         }
       }
     );
-  }, [response]);
+  }, [response, productId]);
+
+  useEffect(() => {
+    if (response) {
+      const selectedPolish = response?.polishingTypeList?.filter(
+        (t) => t.polishingTypeId === Number(polishType)
+      )[0];
+      setProductId(selectedPolish?.productId as number);
+    }
+    // refetch();
+  }, [polishType]);
 
   const { data: recomendedProducts } = useQuery({
     queryKey: ["geRecomendedMakeToOrderProductRecords", response],
@@ -243,7 +261,6 @@ const Page: FC = () => {
       },
     ],
   };
-
   if (isProductDetailsLoading) return <Loading />;
   return (
     <section className='product-details'>
@@ -259,6 +276,7 @@ const Page: FC = () => {
                 >
                   {mainProductImage?.mainImage === undefined ? (
                     <Image
+                      loader={customLoader}
                       src={productImagePlaceholder?.src}
                       width={600}
                       height={600}
@@ -393,18 +411,21 @@ const Page: FC = () => {
                         <div className='d-flex'>
                           <div className='moti-color options-title'>Colors</div>
                           {/* <div className='stock options-title'>Stock</div> */}
-                          <div className='color-quntity  options-title text-center'>
-                            Qty
-                          </div>
+                          {authStatus === "authenticated" && (
+                            <div className='color-quntity  options-title text-center'>
+                              Qty
+                            </div>
+                          )}
                         </div>
                       </div>
                       <div className='col-xl-6 col-lg-6 col-md-12 col-sm-6 d-none d-sm-block d-md-none d-lg-block'>
                         <div className='d-flex'>
                           <div className='moti-color options-title'>Colors</div>
-
-                          <div className='color-quntity  options-title text-center'>
-                            Qty
-                          </div>
+                          {authStatus === "authenticated" && (
+                            <div className='color-quntity  options-title text-center'>
+                              Qty
+                            </div>
+                          )}
                         </div>
                       </div>
                     </div>
@@ -417,74 +438,18 @@ const Page: FC = () => {
                           <div className='d-flex'>
                             <div className='moti-color'>
                               <Image
-                                src={`${process.env.NEXT_PUBLIC_APP_IMAGE_API_URL}/${color?.imagePath}`}
-                                alt=''
-                              />
-                              <span className='color-name'>
-                                {color.colorName}{" "}
-                              </span>
-                            </div>
-
-                            <div className='color-quntity'>
-                              <input
-                                type='text'
-                                className='quntity-input'
-                                id={index.toString()}
-                                defaultValue={0}
-                                min={1}
-                                max={99999}
-                                onChange={(e) => {
-                                  const qty = parseInt(e.target.value);
-                                  if (qty < 0) {
-                                    e.target.value = "";
-                                  } else if (qty > 99999) {
-                                    e.target.value = "";
-                                  } else {
-                                    handleQuantityChange(
-                                      color.productId as number,
-                                      color.colorId as number,
-                                      qty
-                                    );
-                                  }
-                                }}
-                              />
-                            </div>
-                          </div>
-                        </div>
-                      ))}
-                    </div>
-                  </div>
-                ) : (
-                  <div className='row'>
-                    <div className='col-md-6'>
-                      <div className='product-color-options mt-4'>
-                        <div className='row option-heading'>
-                          <div className='col-md-12'>
-                            <div className='d-flex'>
-                              <div className='moti-color options-title'>
-                                Colors
-                              </div>
-
-                              <div className='color-quntity  options-title text-center'>
-                                Qty
-                              </div>
-                            </div>
-                          </div>
-                        </div>
-
-                        {response?.colorList?.map((color, index) => (
-                          <div className='d-flex' key={color?.colorId}>
-                            <div className='moti-color'>
-                              <Image
+                                loader={customLoader}
                                 src={`${process.env.NEXT_PUBLIC_APP_IMAGE_API_URL}/${color?.imagePath}`}
                                 alt='color'
+                                width={20}
+                                height={20}
                               />
                               <span className='color-name'>
                                 {color.colorName}{" "}
                               </span>
                             </div>
 
-                            <div className='color-quntity'>
+                            {authStatus === "authenticated" && (
                               <div className='color-quntity'>
                                 <input
                                   type='text'
@@ -509,7 +474,73 @@ const Page: FC = () => {
                                   }}
                                 />
                               </div>
+                            )}
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                ) : (
+                  <div className='row'>
+                    <div className='col-md-6'>
+                      <div className='product-color-options mt-4'>
+                        <div className='row option-heading'>
+                          <div className='col-md-12'>
+                            <div className='d-flex'>
+                              <div className='moti-color options-title'>
+                                Colors
+                              </div>
+
+                              {authStatus === "authenticated" && (
+                                <div className='color-quntity  options-title text-center'>
+                                  Qty
+                                </div>
+                              )}
                             </div>
+                          </div>
+                        </div>
+
+                        {response?.colorList?.map((color, index) => (
+                          <div className='d-flex' key={color?.colorId}>
+                            <div className='moti-color'>
+                              <Image
+                                loader={customLoader}
+                                src={`${process.env.NEXT_PUBLIC_APP_IMAGE_API_URL}/${color?.imagePath}`}
+                                alt='color'
+                                width={20}
+                                height={20}
+                              />
+                              <span className='color-name'>
+                                {color.colorName}{" "}
+                              </span>
+                            </div>
+
+                            {authStatus === "authenticated" && (
+                              <div className='color-quntity'>
+                                <input
+                                  type='text'
+                                  className='quntity-input'
+                                  id={index.toString()}
+                                  defaultValue={0}
+                                  min={1}
+                                  max={99999}
+                                  onChange={(e) => {
+                                    const qty = parseInt(e.target.value);
+                                    if (qty < 0) {
+                                      e.target.value = "";
+                                    } else if (qty > 99999) {
+                                      e.target.value = "";
+                                    } else {
+                                      handleQuantityChange(
+                                        color.productId as number,
+                                        color.colorId as number,
+                                        qty
+                                      );
+                                    }
+                                  }}
+                                />
+                              </div>
+                            )}
                           </div>
                         ))}
                       </div>
@@ -538,7 +569,7 @@ const Page: FC = () => {
                       </div>
                       {/* <button className="btn btn-saawree-outline"><i className="bi bi-heart"></i></button>  */}
                       <a href='#' className='whatsapp'>
-                        <Image src='img/whats-aap.png' alt='whats-app' />
+                        <BsWhatsapp fontSize={25} color='green' />
                       </a>
                     </div>
                   )}
@@ -664,11 +695,12 @@ const Page: FC = () => {
             </div>
             <div className='title-septer'>
               <Image
+                loader={customLoader}
                 src={underlineIcon.src}
                 alt='underlineIcon'
                 className='img-fluid'
-                width={100}
-                height={50}
+                width={120}
+                height={20}
               />
             </div>
             <div className='kada-collections'>
@@ -712,61 +744,65 @@ const Page: FC = () => {
               /> */}
 
               <Slider {...collectionSettings}>
-                {recomendedProducts?.data?.map((prodData) => (
-                  <Link
-                    href={`/maketoorder/details?productId=${prodData?.id}`}
-                    key={prodData?.id}
-                  >
-                    <div className='products-box'>
-                      <div className='inner-box-wraper'>
-                        <div className='prod-img1'>
-                          <ProductImage
-                            url={`${process.env.NEXT_PUBLIC_APP_IMAGE_API_URL}/${prodData?.id}`}
-                            className={"auto-fit"}
-                          />
-                        </div>
-                        <div className='prod-name1 text-dark'>
-                          {prodData?.productName} <br />{" "}
-                          <small className='text-dark'>
-                            Design Number: {prodData?.productGroupName}
-                          </small>
-                        </div>
-                        <div className='prod-rate1 d-flex justify-content-between align-items-center'>
-                          {!!session?.user ? (
-                            <>
-                              <div className='value'>
-                                <span className='seling'>
-                                  {formatCurrency(
-                                    prodData?.productPrice as number
-                                  )}
-                                </span>
-                              </div>
-                              <div
-                                className='cart-link'
-                                onClick={() =>
-                                  router.push(
-                                    `/maketoorder/details?productId=${prodData?.id}`
-                                  )
-                                }
-                              >
-                                <div className='act-btn'>
-                                  <BsCart fontSize={20} />
+                {recomendedProducts?.data
+                  ?.filter(
+                    (prodData) => prodData?.productId !== Number(productId)
+                  )
+                  .map((prodData) => (
+                    <Link
+                      href={`/maketoorder/details?productId=${prodData?.id}`}
+                      key={prodData?.id}
+                    >
+                      <div className='products-box'>
+                        <div className='inner-box-wraper'>
+                          <div className='prod-img1'>
+                            <ProductImage
+                              url={`${process.env.NEXT_PUBLIC_APP_IMAGE_API_URL}/${prodData?.id}`}
+                              className={"auto-fit"}
+                            />
+                          </div>
+                          <div className='prod-name1 text-dark'>
+                            {prodData?.productName} <br />{" "}
+                            <small className='text-dark'>
+                              Design Number: {prodData?.productGroupName}
+                            </small>
+                          </div>
+                          <div className='prod-rate1 d-flex justify-content-between align-items-center'>
+                            {!!session?.user ? (
+                              <>
+                                <div className='value'>
+                                  <span className='seling'>
+                                    {formatCurrency(
+                                      prodData?.productPrice as number
+                                    )}
+                                  </span>
                                 </div>
-                              </div>
-                            </>
-                          ) : (
-                            // <a href='#'>
-                            //   <button className='btn btn-small btn-saawree mt-2'>
-                            //     Login
-                            //   </button>
-                            // </a>
-                            ""
-                          )}
+                                <div
+                                  className='cart-link'
+                                  onClick={() =>
+                                    router.push(
+                                      `/maketoorder/details?productId=${prodData?.id}`
+                                    )
+                                  }
+                                >
+                                  <div className='act-btn'>
+                                    <BsCart fontSize={20} />
+                                  </div>
+                                </div>
+                              </>
+                            ) : (
+                              // <a href='#'>
+                              //   <button className='btn btn-small btn-saawree mt-2'>
+                              //     Login
+                              //   </button>
+                              // </a>
+                              ""
+                            )}
+                          </div>
                         </div>
                       </div>
-                    </div>
-                  </Link>
-                ))}
+                    </Link>
+                  ))}
               </Slider>
             </div>
           </div>

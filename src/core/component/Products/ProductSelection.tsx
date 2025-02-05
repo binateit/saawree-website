@@ -17,6 +17,7 @@ import {
 import Image from "next/image";
 import React, { useEffect, useState } from "react";
 import Select from "react-select";
+import customLoader from "../shared/image-loader";
 
 const paginationFilter: PaginationFilter = {
   pageNumber: 1,
@@ -261,6 +262,7 @@ const ProductSelection = ({ onSelect }: ProductSelectionProps) => {
                   <label className='mb-0'>
                     <span className='mr-2 sales-order-color-options'>
                       <Image
+                        loader={customLoader}
                         src={`${process.env.NEXT_PUBLIC_APP_IMAGE_API_URL}/${color?.imagePath}`}
                         // alt={color.colorName}
                         width={20}

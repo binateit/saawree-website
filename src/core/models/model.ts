@@ -53,6 +53,7 @@ export type PropertyFailureResult = {
 export type SelectOptionProps = {
   value: number;
   label: string;
+  name?: string;
 };
 
 export type SelectOption<T> = {
@@ -105,6 +106,7 @@ export type userToken = {
   rateTypeId: number;
   isGuestUser: boolean;
   userType: string;
+  isMakeToOrderEnabled?: boolean;
 };
 
 export type Session = {
@@ -119,6 +121,7 @@ export type User = {
   lastName: string;
   emailAddress: string;
   userType: string;
+  isMakeToOrderEnabled: boolean;
 };
 
 export type Search = {
