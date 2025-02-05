@@ -100,7 +100,7 @@ export type Filter = {
   filters?: Array<Filter> | undefined;
   field?: string | undefined;
   operator?: string | undefined;
-  value?: any | undefined;
+  value?: string | undefined;
 };
 export type BaseFilter = {
   keyword?: string | undefined;

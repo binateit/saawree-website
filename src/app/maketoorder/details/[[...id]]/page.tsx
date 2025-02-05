@@ -3,7 +3,6 @@
 import {
   checkIfImageExists,
   formatCurrency,
-  urlExists,
 } from "@/core/helpers/helperFunctions";
 import { SelectOptionProps } from "@/core/models/model";
 import underlineIcon from "@/assets/images/underlineIcon.png";
@@ -57,11 +56,7 @@ const Page: FC = () => {
   const [polishTypeList, setPolishTypeList] = useState<SelectOptionProps[]>([]);
   const [visibleTab, setVisibleTab] = useState<string>("description");
 
-  const {
-    data: response,
-    isLoading: isProductDetailsLoading,
-    refetch,
-  } = useQuery({
+  const { data: response, isLoading: isProductDetailsLoading } = useQuery({
     queryKey: ["getMTOProductDetails", productId && productId],
     queryFn: () => getMaketoOrderProductDetails(productId && productId),
   });

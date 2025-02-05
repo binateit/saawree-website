@@ -106,6 +106,7 @@ export type userToken = {
   rateTypeId: number;
   isGuestUser: boolean;
   userType: string;
+  isMakeToOrderEnabled?: boolean;
 };
 
 export type Session = {
@@ -120,6 +121,7 @@ export type User = {
   lastName: string;
   emailAddress: string;
   userType: string;
+  isMakeToOrderEnabled: boolean;
 };
 
 export type Search = {

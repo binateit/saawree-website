@@ -32,6 +32,7 @@ const Header = () => {
   const UserSession = session as Session;
 
   const [show, setShow] = useState(false);
+  const [showSearchDropDown, setShowDropDown] = useState(false);
   const { cartCount } = useCartCount();
 
   const [closeSubMenu, setCloseSubMenu] = useState(false);
@@ -66,6 +67,14 @@ const Header = () => {
     staleTime: 300,
     placeholderData: keepPreviousData,
   });
+  const handleNavgation = (productId: number): void => {
+    navigate.push(`/readystock/details?productId=${productId}`);
+    setShowDropDown(false);
+    setQuery("");
+  };
+
+  console.log(UserSession?.user);
+
   return (
     <>
       <div className='top-header-bar'>
@@ -160,8 +169,9 @@ const Header = () => {
                     onChange={(e) => {
                       const newValue = e.target.value;
                       setQuery(newValue);
+                      setShowDropDown(newValue?.length > 1 ? true : false);
                     }}
-                    name=''
+                    name='product-search'
                   />
                   <input
                     type='submit'
@@ -176,25 +186,24 @@ const Header = () => {
                     (queryResult?.data?.length || 0) > 0 ? "border shadow" : ""
                   } position-absolute w-100 bg-white`}
                 >
-                  {
-                    !!debouncedQuery && (
+                  {showSearchDropDown &&
+                    ((queryResult?.data?.length || 0) > 0 ? (
                       <div className='d-flex flex-column'>
                         {queryResult?.data?.map((res) => (
-                          <Link
-                            href={`/readystock/details?productId=${res?.productId}`}
+                          <div
+                            key={res?.productId}
+                            onClick={() => handleNavgation(res?.productId)}
                             className='text-dark mb-0 border-bottom py-2 px-3'
                           >
                             {res?.productName}
-                          </Link>
+                          </div>
                         ))}
                       </div>
-                    )
-                    // : (
-                    //   <div className='global-empty-result text-center p-4'>
-                    //     <p className='mb-0'>No Result Found</p>
-                    //   </div>
-                    // )
-                  }
+                    ) : (
+                      <div className='global-empty-result text-center p-4'>
+                        <p className='mb-0'>No Result Found</p>
+                      </div>
+                    ))}
                 </div>
               </form>
             </div>
@@ -238,81 +247,92 @@ const Header = () => {
                         Home
                       </Link>
                     </li>
-                    <li className='has_dropdown'>
-                      <a href='#'>
-                        Make to Order <i className='fas fa-angle-down'></i>
-                      </a>
-                      <ul className='sub_menu'>
-                        {menuCategoryData?.mtoc
-                          ?.filter(
-                            (cat) => cat.isp === true && cat.pcid === null
-                          )
-                          .map((cat) => (
-                            <React.Fragment key={cat.id}>
-                              <li className='has_dropdown'>
-                                <Link
-                                  href={`/maketoorder/products?subCategoryName=${cat.n}&categoryId=${cat?.id}`}
-                                  onClick={() => setCloseSubMenu(!closeSubMenu)}
-                                >
-                                  {cat.n}
-                                  <i className='fas fa-angle-right' />
-                                </Link>
-                                <ul
-                                  className={
-                                    closeSubMenu ? "sub_menu open" : "sub_menu "
-                                  }
-                                >
-                                  {menuCategoryData?.mtoc
-                                    .filter((subCat) => subCat.pcid === cat.id)
-                                    .map((subCat, index) => (
-                                      <li key={index} className='has_dropdown'>
-                                        <Link
-                                          href={`/maketoorder/products?subCategoryName=${subCat.n}&categoryId=${subCat?.id}`}
-                                          onClick={() => {
-                                            setCloseSubMenu(!closeSubMenu);
-                                          }}
+                    {UserSession?.user?.isMakeToOrderEnabled && (
+                      <li className='has_dropdown'>
+                        <a href='#'>
+                          Make to Order <i className='fas fa-angle-down'></i>
+                        </a>
+                        <ul className='sub_menu'>
+                          {menuCategoryData?.mtoc
+                            ?.filter(
+                              (cat) => cat.isp === true && cat.pcid === null
+                            )
+                            .map((cat) => (
+                              <React.Fragment key={cat.id}>
+                                <li className='has_dropdown'>
+                                  <Link
+                                    href={`/maketoorder/products?subCategoryName=${cat.n}&categoryId=${cat?.id}`}
+                                    onClick={() =>
+                                      setCloseSubMenu(!closeSubMenu)
+                                    }
+                                  >
+                                    {cat.n}
+                                    <i className='fas fa-angle-right' />
+                                  </Link>
+                                  <ul
+                                    className={
+                                      closeSubMenu
+                                        ? "sub_menu open"
+                                        : "sub_menu "
+                                    }
+                                  >
+                                    {menuCategoryData?.mtoc
+                                      .filter(
+                                        (subCat) => subCat.pcid === cat.id
+                                      )
+                                      .map((subCat, index) => (
+                                        <li
+                                          key={index}
+                                          className='has_dropdown'
                                         >
-                                          {subCat.n}{" "}
-                                          <i className='fas fa-angle-right' />
-                                        </Link>
-                                        <ul
-                                          className={
-                                            closeSubMenu
-                                              ? "sub_menu row category-menu open"
-                                              : "sub_menu row category-menu "
-                                          }
-                                        >
-                                          {menuCategoryData?.mtoc
-                                            .filter(
-                                              (ssubCat) =>
-                                                ssubCat.pcid === subCat.id
-                                            )
-                                            .map((ssubCat, index) => (
-                                              <li
-                                                key={index}
-                                                className='sub-menu-col'
-                                              >
-                                                <Link
-                                                  href={`/maketoorder/products?subCategoryName=${ssubCat.n}&categoryId=${ssubCat?.id}`}
-                                                  onClick={() => {
-                                                    setCloseSubMenu(
-                                                      !closeSubMenu
-                                                    );
-                                                  }}
+                                          <Link
+                                            href={`/maketoorder/products?subCategoryName=${subCat.n}&categoryId=${subCat?.id}`}
+                                            onClick={() => {
+                                              setCloseSubMenu(!closeSubMenu);
+                                            }}
+                                          >
+                                            {subCat.n}{" "}
+                                            <i className='fas fa-angle-right' />
+                                          </Link>
+                                          <ul
+                                            className={
+                                              closeSubMenu
+                                                ? "sub_menu row category-menu open"
+                                                : "sub_menu row category-menu "
+                                            }
+                                          >
+                                            {menuCategoryData?.mtoc
+                                              .filter(
+                                                (ssubCat) =>
+                                                  ssubCat.pcid === subCat.id
+                                              )
+                                              .map((ssubCat, index) => (
+                                                <li
+                                                  key={index}
+                                                  className='sub-menu-col'
                                                 >
-                                                  {ssubCat.n}
-                                                </Link>
-                                              </li>
-                                            ))}
-                                        </ul>
-                                      </li>
-                                    ))}
-                                </ul>
-                              </li>
-                            </React.Fragment>
-                          ))}
-                      </ul>
-                    </li>
+                                                  <Link
+                                                    href={`/maketoorder/products?subCategoryName=${ssubCat.n}&categoryId=${ssubCat?.id}`}
+                                                    onClick={() => {
+                                                      setCloseSubMenu(
+                                                        !closeSubMenu
+                                                      );
+                                                    }}
+                                                  >
+                                                    {ssubCat.n}
+                                                  </Link>
+                                                </li>
+                                              ))}
+                                          </ul>
+                                        </li>
+                                      ))}
+                                  </ul>
+                                </li>
+                              </React.Fragment>
+                            ))}
+                        </ul>
+                      </li>
+                    )}
                     <li className='mega_menu_dropdown mega_menu_demo_2 has_dropdown'>
                       <a href='#'>
                         Ready Stock <i className='fas fa-angle-down'></i>

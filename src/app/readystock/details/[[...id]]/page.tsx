@@ -3,7 +3,6 @@
 import {
   checkIfImageExists,
   formatCurrency,
-  urlExists,
 } from "@/core/helpers/helperFunctions";
 import { SelectOptionProps } from "@/core/models/model";
 import underlineIcon from "@/assets/images/underlineIcon.png";
@@ -57,8 +56,8 @@ const Page = () => {
   const { setCartCount, cartCount, setIsBuyNow } = useCartCount();
 
   const { data: response } = useQuery({
-    queryKey: ["getRSProductDetailsData"],
-    queryFn: () => getRSProductDetails(Number(productId)),
+    queryKey: ["getRSProductDetailsData", productId && productId],
+    queryFn: () => getRSProductDetails(productId && productId),
   });
   useEffect(() => {
     const polishTypes: any = [];

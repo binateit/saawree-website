@@ -20,7 +20,7 @@ const Page = () => {
                 className='img-fluid'
                 width={120}
                 height={20}
-                alt=''
+                alt='underline'
               />
             </div>
           </div>
@@ -127,6 +127,9 @@ const Page = () => {
               <Image
                 loader={customLoader}
                 src={underlineIcon.src}
+                className='img-fluid'
+                width={120}
+                height={20}
                 alt='underline'
               />
             </div>
