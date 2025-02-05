@@ -380,3 +380,13 @@
       width: 100%;
     }
   }
+
+  .global-search-results a{
+    transition: 0.2s all ease-in-out;
+  }
+  .global-search-results a:hover{
+    background-color: rgb(0 0 0 / 0.08);
+  }
+  .global-search-results{
+    z-index: 99;
+  }

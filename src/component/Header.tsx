@@ -120,7 +120,7 @@ const Header = () => {
               className='col-xl-8 col-lg-7 col-md-8 col-sm-12 d-none d-md-block order-3 order-md-2'
               id='product-search-bar'
             >
-              <form className='search-form'>
+              <form className='search-form position-relative'>
                 {/* <div className='up-in-toggle text-center mb-3'>
                   <span className='switch-btn'>
                     <input
@@ -171,6 +171,17 @@ const Header = () => {
                     name=''
                   />
                 </div>
+
+                <div className="global-search-results border shadow position-absolute w-100 bg-white">
+                  <div className="d-flex flex-column">
+                    <a href="#" className="text-dark mb-0 border-bottom py-2 px-3">Moti Necklace MN8 MD Black</a>
+                    <a href="#" className="text-dark mb-0 border-bottom py-2 px-3">Moti Necklace MN8 MD Black</a>
+                    <a href="#" className="text-dark mb-0 border-bottom py-2 px-3">Moti Necklace MN8 MD Black</a>
+                  </div>
+                  {/* <div className="global-empty-result text-center p-4">
+                      <p className="mb-0">No Result Found</p>
+                  </div> */}
+                </div>
               </form>
             </div>
             <div className='col-xl-2 col-lg-3 col-md-2 col-sm-9 col-9 order-2 order-md-3 pl-md-0'>
@@ -191,7 +202,7 @@ const Header = () => {
                     <BsList
                       fontSize={25}
                       onClick={() => setShow(true)}
-                      // onClick={handleShow}
+                    // onClick={handleShow}
                     />
                   </div>
                 )}
