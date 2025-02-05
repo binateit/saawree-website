@@ -7,10 +7,10 @@ interface FilterProps {
   title: string;
   filterList?: CheckBoxFilter[];
   //   anonymous?: CategoryAnonymous[];
-  onChange: (id: number, status: any) => void;
+  onChange: (id: number, status: boolean) => void;
   multiFilter?: CategoryList[];
   selectedFilter: number[];
-  categoryList?: any;
+  categoryList?: CategoryList[];
   type: string;
   parentCategoryId?: number;
 }
@@ -24,7 +24,6 @@ const FilterSection = ({
   categoryList,
   //   anonymous,
   type,
-  parentCategoryId,
 }: FilterProps) => {
   return (
     <div className='card mb-3'>
@@ -48,10 +47,7 @@ const FilterSection = ({
                           onChange={(e) => {
                             onChange(cat?.id, e.target.checked);
                           }}
-                          checked={
-                            selectedFilter.includes(cat.id as number) ||
-                            cat?.id === Number(parentCategoryId)
-                          }
+                          checked={selectedFilter.includes(cat.id as number)}
                         />
                         <label
                           htmlFor={`${cat.name} - ${cat?.id}`}
@@ -64,10 +60,11 @@ const FilterSection = ({
                     </div>
                     <div className='filters-inner'>
                       {categoryList
-                        .filter(
-                          (subCat: any) => subCat.parentCategoryId === cat.id
+                        ?.filter(
+                          (subCat: CategoryList) =>
+                            subCat.parentCategoryId === cat.id
                         )
-                        .map((subCat: any) => (
+                        .map((subCat: CategoryList) => (
                           <div className='form-group' key={subCat.id}>
                             <input
                               type='checkbox'
@@ -104,7 +101,7 @@ const FilterSection = ({
                     type='checkbox'
                     id={`${item.name} - ${item?.id}`}
                     className='filter-chekbox'
-                    onChange={() => onChange(item?.id)}
+                    onChange={(e) => onChange(item?.id, e.target.checked)}
                     checked={selectedFilter?.includes(item?.id as number)}
                   />
                   <label

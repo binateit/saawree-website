@@ -13,7 +13,6 @@ import {
 } from "@/core/requests/productsRequests";
 import { useQuery } from "@tanstack/react-query";
 import { useSession } from "next-auth/react";
-import Link from "next/link";
 import { useSearchParams } from "next/navigation";
 import { Dropdown } from "primereact/dropdown";
 import React, { useEffect, useState } from "react";
@@ -159,6 +158,27 @@ const Page = () => {
     setColorList(colors);
     setPolishList(result);
     setCategoryFilterList(mulitiFilter);
+    const parentCategorySelected = mulitiFilter?.filter(
+      (cat: CategoryList) =>
+        cat?.id === Number(categoryId) && cat?.hasChild === true
+    );
+
+    if (parentCategorySelected.length > 0) {
+      const allSubCat = mulitiFilter
+        ?.filter(
+          (item: CategoryList) => item?.parentCategoryId === Number(categoryId)
+        )
+        ?.map((cat: CategoryList) => cat?.id);
+      setSelectedFilters({
+        ...selectedFilters,
+        categoryIds: [...allSubCat, Number(categoryId)],
+      });
+    } else {
+      setSelectedFilters({
+        ...selectedFilters,
+        categoryIds: [Number(categoryId)],
+      });
+    }
   }, [
     isPolishTypeListLoading,
     isColorTypeListLoading,
@@ -170,8 +190,8 @@ const Page = () => {
     // colorList,
   ]);
 
-  const handleCategoryChange = (id: number, status: any) => {
-    let catList = selectedFilters?.categoryIds;
+  const handleCategoryChange = (id: number, status: boolean) => {
+    const catList = selectedFilters?.categoryIds;
     const parentCategorySelected = categoryFilterList?.filter(
       (cat) => cat?.id === id && cat?.hasChild === true
     );
@@ -380,6 +400,7 @@ const Page = () => {
                   ?.filter((cat) => cat?.parentCategoryId === null)
                   .map((category) => (
                     <FilterSection
+                      key={category?.id}
                       title={`Filter by ${category?.name}`}
                       type='multi'
                       multiFilter={categoryFilterList?.filter(
@@ -413,7 +434,8 @@ const Page = () => {
                   <span className='only-for-responsive'>
                     <BsFilter fontSize={18} />
                   </span>
-                  Showing all {response?.data?.length} results
+                  Showing {response?.data?.length} out of{" "}
+                  {response?.pagination?.totalCount} results
                 </div>
                 <div className='d-flex'>
                   {isLoading ? (
@@ -465,9 +487,18 @@ const Page = () => {
                   <h4 className='mt-2 text-muted'>No Products Found.</h4>
                   <p>Your search did not match any products</p>
                   <p>Please ty again.</p>
-                  <Link href='' className='btn btn-saawree mt-2'>
+                  <button
+                    className='btn btn-saawree mt-2'
+                    onClick={() =>
+                      setSelectedFilters({
+                        categoryIds: undefined,
+                        colorIds: undefined,
+                        polishingTypeIds: undefined,
+                      })
+                    }
+                  >
                     Clear Filter
-                  </Link>
+                  </button>
                 </div>
               ) : (
                 <>

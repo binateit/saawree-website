@@ -8,13 +8,8 @@ import {
   getMaketoOrderProducts,
   getMTOCategoryList,
 } from "@/core/requests/productsRequests";
-import {
-  keepPreviousData,
-  useInfiniteQuery,
-  useQuery,
-} from "@tanstack/react-query";
+import { keepPreviousData, useQuery } from "@tanstack/react-query";
 import { useSession } from "next-auth/react";
-import Link from "next/link";
 import { useSearchParams } from "next/navigation";
 import { Dropdown } from "primereact/dropdown";
 import React, { useEffect, useState } from "react";
@@ -27,7 +22,6 @@ import Loading from "@/app/loading";
 import { Session } from "next-auth";
 import {
   Paginator,
-  PaginatorCurrentPageReportOptions,
   PaginatorPageChangeEvent,
   PaginatorRowsPerPageDropdownOptions,
 } from "primereact/paginator";
@@ -44,14 +38,8 @@ const Page = () => {
     []
   );
 
-  const [selectedFilters, setSelectedFilters] = useState<any>({
-    categoryIds: [categoryId ? Number(categoryId) : undefined],
-  });
-  // useEffect(() => {
-  //   setSelectedFilters({
-  //     categoryIds: [categoryId ? Number(categoryId) : undefined],
-  //   });
-  // }, [Number(categoryId)]);
+  const [selectedFilters, setSelectedFilters] = useState<any>();
+
   const [paginationFilters, setPaginationFilters] = useImmer<{
     pageNumber: number;
     pageSize: number;
@@ -97,7 +85,7 @@ const Page = () => {
         categoryIds:
           selectedFilters?.categoryIds?.length >= 1
             ? selectedFilters?.categoryIds
-            : [categoryId ? Number(categoryId) : undefined],
+            : undefined,
         orderBy:
           paginationFilters?.orderBy?.length >= 1 &&
           paginationFilters?.orderBy[0] !== undefined
@@ -126,10 +114,30 @@ const Page = () => {
       })
     );
     setCategoryFilterList(mulitiFilter);
+
+    const parentCategorySelected = mulitiFilter?.filter(
+      (cat: CategoryList) =>
+        cat?.id === Number(categoryId) && cat?.hasChild === true
+    );
+
+    if (parentCategorySelected.length > 0) {
+      const allSubCat = mulitiFilter
+        ?.filter(
+          (item: CategoryList) => item?.parentCategoryId === Number(categoryId)
+        )
+        ?.map((cat: CategoryList) => cat?.id);
+      setSelectedFilters({
+        categoryIds: [...allSubCat, Number(categoryId)],
+      });
+    } else {
+      setSelectedFilters({
+        categoryIds: [categoryId ? Number(categoryId) : undefined],
+      });
+    }
   }, [categoryList, isCategoryListLoading]);
 
   const handleCategoryChange = (id: number, status: any) => {
-    let catList = [...selectedFilters?.categoryIds];
+    const catList = selectedFilters?.categoryIds;
     const parentCategorySelected = categoryFilterList?.filter(
       (cat) => cat?.id === id && cat?.hasChild === true
     );
@@ -156,7 +164,7 @@ const Page = () => {
       if (parentCategorySelected.length == 0) {
         return setSelectedFilters({
           ...selectedFilters,
-          categoryIds: catList.filter((x) => x != id),
+          categoryIds: catList.filter((x: number) => x != id),
         });
       } else {
         const parentCategoryIndex = catList.indexOf(id);
@@ -268,6 +276,7 @@ const Page = () => {
       };
     });
   };
+
   if (isCategoryListLoading) return <Loading />;
 
   return (
@@ -291,7 +300,6 @@ const Page = () => {
                 <div className='close-filter'>
                   <i className='bi bi-x-circle'></i>
                 </div>
-                <pre>{JSON.stringify(selectedFilters)}</pre>
                 {categoryFilterList
                   ?.filter((cat) => cat?.parentCategoryId === null)
                   .map((category) => (
@@ -368,9 +376,12 @@ const Page = () => {
                   <h4 className='mt-2 text-muted'>No Products Found.</h4>
                   <p>Your search did not match any products</p>
                   <p>Please ty again.</p>
-                  <Link href='' className='btn btn-saawree mt-2'>
+                  <button
+                    className='btn btn-saawree mt-2'
+                    onClick={() => setSelectedFilters({})}
+                  >
                     Clear Filter
-                  </Link>
+                  </button>
                 </div>
               ) : (
                 <>
