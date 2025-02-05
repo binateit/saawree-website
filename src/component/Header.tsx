@@ -66,7 +66,6 @@ const Header = () => {
     staleTime: 300,
     placeholderData: keepPreviousData,
   });
-  console.log(queryResult?.data);
   return (
     <>
       <div className='top-header-bar'>
@@ -172,15 +171,30 @@ const Header = () => {
                   />
                 </div>
 
-                <div className="global-search-results border shadow position-absolute w-100 bg-white">
-                  <div className="d-flex flex-column">
-                    <a href="#" className="text-dark mb-0 border-bottom py-2 px-3">Moti Necklace MN8 MD Black</a>
-                    <a href="#" className="text-dark mb-0 border-bottom py-2 px-3">Moti Necklace MN8 MD Black</a>
-                    <a href="#" className="text-dark mb-0 border-bottom py-2 px-3">Moti Necklace MN8 MD Black</a>
-                  </div>
-                  {/* <div className="global-empty-result text-center p-4">
-                      <p className="mb-0">No Result Found</p>
-                  </div> */}
+                <div
+                  className={`global-search-results ${
+                    (queryResult?.data?.length || 0) > 0 ? "border shadow" : ""
+                  } position-absolute w-100 bg-white`}
+                >
+                  {
+                    !!debouncedQuery && (
+                      <div className='d-flex flex-column'>
+                        {queryResult?.data?.map((res) => (
+                          <Link
+                            href={`/readystock/details?productId=${res?.productId}`}
+                            className='text-dark mb-0 border-bottom py-2 px-3'
+                          >
+                            {res?.productName}
+                          </Link>
+                        ))}
+                      </div>
+                    )
+                    // : (
+                    //   <div className='global-empty-result text-center p-4'>
+                    //     <p className='mb-0'>No Result Found</p>
+                    //   </div>
+                    // )
+                  }
                 </div>
               </form>
             </div>
@@ -202,7 +216,7 @@ const Header = () => {
                     <BsList
                       fontSize={25}
                       onClick={() => setShow(true)}
-                    // onClick={handleShow}
+                      // onClick={handleShow}
                     />
                   </div>
                 )}
