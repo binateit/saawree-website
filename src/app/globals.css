@@ -4541,3 +4541,14 @@ select {
 .p-paginator{
     padding:0;
 }
+
+
+.slick-list {
+    display: flex;
+    justify-content: space-between;
+  }
+  
+  .slick-slide {
+    flex: 1 0 auto; /* Allows the slides to grow and shrink */
+    margin: 0 10px; /* Adjust the margin as needed */
+  }
