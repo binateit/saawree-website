@@ -10,7 +10,11 @@ import {
   getReadyStockRecomendedProducts,
   getRSProductDetails,
 } from "@/core/requests/productsRequests";
-import { useQuery, useQueryClient } from "@tanstack/react-query";
+import {
+  keepPreviousData,
+  useQuery,
+  useQueryClient,
+} from "@tanstack/react-query";
 import { useSession } from "next-auth/react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { Dropdown } from "primereact/dropdown";
@@ -33,6 +37,7 @@ import ProductImage from "@/core/component/Products/ProductImage";
 import Link from "next/link";
 import { Session } from "next-auth";
 import customLoader from "@/core/component/shared/image-loader";
+import Loading from "@/app/loading";
 
 const Page = () => {
   const { data: session, status: authStatus } = useSession();
@@ -55,9 +60,13 @@ const Page = () => {
   const [visibleTab, setVisibleTab] = useState<string>("description");
   const { setCartCount, cartCount, setIsBuyNow } = useCartCount();
 
-  const { data: response } = useQuery({
-    queryKey: ["getRSProductDetailsData", productId && productId],
-    queryFn: () => getRSProductDetails(productId && productId),
+  const { data: response, isLoading } = useQuery({
+    queryKey: ["getRSProductDetailsData", productId],
+    queryFn: () => getRSProductDetails(productId),
+    enabled: !!productId,
+
+    placeholderData: keepPreviousData,
+    retry: 1000,
   });
   useEffect(() => {
     const polishTypes: any = [];
@@ -110,6 +119,7 @@ const Page = () => {
         categoryIds: [response?.categoryId ?? 0],
       });
     },
+    placeholderData: keepPreviousData,
     enabled: !!response,
   });
 
@@ -148,7 +158,7 @@ const Page = () => {
             quantity: color.quantity as number,
           }));
           const carts = {
-            orderType: 2,
+            orderType: 1,
             items: updatedItems,
             isFromBuyNow: isBuyNow,
           };
@@ -248,6 +258,7 @@ const Page = () => {
     ],
   };
 
+  if (isLoading) return <Loading />;
   return (
     <section className='product-details'>
       <div className='container'>
@@ -330,6 +341,7 @@ const Page = () => {
             </div>
           </div>
           <div className='col-md-6'>
+            {/* <pre>{JSON.stringify(response)}</pre> */}
             <div className='product-details-wrapper'>
               <h1 className='product-name-title'>{response?.name}</h1>
               <div className='product-price'>

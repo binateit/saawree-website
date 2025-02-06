@@ -10,6 +10,7 @@ import {
   resetPassword,
 } from "@/core/requests/authRequests";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
+import Link from "next/link";
 
 const passwordSchema = Yup.object().shape({
   password: Yup.string().required("Please enter password"),
@@ -103,15 +104,16 @@ const ResetPasswordPage = () => {
                 )}
             </div>
 
-            <button
-              className='btn-crt'
-              type='submit'
-              disabled={
-                formik.isSubmitting || !formik.isValid || !formik.touched
-              }
-            >
-              Reset Password
-            </button>
+            <div className='flex-dv'>
+              <Link href='/auth/login' className='return-link'>
+                <i className='bi bi-chevron-left'></i> Return to Login
+              </Link>
+              <input
+                type='submit'
+                className='btn btn-saawree'
+                value='Reset Password'
+              />
+            </div>
           </form>
         </div>
       </section>

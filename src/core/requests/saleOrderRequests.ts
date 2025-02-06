@@ -22,6 +22,7 @@ const SalesOrder_FOR_CUSTOMER = `${API_URL}/saleorders/my-orders`;
 const SalesOrder_FOR_AGENT = `${API_URL}/saleorders/agent-orders`;
 const CHALLAN_PDF_URL = `${API_URL}/saleorders/downloadpdf`;
 const TRACK_SALES_ORDER = `${API_URL}/saleorders/track-order`;
+const TRACK_SALES_ORDER_BY_ID = `${API_URL}/saleorders/order-tracking`;
 const SaleOrder_Status_LIST = `${API_URL}/status/get-sale-order-status`;
 const SaleOrderPayment_Status_List = `${API_URL}/status/get-payment-status`;
 const Customer_List_URL = `${API_URL}/customers/customer-by-agent-dropdown`;
@@ -222,6 +223,20 @@ const getOrderTracking = async (order: {
     });
 };
 
+const getOrderTrackingByTracker = async (
+  orderId: string
+): Promise<ISalesOrder> => {
+  return await axiosInstance
+    .post(`${TRACK_SALES_ORDER_BY_ID}`, {
+      orderTrackingId: orderId,
+    })
+    .then((response: AxiosResponse<ISalesOrder>) => response.data)
+    .then((response: ISalesOrder) => response)
+    .catch((err) => {
+      throw err;
+    });
+};
+
 export {
   getSalesOrderById,
   getSaleOrdersOfCustomer,
@@ -237,4 +252,5 @@ export {
   getProductColor,
   getSaleOrdersOfAgent,
   getOrderTracking,
+  getOrderTrackingByTracker,
 };

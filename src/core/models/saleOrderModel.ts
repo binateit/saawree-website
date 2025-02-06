@@ -42,7 +42,7 @@ export interface ISalesOrder {
   discountAmount?: number;
   totalDiscountedPrice?: number;
   totalTaxAmount?: number;
-  saleOrderStatusHistory?: SaleOrderStatusHistory[];
+  saleOrderStatusHistory: SaleOrderStatusHistory[];
 }
 export interface ISaleOrderOtherCharges {
   id: number;

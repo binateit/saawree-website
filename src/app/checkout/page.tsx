@@ -170,8 +170,8 @@ const CheckoutPage = () => {
         if (isRazorPaySelected) {
           handleRazorPayment(data?.data?.orderId as string);
         } else {
-          const orderDataa = JSON.stringify(data.data);
-          router.push(`/thankyou?orderData=${orderDataa}`);
+          const orderDataa = data.data;
+          router.push(`/thankyou?orderId=${orderDataa?.saleOrderId}`);
           setCartCount(0);
           queryClient.invalidateQueries({ queryKey: ["cartDetails"] });
         }
