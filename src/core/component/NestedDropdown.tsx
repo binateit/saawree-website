@@ -29,8 +29,8 @@ const NestedDropdown = ({
       .filter((cat) => cat.pcid === parentId)
       .map((cat) => (
         <li key={cat.id} className='has_dropdown'>
-          <Link
-            href={`/maketoorder/products?subCategoryName=${cat.n}&categoryId=${cat.id}`}
+          <p
+          // href={`/maketoorder/products?subCategoryName=${cat.n}&categoryId=${cat.id}`}
           >
             <div
               onClick={(e) => {
@@ -40,7 +40,7 @@ const NestedDropdown = ({
             >
               {cat.n} <BsChevronDown fontSize={14} />
             </div>
-          </Link>
+          </p>
           {openSubMenu[cat?.id] && (
             <ul
               className={"nav flex-column nav-pills nav-pills-custom-dropdown"}

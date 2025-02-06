@@ -186,53 +186,6 @@ const Page = () => {
         });
       }
     }
-
-    // if (catList?.includes(id)) {
-    //   const allSubCat = categoryFilterList
-    //     ?.filter((item) => item?.parentCategoryId === id)
-    //     ?.map((cat) => cat?.id);
-    //   console.log(allSubCat);
-    //   return setSelectedFilters({
-    //     ...selectedFilters,
-    //     categoryIds: catList.filter((item, index) => item !== allSubCat[index]),
-    //   });
-    // } else {
-    //   if (parentCategorySelected?.length > 0) {
-    //     const allSubCat = categoryFilterList
-    //       ?.filter((item) => item?.parentCategoryId === id)
-    //       ?.map((cat) => cat?.id);
-    //     return setSelectedFilters({
-    //       ...selectedFilters,
-    //       categoryIds: [...allSubCat, id],
-    //     });
-    //   } else {
-    //     catList.push(id);
-    //     return setSelectedFilters({
-    //       ...selectedFilters,
-    //       categoryIds: catList,
-    //     });
-    //   }
-
-    //   // categoryFilterList?.map((item: CategoryList) => {
-    //   //   if (item?.id === id && item?.isParent === true) {
-    //   //     const allSubCat = categoryFilterList
-    //   //       ?.filter((item) => item?.parentCategoryId === id)
-    //   //       ?.map((cat) => cat?.id);
-    //   //     console.log("inside handle category", [...allSubCat, id]);
-    //   //     return setSelectedFilters({
-    //   //       ...selectedFilters,
-    //   //       categoryIds: [allSubCat, id],
-    //   //     });
-    //   //   } else {
-    //   //     console.log("inside handle category", [id]);
-    //   //     catList.push(id);
-    //   //     return setSelectedFilters({
-    //   //       ...selectedFilters,
-    //   //       categoryIds: catList,
-    //   //     });
-    //   //   }
-    //   // });
-    // }
   };
 
   const onPageOrSortChange = (event: PaginatorPageChangeEvent) => {

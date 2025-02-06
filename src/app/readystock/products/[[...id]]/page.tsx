@@ -529,14 +529,14 @@ const Page = () => {
                   {viewType === "list" && (
                     <div className='products-list-wrap'>
                       {response?.data?.map((product) => (
-                        <>
+                        <React.Fragment key={product?.productId}>
                           <ProductListCard
                             product={product}
                             session={session as Session}
                             type={"rds"}
                             key={product?.productId}
                           />
-                        </>
+                        </React.Fragment>
                       ))}
                     </div>
                   )}
