@@ -23,6 +23,8 @@ const ForgotPassword = () => {
   const searchParams = useSearchParams();
 
   const userType = searchParams.get("userType");
+  const [selectUserType, setSelectUserType] = useState<string | null>(userType);
+
   const initialValues = {
     email: "",
   };
@@ -34,7 +36,7 @@ const ForgotPassword = () => {
       setSubmitting(true);
       try {
         const result =
-          userType === "customer"
+          selectUserType === "customer"
             ? await forgotPassword(formValues)
             : await forgotAgentPassword(formValues);
         if (result.succeeded) {
@@ -62,6 +64,34 @@ const ForgotPassword = () => {
         <div className='container'>
           <h3 className='form-heading1'>Forgot Password</h3>
           <form className='login-form' onSubmit={formik.handleSubmit}>
+            <div className='d-flex align-items-center justify-content-center'>
+              <div className='form-group d-flex align-items-center  mr-3'>
+                <input
+                  type='radio'
+                  id='customer'
+                  name='role'
+                  value={"customer"}
+                  checked={selectUserType === "customer"}
+                  onChange={() => setSelectUserType("customer")}
+                />
+                <label htmlFor='customer' className='mb-0 ml-1 cursor-pointer'>
+                  Customer
+                </label>
+              </div>
+              <div className='form-group d-flex align-items-center'>
+                <input
+                  type='radio'
+                  id='agent'
+                  name='role'
+                  value={"agent"}
+                  checked={selectUserType === "agent"}
+                  onChange={() => setSelectUserType("agent")}
+                />
+                <label htmlFor='agent' className='mb-0 ml-1 cursor-pointer'>
+                  Agent
+                </label>
+              </div>
+            </div>
             <div className='form-group'>
               <label htmlFor='username'>
                 Please enter your registered email to reset your password
@@ -88,7 +118,7 @@ const ForgotPassword = () => {
             )}
             <div className='flex-dv'>
               <Link href='/auth/login' className='return-link'>
-                <i className='bi bi-chevron-left'></i> Return to store
+                <i className='bi bi-chevron-left'></i> Return to Login
               </Link>
               <input type='submit' className='btn btn-saawree' value='Submit' />
             </div>

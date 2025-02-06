@@ -410,7 +410,6 @@ const Page = () => {
                       onClick={() => setShowFilters(false)}
                     />
                   </div>
-                  <BsXCircle fontSize={30}/>
                 </div>
                 {categoryFilterList
                   ?.filter((cat) => cat?.parentCategoryId === null)
@@ -447,9 +446,12 @@ const Page = () => {
             <div className='products-bar col-xl-8 col-lg-8 col-md-12 mt-4 mb-4'>
               <div className='categ-top-bar d-flex align-items-center justify-content-between'>
                 <div className='left-side-content'>
-                  <span className='only-for-responsive'>
+                  <div
+                    className='only-for-responsive'
+                    onClick={() => setShowFilters(true)}
+                  >
                     <BsFilter fontSize={25} />
-                  </span>
+                  </div>
                   Showing {paginationFilters?.first + 1} to{" "}
                   {paginationFilters?.first + (response?.data?.length || 0)} of{" "}
                   {response?.pagination?.totalCount} products
@@ -509,9 +511,9 @@ const Page = () => {
                     className='btn btn-saawree mt-2'
                     onClick={() =>
                       setSelectedFilters({
-                        categoryIds: undefined,
-                        colorIds: undefined,
-                        polishingTypeIds: undefined,
+                        categoryIds: [],
+                        colorIds: [],
+                        polishingTypeIds: [],
                       })
                     }
                   >

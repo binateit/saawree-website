@@ -1,5 +1,5 @@
 import React from "react";
-import { BsChevronDown, BsChevronRight } from "react-icons/bs";
+import { BsChevronDown } from "react-icons/bs";
 import { CategoryList, CheckBoxFilter } from "../models/productModel";
 // import { CategoryAnonymous } from "../models/productModel";
 
