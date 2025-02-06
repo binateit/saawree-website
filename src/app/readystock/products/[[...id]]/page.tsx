@@ -11,7 +11,7 @@ import {
   getPolishingTypeList,
   getReadyStockProducts,
 } from "@/core/requests/productsRequests";
-import { useQuery } from "@tanstack/react-query";
+import { keepPreviousData, useQuery } from "@tanstack/react-query";
 import { useSession } from "next-auth/react";
 import { useSearchParams } from "next/navigation";
 import { Dropdown } from "primereact/dropdown";
@@ -119,21 +119,25 @@ const Page = () => {
       });
     },
     refetchOnWindowFocus: false,
+    placeholderData: keepPreviousData,
   });
 
   const { data: categoryList, isLoading: isCategoryListLoading } = useQuery({
     queryKey: ["categoryList"],
     queryFn: () => getCategoryList(),
+    refetchOnWindowFocus: false,
   });
   const { data: polishTypeList, isLoading: isPolishTypeListLoading } = useQuery(
     {
       queryKey: ["polishTypeList"],
       queryFn: () => getPolishingTypeList(),
+      refetchOnWindowFocus: false,
     }
   );
   const { data: colorTypeList, isLoading: isColorTypeListLoading } = useQuery({
     queryKey: ["colorTypeList"],
     queryFn: () => getColorList(),
+    refetchOnWindowFocus: false,
   });
 
   useEffect(() => {
@@ -189,6 +193,7 @@ const Page = () => {
     // categoryList,
     // polishList,
     // colorList,
+    categoryId,
   ]);
 
   const handleCategoryChange = (id: number, status: boolean) => {

@@ -259,6 +259,10 @@
     list-style: none;
   }
 
+  .my-account-label {
+    font-weight: 700 !important;
+  }
+
   .main_menu ul li .mega_menu {
     visibility: hidden;
     opacity: 0;
