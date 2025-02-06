@@ -2,9 +2,7 @@
 import React, { useState } from "react";
 import { Field, FormikProvider, useFormik } from "formik";
 import { useSearchParams } from "next/navigation";
-import { toast } from "react-toastify";
 import * as Yup from "yup";
-import { camelize } from "@/core/helpers/helperFunctions";
 import {
   forgotAgentPassword,
   forgotPassword,
@@ -32,26 +30,18 @@ const ForgotPassword = () => {
   const formik = useFormik({
     initialValues: initialValues,
     validationSchema: forgotPasswordSchema,
-    onSubmit: async (formValues, { setFieldError, setSubmitting }) => {
+    onSubmit: async (formValues, { setSubmitting }) => {
       setSubmitting(true);
       try {
         const result =
           selectUserType === "customer"
             ? await forgotPassword(formValues)
             : await forgotAgentPassword(formValues);
-        if (result.succeeded) {
+        if (result) {
           setSubmitting(true);
           setAlertMessage(
             "Link to reset password is been sent to your registered email address"
           );
-        } else {
-          if (result.statusCode === 400) {
-            result.propertyResults.map(
-              (error) =>
-                setFieldError(camelize(error.propertyName), error.errorMessage),
-              toast.error("Error while reseting password link")
-            );
-          }
         }
       } catch (ex) {
         console.error(ex);
