@@ -11,12 +11,12 @@ import {
   getPolishingTypeList,
   getReadyStockProducts,
 } from "@/core/requests/productsRequests";
-import { useQuery } from "@tanstack/react-query";
+import { keepPreviousData, useQuery } from "@tanstack/react-query";
 import { useSession } from "next-auth/react";
 import { useSearchParams } from "next/navigation";
 import { Dropdown } from "primereact/dropdown";
 import React, { useEffect, useState } from "react";
-import { BsFilter, BsGrid, BsListUl } from "react-icons/bs";
+import { BsFilter, BsGrid, BsListUl, BsXCircle } from "react-icons/bs";
 import noProductImage from "@/assets/images/no-products-available.png";
 import { useImmer } from "use-immer";
 import Image from "next/image";
@@ -68,7 +68,7 @@ const Page = () => {
 
   // const categoryId = searchParams.get("categoryId");
   const categoryName = searchParams.get("categoryName");
-
+  const [showFilters, setShowFilters] = useState<boolean>(false);
   const sortOptions = [
     { name: "Alphabetically A-Z", value: "Name asc", show: "always" },
     { name: "Alphabetically Z-A", value: "Name desc", show: "always" },
@@ -119,21 +119,25 @@ const Page = () => {
       });
     },
     refetchOnWindowFocus: false,
+    placeholderData: keepPreviousData,
   });
 
   const { data: categoryList, isLoading: isCategoryListLoading } = useQuery({
     queryKey: ["categoryList"],
     queryFn: () => getCategoryList(),
+    refetchOnWindowFocus: false,
   });
   const { data: polishTypeList, isLoading: isPolishTypeListLoading } = useQuery(
     {
       queryKey: ["polishTypeList"],
       queryFn: () => getPolishingTypeList(),
+      refetchOnWindowFocus: false,
     }
   );
   const { data: colorTypeList, isLoading: isColorTypeListLoading } = useQuery({
     queryKey: ["colorTypeList"],
     queryFn: () => getColorList(),
+    refetchOnWindowFocus: false,
   });
 
   useEffect(() => {
@@ -189,6 +193,7 @@ const Page = () => {
     // categoryList,
     // polishList,
     // colorList,
+    categoryId,
   ]);
 
   const handleCategoryChange = (id: number, status: boolean) => {
@@ -392,10 +397,19 @@ const Page = () => {
       <section className='category-page'>
         <div className='container'>
           <div className='category-wraper row'>
-            <div className='filter-side-bar col-xl-4 col-lg-4 col-md-6 mt-4'>
+            <div
+              className={`filter-side-bar col-xl-4 col-lg-4 col-md-6 mt-4 ${
+                showFilters ? "show" : ""
+              }`}
+            >
               <div className='sidebar-inner'>
                 <div className='close-filter'>
-                  <i className='bi bi-x-circle'></i>
+                  <div className='close-filter'>
+                    <BsXCircle
+                      fontSize={18}
+                      onClick={() => setShowFilters(false)}
+                    />
+                  </div>
                 </div>
                 {categoryFilterList
                   ?.filter((cat) => cat?.parentCategoryId === null)
@@ -432,9 +446,12 @@ const Page = () => {
             <div className='products-bar col-xl-8 col-lg-8 col-md-12 mt-4 mb-4'>
               <div className='categ-top-bar d-flex align-items-center justify-content-between'>
                 <div className='left-side-content'>
-                  <span className='only-for-responsive'>
-                    <BsFilter fontSize={18} />
-                  </span>
+                  <div
+                    className='only-for-responsive'
+                    onClick={() => setShowFilters(true)}
+                  >
+                    <BsFilter fontSize={25} />
+                  </div>
                   Showing {paginationFilters?.first + 1} to{" "}
                   {paginationFilters?.first + (response?.data?.length || 0)} of{" "}
                   {response?.pagination?.totalCount} products
@@ -494,9 +511,9 @@ const Page = () => {
                     className='btn btn-saawree mt-2'
                     onClick={() =>
                       setSelectedFilters({
-                        categoryIds: undefined,
-                        colorIds: undefined,
-                        polishingTypeIds: undefined,
+                        categoryIds: [],
+                        colorIds: [],
+                        polishingTypeIds: [],
                       })
                     }
                   >
@@ -524,14 +541,14 @@ const Page = () => {
                   {viewType === "list" && (
                     <div className='products-list-wrap'>
                       {response?.data?.map((product) => (
-                        <>
+                        <React.Fragment key={product?.productId}>
                           <ProductListCard
                             product={product}
                             session={session as Session}
                             type={"rds"}
                             key={product?.productId}
                           />
-                        </>
+                        </React.Fragment>
                       ))}
                     </div>
                   )}

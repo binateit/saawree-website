@@ -455,6 +455,11 @@ ul.sub-menu {
 .res-nav-btn {
     display: none;
 }
+.dashboard-menu-icon {
+    font-size: 25px;
+    display: block;
+    margin-right: 15px;
+}
 
 .welcome-box {
     padding: 40px;
@@ -2828,6 +2833,10 @@ label .span {
         margin-right: 15px;
     }
 
+    .dashboard-menu-icon {
+        display: none;
+    }
+
     .nav-item-dropdown-box {
         position: initial;
         display: none;
@@ -3052,6 +3061,10 @@ label .span {
         transition: 0.3s;
         overflow-y: scroll;
         top: 110px;
+    }
+
+    .filter-side-bar.show{
+        left:0;
     }
 
     .filter-side-bar::-webkit-scrollbar {
@@ -3715,6 +3728,7 @@ label .span {
         left: 0px;
         border-top: 1px solid #eee;
         padding-top: 10px;
+        z-index: 1;
     }
 }
 
@@ -4503,4 +4517,27 @@ select {
 .offcanvas-panel-menu>.p-sidebar-content {
     padding: 0px;
     overflow-x: hidden;
+}
+
+/*-----Prime React Paginator----*/
+.p-paginator .p-dropdown{
+    height: auto;
+}
+
+.p-paginator.p-component{
+    justify-content:end;
+}
+
+.p-paginator.p-component>div:first-child{
+    margin-right: auto;
+}
+.p-dropdown-panel .p-dropdown-items-wrapper .p-dropdown-items{
+    margin-bottom: 0;
+    padding: 0;
+}
+.p-dropdown-panel .p-dropdown-items .p-dropdown-item{
+    padding: 5px 10px;
+}
+.p-paginator{
+    padding:0;
 }

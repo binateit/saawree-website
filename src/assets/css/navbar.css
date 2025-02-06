@@ -21,7 +21,7 @@
 
 .main_menu ul li a {
   color: #ffffff;
-  padding: 20px 24px 20px 0px;
+  padding: 20px 24px 20px 15px;
   display: block;
   font-weight: 400;
   text-transform: uppercase;
@@ -257,6 +257,11 @@
     position: absolute;
     /* margin-top: 50px; */
     list-style: none;
+    width:100%;
+  }
+
+  .my-account-label {
+    font-weight: 700 !important;
   }
 
   .main_menu ul li .mega_menu {
@@ -271,7 +276,6 @@
     opacity: 1;
     /* margin-top: 0px; */
     z-index: 99;
-
   }
 
   .main_menu ul li:hover>.mega_menu {
@@ -415,8 +419,9 @@
   transition: 0.2s all ease-in-out;
 }
 
-.global-search-results a:hover {
+.global-search-results .global-result-item:hover {
   background-color: rgb(0 0 0 / 0.08);
+  cursor: pointer;
 }
 
 .global-search-results {

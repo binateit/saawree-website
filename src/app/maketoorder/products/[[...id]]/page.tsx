@@ -13,7 +13,7 @@ import { useSession } from "next-auth/react";
 import { useSearchParams } from "next/navigation";
 import { Dropdown } from "primereact/dropdown";
 import React, { useEffect, useState } from "react";
-import { BsFilter, BsGrid, BsListUl } from "react-icons/bs";
+import { BsFilter, BsGrid, BsListUl, BsXCircle } from "react-icons/bs";
 import noProductImage from "@/assets/images/no-products-available.png";
 import { useImmer } from "use-immer";
 import pageTitleBgImage from "../../../../assets/images/page-title-bg2.jpg";
@@ -34,7 +34,7 @@ const Page = () => {
   const { data: session } = useSession();
 
   const [viewType, setViewType] = useState<string>("grid");
-
+  const [showFilters, setShowFilters] = useState<boolean>(false);
   const [categoryFilterList, setCategoryFilterList] = useState<CategoryList[]>(
     []
   );
@@ -186,53 +186,6 @@ const Page = () => {
         });
       }
     }
-
-    // if (catList?.includes(id)) {
-    //   const allSubCat = categoryFilterList
-    //     ?.filter((item) => item?.parentCategoryId === id)
-    //     ?.map((cat) => cat?.id);
-    //   console.log(allSubCat);
-    //   return setSelectedFilters({
-    //     ...selectedFilters,
-    //     categoryIds: catList.filter((item, index) => item !== allSubCat[index]),
-    //   });
-    // } else {
-    //   if (parentCategorySelected?.length > 0) {
-    //     const allSubCat = categoryFilterList
-    //       ?.filter((item) => item?.parentCategoryId === id)
-    //       ?.map((cat) => cat?.id);
-    //     return setSelectedFilters({
-    //       ...selectedFilters,
-    //       categoryIds: [...allSubCat, id],
-    //     });
-    //   } else {
-    //     catList.push(id);
-    //     return setSelectedFilters({
-    //       ...selectedFilters,
-    //       categoryIds: catList,
-    //     });
-    //   }
-
-    //   // categoryFilterList?.map((item: CategoryList) => {
-    //   //   if (item?.id === id && item?.isParent === true) {
-    //   //     const allSubCat = categoryFilterList
-    //   //       ?.filter((item) => item?.parentCategoryId === id)
-    //   //       ?.map((cat) => cat?.id);
-    //   //     console.log("inside handle category", [...allSubCat, id]);
-    //   //     return setSelectedFilters({
-    //   //       ...selectedFilters,
-    //   //       categoryIds: [allSubCat, id],
-    //   //     });
-    //   //   } else {
-    //   //     console.log("inside handle category", [id]);
-    //   //     catList.push(id);
-    //   //     return setSelectedFilters({
-    //   //       ...selectedFilters,
-    //   //       categoryIds: catList,
-    //   //     });
-    //   //   }
-    //   // });
-    // }
   };
 
   const onPageOrSortChange = (event: PaginatorPageChangeEvent) => {
@@ -296,10 +249,17 @@ const Page = () => {
       <section className='category-page'>
         <div className='container'>
           <div className='category-wraper row'>
-            <div className='filter-side-bar col-xl-4 col-lg-4 col-md-6 mt-4'>
+            <div
+              className={`filter-side-bar col-xl-4 col-lg-4 col-md-6 mt-4 ${
+                showFilters ? "show" : ""
+              }`}
+            >
               <div className='sidebar-inner'>
                 <div className='close-filter'>
-                  <i className='bi bi-x-circle'></i>
+                  <BsXCircle
+                    fontSize={18}
+                    onClick={() => setShowFilters(false)}
+                  />
                 </div>
                 {categoryFilterList
                   ?.filter((cat) => cat?.parentCategoryId === null)
@@ -322,9 +282,12 @@ const Page = () => {
             <div className='products-bar col-xl-8 col-lg-8 col-md-12 mt-4 mb-4'>
               <div className='categ-top-bar d-flex align-items-center justify-content-between'>
                 <div className='left-side-content'>
-                  <span className='only-for-responsive'>
+                  <div
+                    className='only-for-responsive'
+                    onClick={() => setShowFilters(true)}
+                  >
                     <BsFilter fontSize={18} />
-                  </span>
+                  </div>
                   Showing {paginationFilters?.first + 1} to{" "}
                   {paginationFilters?.first + (response?.data?.length || 0)} of{" "}
                   {response?.pagination?.totalCount} products

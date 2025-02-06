@@ -1,6 +1,6 @@
 "use client";
 import { useDebounce } from "use-debounce";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import finalLogo from "@/assets/images/finalLogo.png";
 import appleStore from "@/assets/images/appleStore.png";
 import playStore from "@/assets/images/playStore.png";
@@ -23,6 +23,19 @@ import Image from "next/image";
 import { Session } from "next-auth";
 import customLoader from "@/core/component/shared/image-loader";
 import { getReadyStockProducts } from "@/core/requests/productsRequests";
+import NestedDropdown from "@/core/component/NestedDropdown";
+import { Mtoc } from "@/core/models/homeModel";
+
+const renderSubCategories = (categories: Mtoc[], parentId: number | null) => {
+  return categories
+    ?.filter((subCat) => subCat?.pcid === parentId)
+    .map((subCat) => (
+      <React.Fragment key={subCat?.id}>
+        <option value={subCat?.id}>{subCat?.n}</option>
+        {renderSubCategories(categories, subCat?.id)}
+      </React.Fragment>
+    ));
+};
 
 const Header = () => {
   const { data: session, status: authStatus } = useSession();
@@ -32,7 +45,15 @@ const Header = () => {
   const UserSession = session as Session;
 
   const [show, setShow] = useState(false);
+  const [showMobileSearchBar, setShowMobileSearch] = useState<boolean>(false);
+  const [showResponsiveMenu, setShowResponsiveMenu] = useState(false);
   const [showSearchDropDown, setShowDropDown] = useState(false);
+  const [readyStockSubCategories, setReadyStockSubCategory] = useState<Mtoc[]>(
+    []
+  );
+  const [selctedCategory, setSelectedCategory] = useState<number | undefined>(
+    undefined
+  );
   const { cartCount } = useCartCount();
 
   const [closeSubMenu, setCloseSubMenu] = useState(false);
@@ -49,6 +70,7 @@ const Header = () => {
   const { data: menuCategoryData } = useQuery({
     queryKey: ["menuCategoryData"],
     queryFn: () => getMenuCategories(),
+    refetchOnWindowFocus: false,
   });
 
   const queryResult = useQuery({
@@ -61,6 +83,7 @@ const Header = () => {
           operator: "contains",
           value: debouncedQuery,
         },
+        categoryIds: selctedCategory ? [selctedCategory] : undefined,
       });
       return rows?.data;
     },
@@ -70,10 +93,33 @@ const Header = () => {
   const handleNavgation = (productId: number): void => {
     navigate.push(`/readystock/details?productId=${productId}`);
     setShowDropDown(false);
+    setShowMobileSearch(false);
     setQuery("");
   };
 
-  console.log(UserSession?.user);
+  useEffect(() => {
+    const readyStockCategories: Mtoc[] = [];
+
+    const getSubCategories = (categories: Mtoc[], parentId: number | null) => {
+      return categories
+        ?.filter((srsc) => srsc?.pcid === parentId)
+        ?.map((srsc) => {
+          readyStockCategories.push({
+            id: srsc?.id,
+            hc: srsc?.hc,
+            isp: srsc?.isp,
+            n: srsc?.n,
+            o: srsc?.o,
+            pcid: srsc?.pcid,
+          });
+          getSubCategories(categories, srsc?.id);
+        });
+    };
+    menuCategoryData?.rsc
+      ?.filter((rs) => rs?.pcid === null)
+      ?.map((rs) => getSubCategories(menuCategoryData?.rsc, rs?.id));
+    setReadyStockSubCategory(readyStockCategories);
+  }, [menuCategoryData]);
 
   return (
     <>
@@ -110,7 +156,11 @@ const Header = () => {
             <div className='col-xl-2 col-lg-2 col-md-2 col-sm-3 col-3 order-1 order-md-1'>
               <div className='brand-log'>
                 <span className='res-nav-btn'>
-                  <i className='fas fa-bars fa-1x'></i>
+                  <BsList
+                    fontSize={25}
+                    onClick={() => setShowResponsiveMenu(true)}
+                    // onClick={handleShow}
+                  />
                 </span>
                 <Link href='/'>
                   <Image
@@ -125,7 +175,9 @@ const Header = () => {
               </div>
             </div>
             <div
-              className='col-xl-8 col-lg-7 col-md-8 col-sm-12 d-none d-md-block order-3 order-md-2'
+              className={`col-xl-8 col-lg-7 col-md-8 col-sm-12 d-none d-md-block order-3 order-md-2 ${
+                showMobileSearchBar ? "show" : " "
+              }`}
               id='product-search-bar'
             >
               <form className='search-form position-relative'>
@@ -154,10 +206,23 @@ const Header = () => {
                 </div> */}
                 <div className='d-flex w-100'>
                   <div className='search-category-dropdown'>
-                    <select className='form-control search-box search-category'>
-                      <option disabled>Category</option>
-                      <option>Category one</option>
-                      <option>Larger Cartegory is here</option>
+                    <select
+                      className='form-control search-box search-category'
+                      onChange={(e) =>
+                        setSelectedCategory(Number(e.target?.value))
+                      }
+                    >
+                      <option value={undefined}>Category</option>
+                      {menuCategoryData?.rsc
+                        ?.filter((item) => item?.pcid === null)
+                        .map((cat) => (
+                          <optgroup label={cat?.n} key={cat?.id}>
+                            {renderSubCategories(
+                              menuCategoryData?.rsc,
+                              cat?.id
+                            )}
+                          </optgroup>
+                        ))}
                     </select>
                     <i className='fas fa-angle-down'></i>
                   </div>
@@ -193,7 +258,7 @@ const Header = () => {
                           <div
                             key={res?.productId}
                             onClick={() => handleNavgation(res?.productId)}
-                            className='text-dark mb-0 border-bottom py-2 px-3'
+                            className='text-dark mb-0 border-bottom py-2 px-3 global-result-item'
                           >
                             {res?.productName}
                           </div>
@@ -212,18 +277,19 @@ const Header = () => {
                 <div
                   className='header-icons d-md-none'
                   id='product-search-icon'
+                  onClick={() => setShowMobileSearch(!showMobileSearchBar)}
                 >
-                  <BsSearch fontSize={25} />
+                  <BsSearch fontSize={20} />
                 </div>
 
                 <Link href='/cart' className='cart-widget header-icons'>
-                  <BsCart fontSize={25} />
+                  <BsCart fontSize={20} />
                   <span className='badge badge-danger'>{cartCount}</span>
                 </Link>
                 {authStatus === "authenticated" && (
                   <div className='header-icons dashboard-menu-icon'>
                     <BsList
-                      fontSize={25}
+                      fontSize={20}
                       onClick={() => setShow(true)}
                       // onClick={handleShow}
                     />
@@ -250,7 +316,7 @@ const Header = () => {
                     {UserSession?.user?.isMakeToOrderEnabled && (
                       <li className='has_dropdown'>
                         <a href='#'>
-                          Make to Order <i className='fas fa-angle-down'></i>
+                          Make to Order <BsChevronDown />
                         </a>
                         <ul className='sub_menu'>
                           {menuCategoryData?.mtoc
@@ -333,25 +399,70 @@ const Header = () => {
                         </ul>
                       </li>
                     )}
-                    <li className='mega_menu_dropdown mega_menu_demo_2 has_dropdown'>
-                      <a href='#'>
-                        Ready Stock <i className='fas fa-angle-down'></i>
-                      </a>
-                      <div className='mega_menu sub_menu'>
-                        <div className='mega_menu_item'>
-                          <h3>Jewellery</h3>
-                          <a href='#'>Traditional</a>
-                          <a href='#'>Pakistani</a>
-                          <a href='#'>Store</a>
-                        </div>
-                        <div className='mega_menu_item'>
-                          <h3>Jewellery 02</h3>
-                          <a href='#'>Traditional</a>
-                          <a href='#'>Pakistani</a>
-                          <a href='#'>Store</a>
-                        </div>
-                      </div>
-                    </li>
+                    {menuCategoryData?.rsc
+                      ?.filter((cat) => cat?.pcid === null)
+                      .map((cat) => (
+                        <React.Fragment key={cat?.id}>
+                          <li className='has_dropdown'>
+                            <Link
+                              href={`/readystock/products?categoryName=${cat.n}&categoryId=${cat?.id}`}
+                              onClick={() => {
+                                setCloseSubMenu(!closeSubMenu);
+                              }}
+                            >
+                              {cat?.n}
+                              <BsChevronDown fontSize={16} className='ml-2' />
+                            </Link>
+                            <ul className='sub_menu'>
+                              {menuCategoryData?.rsc
+                                ?.filter(
+                                  (item) =>
+                                    // item?.isp === true &&
+                                    item?.pcid === cat?.id
+                                )
+                                .map((subCat) => (
+                                  <React.Fragment key={subCat?.id}>
+                                    <li className='has_dropdown'>
+                                      <Link
+                                        href={`/readystock/products?categoryName=${subCat.n}&categoryId=${subCat?.id}`}
+                                        onClick={() => {
+                                          setCloseSubMenu(!closeSubMenu);
+                                        }}
+                                      >
+                                        {subCat?.n}
+                                      </Link>
+                                      <ul className='sub_menu'>
+                                        {menuCategoryData?.rsc
+                                          ?.filter(
+                                            (ssubCat) =>
+                                              // ssubCat?.isp === true &&
+                                              ssubCat?.pcid === subCat?.id
+                                          )
+                                          .map((ssubCat) => (
+                                            <li
+                                              className='has_dropdown'
+                                              key={ssubCat?.id}
+                                            >
+                                              <Link
+                                                href={`/readystock/products?categoryName=${ssubCat.n}&categoryId=${ssubCat?.id}`}
+                                                onClick={() => {
+                                                  setCloseSubMenu(
+                                                    !closeSubMenu
+                                                  );
+                                                }}
+                                              >
+                                                {ssubCat?.n}
+                                              </Link>
+                                            </li>
+                                          ))}
+                                      </ul>
+                                    </li>
+                                  </React.Fragment>
+                                ))}
+                            </ul>
+                          </li>
+                        </React.Fragment>
+                      ))}
                     <li>
                       <Link href='/track-order'>Track Order</Link>
                     </li>
@@ -371,20 +482,20 @@ const Header = () => {
                 <Image
                   loader={customLoader}
                   src={appleStore.src}
-                  className='app-icon img-fluid'
+                  className='app-icon'
                   alt='appstore'
-                  width={30}
-                  height={30}
+                  width={25}
+                  height={25}
                 />
               </a>
               <a href=''>
                 <Image
                   loader={customLoader}
                   src={playStore.src}
-                  className='app-icon img-fluid'
+                  className='app-icon'
                   alt='playstore'
-                  width={30}
-                  height={30}
+                  width={20}
+                  height={25}
                 />
               </a>
 
@@ -485,6 +596,203 @@ const Header = () => {
                 </div>
               )}
             </li>
+          </ul>
+        </div>
+      </Sidebar>
+      <Sidebar
+        visible={showResponsiveMenu}
+        position='left'
+        onHide={() => setShowResponsiveMenu(false)}
+        className='offcanvas-panel-menu'
+        showCloseIcon={false}
+        blockScroll={true}
+      >
+        <div className='py-2'>
+          <ul className='nav flex-column nav-pills nav-pills-custom'>
+            <li className='nav-link mb-2 active'>
+              <div
+                onClick={() => {
+                  navigate.push("/");
+                  setShowResponsiveMenu(false);
+                }}
+                className='font-weight-bold small text-uppercase nav-link-item  py-1 px-3 d-block'
+              >
+                Home
+              </div>
+            </li>
+            {UserSession?.user?.isMakeToOrderEnabled && (
+              <li className='mb-2 tab-has-dropdown nav-link cursor-pointer'>
+                <div
+                  className='font-weight-bold small text-uppercase py-1 px-3 nav-link-item'
+                  onClick={() =>
+                    setOpenDropDown({
+                      display: !openDropDown.display,
+                      name: "mtc",
+                    })
+                  }
+                >
+                  Make to Order <BsChevronDown fontSize={14} />
+                </div>
+                {openDropDown.display && openDropDown.name === "mtc" && (
+                  <NestedDropdown
+                    menuCategoryData={menuCategoryData?.mtoc || []}
+                    categoryType={"mtc"}
+                    setShowResponsiveMenu={setShowResponsiveMenu}
+                  />
+                )}
+              </li>
+            )}
+            {menuCategoryData?.rsc
+              ?.filter((rs) => rs?.pcid === null)
+              .map((rs) => (
+                <li
+                  className='mb-2 tab-has-dropdown nav-link cursor-pointer'
+                  key={rs?.id}
+                >
+                  <div
+                    className='font-weight-bold small text-uppercase py-1 px-3 nav-link-item'
+                    onClick={() =>
+                      setOpenDropDown({
+                        display: !openDropDown.display,
+                        name: "rs",
+                      })
+                    }
+                  >
+                    {rs?.n} <BsChevronDown fontSize={14} />
+                  </div>
+                  {openDropDown.display && openDropDown.name === "rs" && (
+                    <NestedDropdown
+                      menuCategoryData={readyStockSubCategories || []}
+                      categoryType={"rs"}
+                      setShowResponsiveMenu={setShowResponsiveMenu}
+                    />
+                  )}
+                </li>
+              ))}
+            <li className='nav-link mb-2 active'>
+              <div
+                onClick={() => {
+                  navigate.push("/track-order");
+                  setShowResponsiveMenu(false);
+                }}
+                className='font-weight-bold small text-uppercase nav-link-item  py-1 px-3 d-block'
+              >
+                Track Order
+              </div>
+            </li>
+            <li className='nav-link mb-2 active'>
+              <div
+                onClick={() => {
+                  navigate.push("/order-process");
+                  setShowResponsiveMenu(false);
+                }}
+                className='font-weight-bold small text-uppercase nav-link-item  py-1 px-3 d-block'
+              >
+                Order Process
+              </div>
+            </li>
+            <li className='nav-link mb-2 active'>
+              <div
+                onClick={() => {
+                  navigate.push("/contact-us");
+                  setShowResponsiveMenu(false);
+                }}
+                className='font-weight-bold small text-uppercase nav-link-item  py-1 px-3 d-block'
+              >
+                Contact
+              </div>
+            </li>
+            {authStatus === "authenticated" && (
+              <>
+                <li className='mt-2 my-account-label'>My Account</li>
+                <li className='nav-link mb-2 active'>
+                  <Link
+                    href='overview.html'
+                    className='font-weight-bold small text-uppercase nav-link-item  py-1 px-3 d-block'
+                  >
+                    Overview
+                  </Link>
+                </li>
+                <li className='mb-2 tab-has-dropdown nav-link cursor-pointer'>
+                  <div
+                    className='font-weight-bold small text-uppercase py-1 px-3 nav-link-item'
+                    onClick={() =>
+                      setOpenDropDown({
+                        display: !openDropDown.display,
+                        name: "profile",
+                      })
+                    }
+                  >
+                    Profile <BsChevronDown fontSize={14} />
+                  </div>
+                  {openDropDown.display && openDropDown.name === "profile" && (
+                    <div className='nav flex-column nav-pills nav-pills-custom-dropdown'>
+                      <a
+                        className='nav-link pl-0 py-2 px-3'
+                        href='profile-details.html'
+                      >
+                        Profile Details
+                      </a>
+                      <a
+                        className='nav-link pl-0 py-2 px-3'
+                        href='accounting-details.html'
+                      >
+                        Accounting Details
+                      </a>
+                      <a
+                        className='nav-link pl-0 py-2 px-3'
+                        href='address.html'
+                      >
+                        Address
+                      </a>
+                      <a
+                        className='nav-link pl-0 py-2 px-3'
+                        href='change-password.html'
+                      >
+                        Change Password
+                      </a>
+                    </div>
+                  )}
+                </li>
+                <li className='mb-2 tab-has-dropdown nav-link cursor-pointer'>
+                  <div
+                    className='font-weight-bold small text-uppercase py-1 px-3'
+                    onClick={() =>
+                      setOpenDropDown({
+                        display: !openDropDown.display,
+                        name: "transaction",
+                      })
+                    }
+                  >
+                    Transaction
+                    <BsChevronDown fontSize={14} />
+                  </div>
+                  {openDropDown.display &&
+                    openDropDown.name === "transaction" && (
+                      <div className='nav flex-column nav-pills nav-pills-custom-dropdown'>
+                        <Link
+                          className='nav-link py-2 px-3'
+                          href='sale-order.html'
+                        >
+                          Sales Order
+                        </Link>
+                        <Link
+                          className='nav-link py-2 px-3'
+                          href='invoice.html'
+                        >
+                          Invoice
+                        </Link>
+                        <Link
+                          className='nav-link py-2 px-3'
+                          href='payment.html'
+                        >
+                          Payment
+                        </Link>
+                      </div>
+                    )}
+                </li>
+              </>
+            )}
           </ul>
         </div>
       </Sidebar>

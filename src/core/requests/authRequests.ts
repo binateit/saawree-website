@@ -35,7 +35,7 @@ const RESET_AGENT_PASSWORD_URL = `${API_URL}/agent/reset-password`;
 
 const registerCustomer = async (
   register: Register
-): Promise<RegistationResponse> => {
+): Promise<RegistationResponse | Result> => {
   const headers = {
     tenant: "ho",
   };
@@ -64,7 +64,7 @@ const registerCustomer = async (
 
     .then((response: AxiosResponse<RegistationResponse>) => response.data)
     .then((response: RegistationResponse) => response)
-    .catch((err) => {
+    .catch((err: Result) => {
       return err;
     });
 };
