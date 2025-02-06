@@ -230,9 +230,9 @@ const Header = () => {
                           <div
                             key={res?.productId}
                             onClick={() => handleNavgation(res?.productId)}
-                            className='text-dark mb-0 border-bottom py-2 px-3'
-                          >
-                            {res?.productName}
+                            className='text-dark mb-0 border-bottom py-2 px-3 global-result-item'
+                          >                            
+                            {res?.productName}                            
                           </div>
                         ))}
                       </div>
@@ -288,7 +288,7 @@ const Header = () => {
                     {UserSession?.user?.isMakeToOrderEnabled && (
                       <li className='has_dropdown'>
                         <a href='#'>
-                          Make to Order <i className='fas fa-angle-down'></i>
+                          Make to Order <BsChevronDown/>
                         </a>
                         <ul className='sub_menu'>
                           {menuCategoryData?.mtoc
@@ -383,7 +383,7 @@ const Header = () => {
                               }}
                             >
                               {cat?.n}
-                              <i className='fas fa-angle-down'></i>
+                              <BsChevronDown fontSize={16} className="ml-2"/>
                             </Link>
                             <ul className='sub_menu'>
                               {menuCategoryData?.rsc
@@ -454,20 +454,20 @@ const Header = () => {
                 <Image
                   loader={customLoader}
                   src={appleStore.src}
-                  className='app-icon img-fluid'
+                  className='app-icon'
                   alt='appstore'
-                  width={30}
-                  height={30}
+                  width={25}
+                  height={25}
                 />
               </a>
               <a href=''>
                 <Image
                   loader={customLoader}
                   src={playStore.src}
-                  className='app-icon img-fluid'
+                  className='app-icon'
                   alt='playstore'
-                  width={30}
-                  height={30}
+                  width={20}
+                  height={25}
                 />
               </a>
 

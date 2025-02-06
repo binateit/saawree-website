@@ -1,5 +1,5 @@
 import React from "react";
-import { BsChevronRight } from "react-icons/bs";
+import { BsChevronDown, BsChevronRight } from "react-icons/bs";
 import { CategoryList, CheckBoxFilter } from "../models/productModel";
 // import { CategoryAnonymous } from "../models/productModel";
 
@@ -38,8 +38,8 @@ const FilterSection = ({
                 ?.filter((cat) => cat.parentCategoryId !== null)
                 .map((cat) => (
                   <li className='list-group-item p-0' key={cat?.id}>
-                    <div className='category-item d-flex justify-content-between list-group-item-action cursor-pointer'>
-                      <div className='form-group'>
+                    <div className='category-item d-flex justify-content-between list-group-item-action cursor-pointer bg-light'>
+                      <div className='form-group mb-0'>
                         <input
                           type='checkbox'
                           id={`${cat.name} - ${cat?.id}`}
@@ -51,12 +51,12 @@ const FilterSection = ({
                         />
                         <label
                           htmlFor={`${cat.name} - ${cat?.id}`}
-                          className='filter-label d-flex align-items-start'
+                          className='filter-label d-flex align-items-start mb-0'
                         >
                           {cat?.name}
                         </label>
                       </div>
-                      <BsChevronRight />
+                      <BsChevronDown />
                     </div>
                     <div className='filters-inner'>
                       {categoryList
