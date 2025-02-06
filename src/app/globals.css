@@ -3063,6 +3063,10 @@ label .span {
         top: 110px;
     }
 
+    .filter-side-bar.show{
+        left:0;
+    }
+
     .filter-side-bar::-webkit-scrollbar {
         display: none;
     }
@@ -4513,4 +4517,27 @@ select {
 .offcanvas-panel-menu>.p-sidebar-content {
     padding: 0px;
     overflow-x: hidden;
+}
+
+/*-----Prime React Paginator----*/
+.p-paginator .p-dropdown{
+    height: auto;
+}
+
+.p-paginator.p-component{
+    justify-content:end;
+}
+
+.p-paginator.p-component>div:first-child{
+    margin-right: auto;
+}
+.p-dropdown-panel .p-dropdown-items-wrapper .p-dropdown-items{
+    margin-bottom: 0;
+    padding: 0;
+}
+.p-dropdown-panel .p-dropdown-items .p-dropdown-item{
+    padding: 5px 10px;
+}
+.p-paginator{
+    padding:0;
 }

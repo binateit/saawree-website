@@ -16,7 +16,7 @@ import { useSession } from "next-auth/react";
 import { useSearchParams } from "next/navigation";
 import { Dropdown } from "primereact/dropdown";
 import React, { useEffect, useState } from "react";
-import { BsFilter, BsGrid, BsListUl } from "react-icons/bs";
+import { BsFilter, BsGrid, BsListUl, BsXCircle } from "react-icons/bs";
 import noProductImage from "@/assets/images/no-products-available.png";
 import { useImmer } from "use-immer";
 import Image from "next/image";
@@ -400,7 +400,7 @@ const Page = () => {
             <div className='filter-side-bar col-xl-4 col-lg-4 col-md-6 mt-4'>
               <div className='sidebar-inner'>
                 <div className='close-filter'>
-                  <i className='bi bi-x-circle'></i>
+                  <BsXCircle fontSize={30}/>
                 </div>
                 {categoryFilterList
                   ?.filter((cat) => cat?.parentCategoryId === null)
@@ -438,7 +438,7 @@ const Page = () => {
               <div className='categ-top-bar d-flex align-items-center justify-content-between'>
                 <div className='left-side-content'>
                   <span className='only-for-responsive'>
-                    <BsFilter fontSize={18} />
+                    <BsFilter fontSize={25} />
                   </span>
                   Showing {paginationFilters?.first + 1} to{" "}
                   {paginationFilters?.first + (response?.data?.length || 0)} of{" "}
