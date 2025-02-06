@@ -151,6 +151,13 @@ const dateOptions = [
     value: "custom",
   },
 ];
+
+function toCamelCase(str: string) {
+  // First, handle different possible input formats by splitting on common separators
+  return str
+    .replace(/[^a-zA-Z0-9]+(.)/g, (match, chr) => chr.toUpperCase())
+    .replace(/^[A-Z]/, (chr) => chr.toLowerCase());
+}
 export {
   camelize,
   formatCurrency,
@@ -160,4 +167,5 @@ export {
   dateOptions,
   checkIfImageExists,
   // generateOptions,
+  toCamelCase,
 };

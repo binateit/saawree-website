@@ -45,7 +45,7 @@ const ResetPasswordPage = () => {
           token: tokenFromURL as string,
         };
 
-        const result = pathname.includes("customer")
+        const result = pathname.includes("Customer")
           ? await resetPassword(resetData)
           : await resetAgentPassword(resetData);
 

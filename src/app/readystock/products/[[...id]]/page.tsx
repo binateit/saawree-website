@@ -68,7 +68,7 @@ const Page = () => {
 
   // const categoryId = searchParams.get("categoryId");
   const categoryName = searchParams.get("categoryName");
-
+  const [showFilters, setShowFilters] = useState<boolean>(false);
   const sortOptions = [
     { name: "Alphabetically A-Z", value: "Name asc", show: "always" },
     { name: "Alphabetically Z-A", value: "Name desc", show: "always" },
@@ -397,10 +397,19 @@ const Page = () => {
       <section className='category-page'>
         <div className='container'>
           <div className='category-wraper row'>
-            <div className='filter-side-bar col-xl-4 col-lg-4 col-md-6 mt-4'>
+            <div
+              className={`filter-side-bar col-xl-4 col-lg-4 col-md-6 mt-4 ${
+                showFilters ? "show" : ""
+              }`}
+            >
               <div className='sidebar-inner'>
                 <div className='close-filter'>
-                  <BsXCircle fontSize={30}/>
+                  <div className='close-filter'>
+                    <BsXCircle
+                      fontSize={18}
+                      onClick={() => setShowFilters(false)}
+                    />
+                  </div>
                 </div>
                 {categoryFilterList
                   ?.filter((cat) => cat?.parentCategoryId === null)
@@ -437,9 +446,12 @@ const Page = () => {
             <div className='products-bar col-xl-8 col-lg-8 col-md-12 mt-4 mb-4'>
               <div className='categ-top-bar d-flex align-items-center justify-content-between'>
                 <div className='left-side-content'>
-                  <span className='only-for-responsive'>
+                  <div
+                    className='only-for-responsive'
+                    onClick={() => setShowFilters(true)}
+                  >
                     <BsFilter fontSize={25} />
-                  </span>
+                  </div>
                   Showing {paginationFilters?.first + 1} to{" "}
                   {paginationFilters?.first + (response?.data?.length || 0)} of{" "}
                   {response?.pagination?.totalCount} products
@@ -499,9 +511,9 @@ const Page = () => {
                     className='btn btn-saawree mt-2'
                     onClick={() =>
                       setSelectedFilters({
-                        categoryIds: undefined,
-                        colorIds: undefined,
-                        polishingTypeIds: undefined,
+                        categoryIds: [],
+                        colorIds: [],
+                        polishingTypeIds: [],
                       })
                     }
                   >
