@@ -16,7 +16,7 @@ import { useSession } from "next-auth/react";
 import { useSearchParams } from "next/navigation";
 import { Dropdown } from "primereact/dropdown";
 import React, { useEffect, useState } from "react";
-import { BsFilter, BsGrid, BsListUl } from "react-icons/bs";
+import { BsFilter, BsGrid, BsListUl, BsXCircle } from "react-icons/bs";
 import noProductImage from "@/assets/images/no-products-available.png";
 import { useImmer } from "use-immer";
 import Image from "next/image";
@@ -68,7 +68,7 @@ const Page = () => {
 
   // const categoryId = searchParams.get("categoryId");
   const categoryName = searchParams.get("categoryName");
-
+  const [showFilters, setShowFilters] = useState<boolean>(false);
   const sortOptions = [
     { name: "Alphabetically A-Z", value: "Name asc", show: "always" },
     { name: "Alphabetically Z-A", value: "Name desc", show: "always" },
@@ -397,10 +397,19 @@ const Page = () => {
       <section className='category-page'>
         <div className='container'>
           <div className='category-wraper row'>
-            <div className='filter-side-bar col-xl-4 col-lg-4 col-md-6 mt-4'>
+            <div
+              className={`filter-side-bar col-xl-4 col-lg-4 col-md-6 mt-4 ${
+                showFilters ? "show" : ""
+              }`}
+            >
               <div className='sidebar-inner'>
                 <div className='close-filter'>
-                  <i className='bi bi-x-circle'></i>
+                  <div className='close-filter'>
+                    <BsXCircle
+                      fontSize={18}
+                      onClick={() => setShowFilters(false)}
+                    />
+                  </div>
                 </div>
                 {categoryFilterList
                   ?.filter((cat) => cat?.parentCategoryId === null)
@@ -437,9 +446,12 @@ const Page = () => {
             <div className='products-bar col-xl-8 col-lg-8 col-md-12 mt-4 mb-4'>
               <div className='categ-top-bar d-flex align-items-center justify-content-between'>
                 <div className='left-side-content'>
-                  <span className='only-for-responsive'>
+                  <div
+                    className='only-for-responsive'
+                    onClick={() => setShowFilters(true)}
+                  >
                     <BsFilter fontSize={18} />
-                  </span>
+                  </div>
                   Showing {paginationFilters?.first + 1} to{" "}
                   {paginationFilters?.first + (response?.data?.length || 0)} of{" "}
                   {response?.pagination?.totalCount} products

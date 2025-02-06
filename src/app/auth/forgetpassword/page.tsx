@@ -9,6 +9,7 @@ import {
   forgotAgentPassword,
   forgotPassword,
 } from "@/core/requests/authRequests";
+import Link from "next/link";
 
 const forgotPasswordSchema = Yup.object().shape({
   email: Yup.string()
@@ -62,7 +63,9 @@ const ForgotPassword = () => {
           <h3 className='form-heading1'>Forgot Password</h3>
           <form className='login-form' onSubmit={formik.handleSubmit}>
             <div className='form-group'>
-              <label htmlFor='username'>Email</label>
+              <label htmlFor='username'>
+                Please enter your registered email to reset your password
+              </label>
               <Field
                 type='text'
                 className='form-control checkout-input'
@@ -83,11 +86,12 @@ const ForgotPassword = () => {
                 {alertMessage}
               </div>
             )}
-            <input
-              type='submit'
-              className='submit-btn btn btn-saawree'
-              value='Submit'
-            />
+            <div className='flex-dv'>
+              <Link href='/auth/login' className='return-link'>
+                <i className='bi bi-chevron-left'></i> Return to store
+              </Link>
+              <input type='submit' className='btn btn-saawree' value='Submit' />
+            </div>
           </form>
         </div>
       </section>

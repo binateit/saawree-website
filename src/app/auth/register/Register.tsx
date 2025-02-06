@@ -14,6 +14,8 @@ import { Country, SelectOptionProps, State } from "@/core/models/model";
 import { getCountryList, getStateList } from "@/core/requests/requests";
 import { registerCustomer } from "@/core/requests/authRequests";
 import CustomSelect from "@/core/component/CustomSelect";
+import { toCamelCase } from "@/core/helpers/helperFunctions";
+import { Register } from "@/core/models/authModel";
 
 interface Props {
   updateStep: (step: number) => void;
@@ -93,7 +95,7 @@ const Registration = ({ updateStep, setUserId }: Props) => {
     initialValues: initialValues,
     validationSchema: registerSchema,
 
-    onSubmit: async (formValues, { setSubmitting }) => {
+    onSubmit: async (formValues, { setSubmitting, setFieldError }) => {
       setSubmitting(true);
       try {
         const result = await registerCustomer(formValues);
@@ -103,7 +105,13 @@ const Registration = ({ updateStep, setUserId }: Props) => {
           router.push("/auth/registrationprocess");
         } else {
           if (result?.data?.statusCode === 400) {
-            toast.error("Error while creating registration");
+            result?.data?.propertyResults?.forEach((error: any) => {
+              const propertyName = toCamelCase(
+                error?.propertyName
+              ) as keyof Register;
+              setFieldError(propertyName, error?.errorMessage);
+            });
+            console.log(result);
           }
         }
       } catch (error) {
@@ -372,9 +380,9 @@ const Registration = ({ updateStep, setUserId }: Props) => {
               </div>
 
               <div className='flex-dv'>
-                <a href='#' className='return-link'>
+                <Link href='/' className='return-link'>
                   <i className='bi bi-chevron-left'></i> Return to store
-                </a>
+                </Link>
                 <button className='btn btn-saawree'>Register</button>
               </div>
             </form>
