@@ -181,7 +181,6 @@ const handler = NextAuth({
         if (decodedToken?.exp) {
           const expirationTime = new Date(decodedToken.exp * 1000);
           const currentTime = new Date();
-          console.log("time", expirationTime, currentTime);
           if (expirationTime < currentTime) {
             if (
               typedUser.refreshTokenExpiryTime &&
@@ -191,14 +190,12 @@ const handler = NextAuth({
                 token: typedUser.token,
                 refreshToken: typedUser.refreshToken || "",
               };
-              console.log("callback", refreshTokendetails);
               const response =
                 typedUser.userType === "customer"
                   ? await getRefreshToken(refreshTokendetails)
                   : await getAgentRefreshToken(refreshTokendetails);
 
               if (response.data.token) {
-                console.log("success", response);
                 typedUser.token = response.data.token;
                 typedUser.refreshToken = response.data.refreshToken;
                 typedUser.refreshTokenExpiryTime =
