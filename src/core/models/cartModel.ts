@@ -51,11 +51,6 @@ export type UpdateCartPayload = {
 
 export type PlaceOrderPayload = {
   isFromBuyNow: boolean;
-  shipAddressId: number;
-  paymentModeId: number;
-};
-export type PlaceOrderRSPayload = {
-  isFromBuyNow: boolean;
   shippingAddressId: number;
   paymentModeId: number;
 };

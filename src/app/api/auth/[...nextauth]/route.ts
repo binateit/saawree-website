@@ -29,6 +29,8 @@ const handler = NextAuth({
             credentials.username,
             credentials.password
           );
+
+          console.log("customer login response", loginResponse);
           if (loginResponse.succeeded && loginResponse.data.token) {
             return {
               id: "user-" + loginResponse.data.emailAddress, // Ensure 'id' exists
@@ -186,6 +188,7 @@ const handler = NextAuth({
               typedUser.refreshTokenExpiryTime &&
               new Date(typedUser.refreshTokenExpiryTime) > currentTime
             ) {
+              console.log("check", typedUser?.refreshToken);
               const refreshTokendetails: RefreshToken = {
                 token: typedUser.token,
                 refreshToken: typedUser.refreshToken || "",
@@ -196,6 +199,7 @@ const handler = NextAuth({
                   : await getAgentRefreshToken(refreshTokendetails);
 
               if (response.data.token) {
+                console.log("success", response?.data);
                 typedUser.token = response.data.token;
                 typedUser.refreshToken = response.data.refreshToken;
                 typedUser.refreshTokenExpiryTime =

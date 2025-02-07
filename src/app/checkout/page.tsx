@@ -130,6 +130,7 @@ const CheckoutPage = () => {
   };
 
   const handleRazorPayment = (orderid: string) => {
+    console.log(orderid);
     const options: RazorpayOrderOptions = {
       description: "Payment towrads Order",
       currency: "INR",
@@ -172,8 +173,8 @@ const CheckoutPage = () => {
         if (isRazorPaySelected) {
           handleRazorPayment(data?.data?.orderId as string);
         } else {
-          const orderDataa = data.data;
-          router.push(`/thankyou?orderId=${orderDataa?.saleOrderId}`);
+          const orderData = data.data;
+          router.push(`/thankyou?orderNumber=${orderData?.orderNumber}`);
           setCartCount(0);
           queryClient.invalidateQueries({ queryKey: ["cartDetails"] });
         }
@@ -187,11 +188,13 @@ const CheckoutPage = () => {
     mutationKey: ["placeReadyStockOrder"],
     mutationFn: (result: PlaceOrderRSPayload) => placeOrderRS(result),
     onSuccess: (data: Result) => {
+      console.log(data);
       if (data.succeeded) {
         if (isRazorPaySelected) {
           handleRazorPayment(data?.data?.orderId as string);
         } else {
-          // setOrderData(data.data);
+          const orderData = data.data;
+          router.push(`/thankyou?orderNumber=${orderData?.orderNumber}`);
           setCartCount(0);
           queryClient.invalidateQueries({ queryKey: ["cartDetails"] });
         }
@@ -204,16 +207,11 @@ const CheckoutPage = () => {
   const handleConfirmOrder = () => {
     const orderData: PlaceOrderPayload = {
       isFromBuyNow: isBuyNow,
-      shipAddressId: shipAddressId as number,
-      paymentModeId: paymentMode as number,
-    };
-    const OrderDataRS: PlaceOrderRSPayload = {
-      isFromBuyNow: isBuyNow,
       shippingAddressId: shipAddressId as number,
       paymentModeId: paymentMode as number,
     };
     return cartData?.items[0]?.orderType === 1
-      ? placeOrderReadyStock(OrderDataRS)
+      ? placeOrderReadyStock(orderData)
       : placeOrder(orderData);
   };
   return pendingMTO || pendingRS ? (

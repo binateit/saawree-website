@@ -39,6 +39,10 @@ import { Session } from "next-auth";
 import customLoader from "@/core/component/shared/image-loader";
 import Loading from "@/app/loading";
 
+type StockError = {
+  propertyName: string;
+  errorMessage: string;
+};
 const Page = () => {
   const { data: session, status: authStatus } = useSession();
   const userSession = session as Session;
@@ -46,6 +50,7 @@ const Page = () => {
   const searchParams = useSearchParams();
   const defalutProductId = searchParams.get("productId");
   const [productId, setProductId] = useState<number>(Number(defalutProductId));
+  const [stockErrors, setStockErrors] = useState<StockError[]>([]);
   const [mainProductImage, setMainProductImage] = useState<{
     mainImage: string | undefined;
     zoomedImage: string | undefined;
@@ -172,6 +177,8 @@ const Page = () => {
             queryClient.invalidateQueries({ queryKey: ["cartDetails"] });
             return true;
           } else {
+            console.log(result?.data?.propertyResults);
+            setStockErrors(result?.data?.propertyResults);
             toast.error("Failed to add items to cart");
             return false;
           }
@@ -259,6 +266,7 @@ const Page = () => {
   };
 
   if (isLoading) return <Loading />;
+  console.log(stockErrors);
   return (
     <section className='product-details'>
       <div className='container'>
@@ -428,7 +436,8 @@ const Page = () => {
                                 height={20}
                               />
                               <span className='color-name'>
-                                {color.colorName}{" "}
+                                {color.colorName}
+                                {index}{" "}
                               </span>
                             </div>
                             {authStatus === "authenticated" && (
@@ -468,6 +477,14 @@ const Page = () => {
                               </>
                             )}
                           </div>
+                          {stockErrors
+                            ?.filter(
+                              (se) =>
+                                se?.propertyName === `Items[${index}].Quantity`
+                            )
+                            .map((err) => (
+                              <p className='text-danger'>{err?.errorMessage}</p>
+                            ))}
                         </div>
                       ))}
                     </div>

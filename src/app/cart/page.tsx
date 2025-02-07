@@ -313,7 +313,15 @@ const Page = () => {
                         </td>
                         <td>
                           <div className='selected-product'>
-                            <a href='#'>{item?.productName}</a>
+                            <Link
+                              href={
+                                item?.orderType === 2
+                                  ? `/maketoorder/details?productId=${item?.productId}`
+                                  : `/readystock/details?productId=${item?.productId}`
+                              }
+                            >
+                              {item?.productName}
+                            </Link>
                           </div>
                         </td>
                         <td>{formatCurrency(item?.productPrice)}</td>

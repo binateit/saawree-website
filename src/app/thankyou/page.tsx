@@ -14,12 +14,13 @@ const ThankYouPage = () => {
   const navigate = useRouter();
   const { status: authStatus } = useSession();
   const searchParams = useSearchParams();
-  const orderId = searchParams.get("orderId");
+  const orderNumber = searchParams.get("orderNumber");
+  console.log(typeof orderNumber);
   const { data: orderDetails, isLoading } = useQuery({
-    queryKey: ["orderDetails", orderId],
+    queryKey: ["orderDetails", orderNumber],
 
-    queryFn: () => getSalesOrderById(Number(orderId)),
-    enabled: !!orderId,
+    queryFn: () => getSalesOrderById(Number(orderNumber)),
+    enabled: !!orderNumber,
   });
 
   if (authStatus === "unauthenticated") {
