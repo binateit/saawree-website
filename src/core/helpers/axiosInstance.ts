@@ -57,7 +57,7 @@ const onResponseError = async (
       }
       case 401: {
         // signOut();
-        return Promise.resolve(error.response);
+        return Promise.reject(error.response);
       }
       case 403: {
         // "Permission denied"
