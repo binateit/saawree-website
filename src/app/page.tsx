@@ -22,6 +22,7 @@ export default function Home() {
   const { data: homePageData, isLoading: homePageLoading } = useQuery({
     queryKey: ["homePageData"],
     queryFn: () => getHomePage(),
+    refetchOnWindowFocus: false,
   });
 
   if (homePageLoading) return <Loading />;

@@ -17,6 +17,7 @@ declare module "next-auth" {
     userType: string;
     agentCode?: string; // Optional for agent users
     isMakeToOrderEnabled?: boolean;
+    isPayLaterEnabled?: boolean;
   }
 
   /**

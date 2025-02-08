@@ -142,14 +142,20 @@ const Page = () => {
 
   useEffect(() => {
     const result: { id: number; name: string }[] = [];
-    polishTypeList?.map((t) =>
-      result.push({ ...polishList, id: t.id as number, name: t.name as string })
-    );
+    polishTypeList
+      ?.filter((t) => t?.name !== "NA")
+      ?.map((t) =>
+        result.push({
+          ...polishList,
+          id: t.id as number,
+          name: t.name as string,
+        })
+      );
 
     const colors: { id: number; name: string }[] = [];
-    colorTypeList?.map((t) =>
-      colors.push({ ...colorList, id: t.id, name: t.printName })
-    );
+    colorTypeList
+      ?.filter((t) => t?.printName !== "NA")
+      ?.map((t) => colors.push({ ...colorList, id: t.id, name: t.printName }));
     const mulitiFilter: CategoryList[] = [];
     categoryList?.map((t) =>
       mulitiFilter.push({
