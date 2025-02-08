@@ -30,7 +30,7 @@ const Page = () => {
   const [paginationModel, setPaginationModel] = useImmer<PaginationFilter>({
     first: 0,
     pageNumber: 1,
-    pageSize: 3,
+    pageSize: 10,
     sortField: "",
     sortOrder: -1,
     orderBy: [],

@@ -48,7 +48,7 @@ const Page = () => {
     mutationKey: ["updateItem"],
     mutationFn: (cart: UpdateCartPayload) => updateCartItems(cart),
     onSuccess: () => {
-      toast.success("Item removed from cart successfully.");
+      toast.success("Cart is updated successfully.");
       queryClient.invalidateQueries({ queryKey: ["cartDetails"] });
     },
   });
@@ -225,7 +225,15 @@ const Page = () => {
                         />
                       </div>
                       <div className='cart-product-details-mobile p-2'>
-                        <h6 className='mb-2'>{item?.productName}</h6>
+                        <Link
+                          href={
+                            item?.orderType === 2
+                              ? `/maketoorder/details?productId=${item?.productId}`
+                              : `/readystock/details?productId=${item?.productId}`
+                          }
+                        >
+                          <h6 className='mb-2'>{item?.productName}</h6>
+                        </Link>
                         <p className='mb-0'>
                           Unit : {formatCurrency(item?.productPrice)}
                         </p>
@@ -305,7 +313,15 @@ const Page = () => {
                         </td>
                         <td>
                           <div className='selected-product'>
-                            <a href='#'>{item?.productName}</a>
+                            <Link
+                              href={
+                                item?.orderType === 2
+                                  ? `/maketoorder/details?productId=${item?.productId}`
+                                  : `/readystock/details?productId=${item?.productId}`
+                              }
+                            >
+                              {item?.productName}
+                            </Link>
                           </div>
                         </td>
                         <td>{formatCurrency(item?.productPrice)}</td>

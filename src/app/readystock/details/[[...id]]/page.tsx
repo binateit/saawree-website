@@ -10,7 +10,11 @@ import {
   getReadyStockRecomendedProducts,
   getRSProductDetails,
 } from "@/core/requests/productsRequests";
-import { useQuery, useQueryClient } from "@tanstack/react-query";
+import {
+  keepPreviousData,
+  useQuery,
+  useQueryClient,
+} from "@tanstack/react-query";
 import { useSession } from "next-auth/react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { Dropdown } from "primereact/dropdown";
@@ -33,7 +37,12 @@ import ProductImage from "@/core/component/Products/ProductImage";
 import Link from "next/link";
 import { Session } from "next-auth";
 import customLoader from "@/core/component/shared/image-loader";
+import Loading from "@/app/loading";
 
+type StockError = {
+  propertyName: string;
+  errorMessage: string;
+};
 const Page = () => {
   const { data: session, status: authStatus } = useSession();
   const userSession = session as Session;
@@ -41,6 +50,7 @@ const Page = () => {
   const searchParams = useSearchParams();
   const defalutProductId = searchParams.get("productId");
   const [productId, setProductId] = useState<number>(Number(defalutProductId));
+  const [stockErrors, setStockErrors] = useState<StockError[]>([]);
   const [mainProductImage, setMainProductImage] = useState<{
     mainImage: string | undefined;
     zoomedImage: string | undefined;
@@ -55,9 +65,13 @@ const Page = () => {
   const [visibleTab, setVisibleTab] = useState<string>("description");
   const { setCartCount, cartCount, setIsBuyNow } = useCartCount();
 
-  const { data: response } = useQuery({
-    queryKey: ["getRSProductDetailsData", productId && productId],
-    queryFn: () => getRSProductDetails(productId && productId),
+  const { data: response, isLoading } = useQuery({
+    queryKey: ["getRSProductDetailsData", productId],
+    queryFn: () => getRSProductDetails(productId),
+    enabled: !!productId,
+
+    placeholderData: keepPreviousData,
+    retry: 1000,
   });
   useEffect(() => {
     const polishTypes: any = [];
@@ -110,6 +124,7 @@ const Page = () => {
         categoryIds: [response?.categoryId ?? 0],
       });
     },
+    placeholderData: keepPreviousData,
     enabled: !!response,
   });
 
@@ -148,7 +163,7 @@ const Page = () => {
             quantity: color.quantity as number,
           }));
           const carts = {
-            orderType: 2,
+            orderType: 1,
             items: updatedItems,
             isFromBuyNow: isBuyNow,
           };
@@ -162,6 +177,8 @@ const Page = () => {
             queryClient.invalidateQueries({ queryKey: ["cartDetails"] });
             return true;
           } else {
+            console.log(result?.data?.propertyResults);
+            setStockErrors(result?.data?.propertyResults);
             toast.error("Failed to add items to cart");
             return false;
           }
@@ -248,6 +265,8 @@ const Page = () => {
     ],
   };
 
+  if (isLoading) return <Loading />;
+  console.log(stockErrors);
   return (
     <section className='product-details'>
       <div className='container'>
@@ -330,6 +349,7 @@ const Page = () => {
             </div>
           </div>
           <div className='col-md-6'>
+            {/* <pre>{JSON.stringify(response)}</pre> */}
             <div className='product-details-wrapper'>
               <h1 className='product-name-title'>{response?.name}</h1>
               <div className='product-price'>
@@ -416,7 +436,8 @@ const Page = () => {
                                 height={20}
                               />
                               <span className='color-name'>
-                                {color.colorName}{" "}
+                                {color.colorName}
+                                {index}{" "}
                               </span>
                             </div>
                             {authStatus === "authenticated" && (
@@ -456,6 +477,16 @@ const Page = () => {
                               </>
                             )}
                           </div>
+                          {stockErrors
+                            ?.filter(
+                              (se) =>
+                                se?.propertyName === `Items[${index}].Quantity`
+                            )
+                            .map((err, i) => (
+                              <p className='text-danger' key={i}>
+                                {err?.errorMessage}
+                              </p>
+                            ))}
                         </div>
                       ))}
                     </div>
@@ -553,6 +584,17 @@ const Page = () => {
                                 </div>
                               </>
                             )}
+                            {stockErrors
+                              ?.filter(
+                                (se) =>
+                                  se?.propertyName ===
+                                  `Items[${index}].Quantity`
+                              )
+                              .map((err, i) => (
+                                <p className='text-danger' key={i}>
+                                  {err?.errorMessage}
+                                </p>
+                              ))}
                           </div>
                         ))}
                       </div>

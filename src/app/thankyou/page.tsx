@@ -7,23 +7,28 @@ import { useRouter, useSearchParams } from "next/navigation";
 import React from "react";
 import { toast } from "react-toastify";
 import { BsShieldFillCheck } from "react-icons/bs";
+import { formatDate } from "date-fns";
+import Loading from "../loading";
 
 const ThankYouPage = () => {
   const navigate = useRouter();
   const { status: authStatus } = useSession();
   const searchParams = useSearchParams();
-  const orderData = JSON.parse(searchParams.get("orderData") as string);
-  const { data: orderDetails } = useQuery({
-    queryKey: ["orderDetails", orderData?.saleOrderId],
+  const orderNumber = searchParams.get("orderNumber");
+  console.log(typeof orderNumber);
+  const { data: orderDetails, isLoading } = useQuery({
+    queryKey: ["orderDetails", orderNumber],
 
-    queryFn: () => getSalesOrderById(orderData?.saleOrderId as number),
-    enabled: !!orderData?.saleOrderId,
+    queryFn: () => getSalesOrderById(Number(orderNumber)),
+    enabled: !!orderNumber,
   });
 
   if (authStatus === "unauthenticated") {
     navigate.push("/auth/login");
     toast.error("Please login to view your cart.");
   }
+
+  if (isLoading) return <Loading />;
   return (
     <section className='thankyou-page'>
       <div className='container'>
@@ -59,17 +64,18 @@ const ThankYouPage = () => {
                   </div>
 
                   <div className='ord-details'>
-                    <h5 className='th-ttl'>Payment Method</h5>
-                    <p className='th-dt'>
-                      {orderDetails?.paymentList[0]?.paymentModeName}
-                    </p>
+                    <h5 className='th-ttl'>Payment Status</h5>
+                    <p className='th-dt'>{orderDetails?.paymentStatusName}</p>
                   </div>
 
                   <div className='ord-details'>
                     <h5 className='th-ttl'>Order Date</h5>
                     <p className='th-dt'>
                       {" "}
-                      {/* {formatDate(orderDetails?.orderDate, "MMMM dd, yyyy")} */}
+                      {formatDate(
+                        orderDetails?.orderDate as unknown as string,
+                        "MMMM dd, yyyy"
+                      )}
                     </p>
                   </div>
                 </div>

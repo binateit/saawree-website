@@ -77,15 +77,15 @@ const Footer = () => {
                         <Link href='/contact-us'>Contact us</Link>
                       </li>
                       <li className='footer-list'>
-                        <Link href='privacy-policy'>Privacy Policy</Link>
+                        <Link href='/privacy-policy'>Privacy Policy</Link>
                       </li>
                       <li className='footer-list'>
-                        <Link href='cancellation-policy'>
+                        <Link href='/cancellation-policy'>
                           cancellation-policy
                         </Link>
                       </li>
                       <li className='footer-list'>
-                        <Link href='terms-conditions'>Terms & Condition</Link>
+                        <Link href='/terms-conditions'>Terms & Condition</Link>
                       </li>
                     </ul>
                   </div>
@@ -106,7 +106,7 @@ const Footer = () => {
                         )}
                       </li>
                       <li className='footer-list'>
-                        <a href='checkout.html'>Checkout</a>
+                        <Link href='/checkout'>Checkout</Link>
                       </li>
                       <li className='footer-list'>
                         {authStatus === "authenticated" ? (

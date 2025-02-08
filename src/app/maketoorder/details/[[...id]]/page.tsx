@@ -10,7 +10,11 @@ import {
   getMaketoOrderProductDetails,
   getRecomendedMaketoOrderProducts,
 } from "@/core/requests/productsRequests";
-import { useQuery, useQueryClient } from "@tanstack/react-query";
+import {
+  keepPreviousData,
+  useQuery,
+  useQueryClient,
+} from "@tanstack/react-query";
 import { useSession } from "next-auth/react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { Dropdown } from "primereact/dropdown";
@@ -57,8 +61,9 @@ const Page: FC = () => {
   const [visibleTab, setVisibleTab] = useState<string>("description");
 
   const { data: response, isLoading: isProductDetailsLoading } = useQuery({
-    queryKey: ["getMTOProductDetails", productId && productId],
-    queryFn: () => getMaketoOrderProductDetails(productId && productId),
+    queryKey: ["getMTOProductDetails", productId],
+    queryFn: () => getMaketoOrderProductDetails(productId),
+    placeholderData: keepPreviousData,
   });
   const queryClient = useQueryClient();
 
@@ -113,6 +118,7 @@ const Page: FC = () => {
         categoryIds: [Number(response?.categoryId)],
       });
     },
+    placeholderData: keepPreviousData,
     enabled: !!response,
   });
 

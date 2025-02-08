@@ -1,10 +1,7 @@
 "use client";
 import AddressModal from "@/core/component/modal/AddressModal";
 import { useCartCount } from "@/core/context/useCartCount";
-import {
-  PlaceOrderPayload,
-  PlaceOrderRSPayload,
-} from "@/core/models/cartModel";
+import { PlaceOrderPayload } from "@/core/models/cartModel";
 import { CustomerAddress } from "@/core/models/customerModel";
 import { Result } from "@/core/models/model";
 import {
@@ -27,6 +24,8 @@ import paylater_icon from "@/assets/images/paylater_icon.jpg";
 import razorpay from "@/assets/images/razorpay.jpg";
 import { Session } from "next-auth";
 import customLoader from "@/core/component/shared/image-loader";
+import Link from "next/link";
+import emptyCart from "@/assets/images/empty-cart.png";
 
 const CheckoutPage = () => {
   const { data: session, status: authStatus } = useSession();
@@ -128,6 +127,7 @@ const CheckoutPage = () => {
   };
 
   const handleRazorPayment = (orderid: string) => {
+    console.log(orderid);
     const options: RazorpayOrderOptions = {
       description: "Payment towrads Order",
       currency: "INR",
@@ -170,8 +170,8 @@ const CheckoutPage = () => {
         if (isRazorPaySelected) {
           handleRazorPayment(data?.data?.orderId as string);
         } else {
-          const orderDataa = JSON.stringify(data.data);
-          router.push(`/thankyou?orderData=${orderDataa}`);
+          const orderData = data.data;
+          router.push(`/thankyou?orderNumber=${orderData?.orderNumber}`);
           setCartCount(0);
           queryClient.invalidateQueries({ queryKey: ["cartDetails"] });
         }
@@ -183,13 +183,15 @@ const CheckoutPage = () => {
 
   const { mutate: placeOrderReadyStock, isPending: pendingRS } = useMutation({
     mutationKey: ["placeReadyStockOrder"],
-    mutationFn: (result: PlaceOrderRSPayload) => placeOrderRS(result),
+    mutationFn: (result: PlaceOrderPayload) => placeOrderRS(result),
     onSuccess: (data: Result) => {
+      console.log(data);
       if (data.succeeded) {
         if (isRazorPaySelected) {
           handleRazorPayment(data?.data?.orderId as string);
         } else {
-          // setOrderData(data.data);
+          const orderData = data.data;
+          router.push(`/thankyou?orderNumber=${orderData?.orderNumber}`);
           setCartCount(0);
           queryClient.invalidateQueries({ queryKey: ["cartDetails"] });
         }
@@ -202,16 +204,11 @@ const CheckoutPage = () => {
   const handleConfirmOrder = () => {
     const orderData: PlaceOrderPayload = {
       isFromBuyNow: isBuyNow,
-      shipAddressId: shipAddressId as number,
-      paymentModeId: paymentMode as number,
-    };
-    const OrderDataRS: PlaceOrderRSPayload = {
-      isFromBuyNow: isBuyNow,
       shippingAddressId: shipAddressId as number,
       paymentModeId: paymentMode as number,
     };
     return cartData?.items[0]?.orderType === 1
-      ? placeOrderReadyStock(OrderDataRS)
+      ? placeOrderReadyStock(orderData)
       : placeOrder(orderData);
   };
   return pendingMTO || pendingRS ? (
@@ -220,97 +217,116 @@ const CheckoutPage = () => {
     </>
   ) : (
     <>
-      <div className='address-box'>
-        <h3>Select a delivery address</h3>
-        <div className='all-address'>
-          {customerAddressList
-            ?.filter((address) => address?.addressTypeId === 2)
-            .map((address) => (
-              <div className='address-list-item' key={address?.addressId}>
-                <input
-                  type='radio'
-                  className='address-radio'
-                  id='add1'
-                  name='address'
-                  checked={shipAddressId === address?.customerAddressId}
-                  onChange={() => {
-                    setShipAddressId(address?.customerAddressId as number);
-                  }}
-                />
-                <label className='address-label' htmlFor='add1'>
-                  <p className='select-add'>
-                    {address?.displayAddress}{" "}
-                    <div
-                      onClick={() => {
-                        onCustomerAddressChange(
-                          address.customerAddressId as number
-                        );
-                      }}
-                      className='add-link'
-                    >
-                      Edit Address
-                    </div>
-                  </p>
-                </label>
-              </div>
-            ))}
-          <div className='add-new-address' onClick={addNewCustomerAdress}>
-            <span data-toggle='modal' data-target='#add-address'>
-              <i className='bi bi-plus'></i> Add new address
-            </span>
+      {(cartData?.items?.length as number) > 0 ? (
+        <div className='address-box'>
+          <h3>Select a delivery address</h3>
+          <div className='all-address'>
+            {customerAddressList
+              ?.filter((address) => address?.addressTypeId === 2)
+              .map((address) => (
+                <div className='address-list-item' key={address?.addressId}>
+                  <input
+                    type='radio'
+                    className='address-radio'
+                    id='add1'
+                    name='address'
+                    checked={shipAddressId === address?.customerAddressId}
+                    onChange={() => {
+                      setShipAddressId(address?.customerAddressId as number);
+                    }}
+                  />
+                  <label className='address-label' htmlFor='add1'>
+                    <p className='select-add'>
+                      {address?.displayAddress}{" "}
+                      <div
+                        onClick={() => {
+                          onCustomerAddressChange(
+                            address.customerAddressId as number
+                          );
+                        }}
+                        className='add-link'
+                      >
+                        Edit Address
+                      </div>
+                    </p>
+                  </label>
+                </div>
+              ))}
+            <div className='add-new-address' onClick={addNewCustomerAdress}>
+              <span data-toggle='modal' data-target='#add-address'>
+                <i className='bi bi-plus'></i> Add new address
+              </span>
+            </div>
+          </div>
+          <h3 className='mt-4'>Select payment option</h3>
+          <div className='payment-options'>
+            <label>
+              <input
+                type='radio'
+                value={1}
+                checked={isRazorPaySelected}
+                onChange={() => {
+                  setIsRazorPaySelected(true);
+                }}
+              />
+              <Image
+                loader={customLoader}
+                src={razorpay?.src}
+                alt='razorpay'
+                className='img-fluid'
+                width={100}
+                height={50}
+              />
+            </label>
+            {/* {session?.user?.enableCredit && (
+          <> */}
+            <label>
+              <input
+                type='radio'
+                value={2}
+                checked={!isRazorPaySelected}
+                onChange={() => setIsRazorPaySelected(false)}
+              />
+              <Image
+                loader={customLoader}
+                src={paylater_icon?.src}
+                alt='paylater'
+                width={100}
+                height={50}
+              />
+            </label>
+            {/* </>
+        )} */}
+          </div>
+
+          <button className='btn btn-saawree mt-4' onClick={handleConfirmOrder}>
+            Confirm Order
+          </button>
+          <AddressModal
+            isModalOpen={isModalOpen}
+            initialValues={editAddress as CustomerAddress}
+            isEditMode={isEditMode}
+            closeModal={closeModal}
+          />
+        </div>
+      ) : (
+        <div className='titlehome'>
+          <div className='empty-cart text-center py-5'>
+            <Image
+              loader={customLoader}
+              src={emptyCart.src}
+              width={100}
+              height={100}
+              className='img-fluid'
+              alt='cart'
+            />
+            <h4 className='mt-2'>Your cart is currently empty.</h4>
+            <Link href='/' className='btn btn-saawree mt-2'>
+              Continue Shopping
+            </Link>
           </div>
         </div>
-        <h3 className='mt-4'>Select payment option</h3>
-        <div className='payment-options'>
-          <label>
-            <input
-              type='radio'
-              value={1}
-              checked={isRazorPaySelected}
-              onChange={() => {
-                setIsRazorPaySelected(true);
-              }}
-            />
-            <Image
-              loader={customLoader}
-              src={razorpay?.src}
-              alt='razorpay'
-              className='img-fluid'
-              width={100}
-              height={50}
-            />
-          </label>
-          {/* {session?.user?.enableCredit && (
-          <> */}
-          <label>
-            <input
-              type='radio'
-              value={2}
-              checked={!isRazorPaySelected}
-              onChange={() => setIsRazorPaySelected(false)}
-            />
-            <Image
-              loader={customLoader}
-              src={paylater_icon?.src}
-              alt='paylater'
-              width={100}
-              height={50}
-            />
-          </label>
-          {/* </>
-        )} */}
-        </div>
-
-        <button className='btn btn-saawree mt-4' onClick={handleConfirmOrder}>
-          Confirm Order
-        </button>
-        <AddressModal
-          isModalOpen={isModalOpen}
-          initialValues={editAddress as CustomerAddress}
-          isEditMode={isEditMode}
-          closeModal={closeModal}
-        />
-      </div>
+      )}
     </>
   );
 };

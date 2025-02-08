@@ -5,7 +5,6 @@ import {
   AddCart,
   CartDetails,
   PlaceOrderPayload,
-  PlaceOrderRSPayload,
   RazorPay,
   UpdateCartPayload,
 } from "../models/cartModel";
@@ -90,7 +89,7 @@ const placeOrderMTO = async (result: PlaceOrderPayload): Promise<Result> => {
     });
 };
 
-const placeOrderRS = async (result: PlaceOrderRSPayload): Promise<Result> => {
+const placeOrderRS = async (result: PlaceOrderPayload): Promise<Result> => {
   return await axiosInstance
     .post(`${Checkout_ReadyStock_URL}`, result)
     .then((response: AxiosResponse<Result>) => response.data)

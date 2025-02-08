@@ -6,7 +6,6 @@ import { PaginationFilter } from "@/core/models/model";
 
 import { getCommissionListOfAgent } from "@/core/requests/agentRequests";
 import { useQuery } from "@tanstack/react-query";
-import Link from "next/link";
 import { Column } from "primereact/column";
 import {
   DataTable,
@@ -26,7 +25,7 @@ const Page = () => {
   const [paginationModel, setPaginationModel] = useImmer<PaginationFilter>({
     first: 0,
     pageNumber: 1,
-    pageSize: 3,
+    pageSize: 10,
     sortField: "",
     sortOrder: -1,
     orderBy: [],
@@ -326,13 +325,13 @@ const Page = () => {
             />
             <Column
               header='Action'
-              body={(rowData) => (
-                <Link
-                  href={`/agent/transactions/sales-order/details?saleOrderId=${rowData?.saleOrderId}`}
+              body={() => (
+                <button
+                  // href={`/agent/transactions/sales-order/details?saleOrderId=${rowData?.saleOrderId}`}
                   className='btn btn-saawree'
                 >
                   View
-                </Link>
+                </button>
               )}
             />
           </DataTable>

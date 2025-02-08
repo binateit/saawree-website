@@ -21,11 +21,9 @@ const Page = () => {
     mobileNumber: "",
   });
   const [showTracker, setShowTracker] = useState<boolean>(false);
-
   const {
     mutate: trackOrder,
     data: orderDetails,
-    error,
     isError,
     reset,
   } = useMutation({
@@ -37,7 +35,6 @@ const Page = () => {
     },
   });
   // if (!isSuccess) return <Loading />;
-  console.log(error);
   return (
     <>
       {!showTracker && !isError && (
