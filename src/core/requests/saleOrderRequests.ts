@@ -9,6 +9,7 @@ import {
   ISalesOrder,
   PolishingTypeQueryResponse,
   ProductGroupQueryResponse,
+  SaleOrderByNumberDetails,
   SalesOrderQueryListResponse,
   StatusList,
 } from "../models/saleOrderModel";
@@ -37,6 +38,18 @@ const getSalesOrderById = async (id: number): Promise<ISalesOrder> => {
     .get(`${SalesOrder_BYID_URL}/${id}`)
     .then((response: AxiosResponse<ISalesOrder>) => response.data)
     .then((response: ISalesOrder) => response)
+    .catch((err) => {
+      return err;
+    });
+};
+
+const getSalesOrderByNumber = async (
+  id: string
+): Promise<SaleOrderByNumberDetails> => {
+  return await axiosInstance
+    .get(`${SalesOrder_BYID_URL}/${id}`)
+    .then((response: AxiosResponse<SaleOrderByNumberDetails>) => response.data)
+    .then((response: SaleOrderByNumberDetails) => response)
     .catch((err) => {
       return err;
     });
@@ -253,4 +266,5 @@ export {
   getSaleOrdersOfAgent,
   getOrderTracking,
   getOrderTrackingByTracker,
+  getSalesOrderByNumber,
 };

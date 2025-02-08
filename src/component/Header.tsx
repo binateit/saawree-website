@@ -525,7 +525,7 @@ const Header = () => {
           <ul className='nav flex-column nav-pills nav-pills-custom'>
             <li className='nav-link mb-2 active'>
               <Link
-                href='overview.html'
+                href={`/${UserSession?.user?.userType}`}
                 className='font-weight-bold small text-uppercase nav-link-item  py-1 px-3 d-block'
               >
                 Overview
@@ -545,27 +545,38 @@ const Header = () => {
               </div>
               {openDropDown.display && openDropDown.name === "profile" && (
                 <div className='nav flex-column nav-pills nav-pills-custom-dropdown'>
-                  <a
+                  <Link
                     className='nav-link pl-0 py-2 px-3'
-                    href='profile-details.html'
+                    href={`/${UserSession?.user?.userType}/profile`}
+                    onClick={() => setShow(false)}
                   >
                     Profile Details
-                  </a>
-                  <a
+                  </Link>
+                  {UserSession?.user?.userType !== "agent" && (
+                    <>
+                      <Link
+                        className='nav-link pl-0 py-2 px-3'
+                        href={`/${UserSession?.user?.userType}/profile/accounting-details`}
+                        onClick={() => setShow(false)}
+                      >
+                        Accounting Details
+                      </Link>
+                      <Link
+                        className='nav-link pl-0 py-2 px-3'
+                        href={`/${UserSession?.user?.userType}/profile/address`}
+                        onClick={() => setShow(false)}
+                      >
+                        Address
+                      </Link>
+                    </>
+                  )}
+                  <Link
                     className='nav-link pl-0 py-2 px-3'
-                    href='accounting-details.html'
-                  >
-                    Accounting Details
-                  </a>
-                  <a className='nav-link pl-0 py-2 px-3' href='address.html'>
-                    Address
-                  </a>
-                  <a
-                    className='nav-link pl-0 py-2 px-3'
-                    href='change-password.html'
+                    href={`/${UserSession?.user?.userType}/profile/change-password`}
+                    onClick={() => setShow(false)}
                   >
                     Change Password
-                  </a>
+                  </Link>
                 </div>
               )}
             </li>
@@ -584,15 +595,52 @@ const Header = () => {
               </div>
               {openDropDown.display && openDropDown.name === "transaction" && (
                 <div className='nav flex-column nav-pills nav-pills-custom-dropdown'>
-                  <Link className='nav-link py-2 px-3' href='sale-order.html'>
+                  <Link
+                    className='nav-link py-2 px-3'
+                    href={`/${UserSession?.user?.userType}/transactions/sales-order`}
+                    onClick={() => setShow(false)}
+                  >
                     Sales Order
                   </Link>
-                  <Link className='nav-link py-2 px-3' href='invoice.html'>
+                  <Link
+                    className='nav-link py-2 px-3'
+                    href={`/${UserSession?.user?.userType}/transactions/invoice`}
+                    onClick={() => setShow(false)}
+                  >
                     Invoice
                   </Link>
-                  <Link className='nav-link py-2 px-3' href='payment.html'>
+                  <Link
+                    className='nav-link py-2 px-3'
+                    href={`/${UserSession?.user?.userType}/transactions/payment`}
+                    onClick={() => setShow(false)}
+                  >
                     Payment
                   </Link>
+                  {UserSession?.user?.userType === "agent" && (
+                    <>
+                      <Link
+                        className='nav-link py-2 px-3'
+                        href='/agent/transactions/commissions'
+                        onClick={() => setShow(false)}
+                      >
+                        Commission
+                      </Link>
+                      <Link
+                        className='nav-link py-2 px-3'
+                        href='/agent/transactions/customers'
+                        onClick={() => setShow(false)}
+                      >
+                        Customers
+                      </Link>
+                      <Link
+                        className='nav-link py-2 px-3'
+                        href='/agent/transactions/payout'
+                        onClick={() => setShow(false)}
+                      >
+                        Payout
+                      </Link>
+                    </>
+                  )}
                 </div>
               )}
             </li>
@@ -707,8 +755,9 @@ const Header = () => {
                 <li className='mt-2 my-account-label'>My Account</li>
                 <li className='nav-link mb-2 active'>
                   <Link
-                    href='overview.html'
+                    href={`/${UserSession?.user?.userType}`}
                     className='font-weight-bold small text-uppercase nav-link-item  py-1 px-3 d-block'
+                    onClick={() => setShowResponsiveMenu(false)}
                   >
                     Overview
                   </Link>
@@ -727,30 +776,38 @@ const Header = () => {
                   </div>
                   {openDropDown.display && openDropDown.name === "profile" && (
                     <div className='nav flex-column nav-pills nav-pills-custom-dropdown'>
-                      <a
+                      <Link
                         className='nav-link pl-0 py-2 px-3'
-                        href='profile-details.html'
+                        href={`/${UserSession?.user?.userType}/profile`}
+                        onClick={() => setShowResponsiveMenu(false)}
                       >
                         Profile Details
-                      </a>
-                      <a
+                      </Link>
+                      {UserSession?.user?.userType !== "agent" && (
+                        <>
+                          <Link
+                            className='nav-link pl-0 py-2 px-3'
+                            href={`/${UserSession?.user?.userType}/profile/accounting-details`}
+                            onClick={() => setShowResponsiveMenu(false)}
+                          >
+                            Accounting Details
+                          </Link>
+                          <Link
+                            className='nav-link pl-0 py-2 px-3'
+                            href={`/${UserSession?.user?.userType}/profile/address`}
+                            onClick={() => setShowResponsiveMenu(false)}
+                          >
+                            Address
+                          </Link>
+                        </>
+                      )}
+                      <Link
                         className='nav-link pl-0 py-2 px-3'
-                        href='accounting-details.html'
-                      >
-                        Accounting Details
-                      </a>
-                      <a
-                        className='nav-link pl-0 py-2 px-3'
-                        href='address.html'
-                      >
-                        Address
-                      </a>
-                      <a
-                        className='nav-link pl-0 py-2 px-3'
-                        href='change-password.html'
+                        href={`/${UserSession?.user?.userType}/profile/change-password`}
+                        onClick={() => setShowResponsiveMenu(false)}
                       >
                         Change Password
-                      </a>
+                      </Link>
                     </div>
                   )}
                 </li>
@@ -772,22 +829,50 @@ const Header = () => {
                       <div className='nav flex-column nav-pills nav-pills-custom-dropdown'>
                         <Link
                           className='nav-link py-2 px-3'
-                          href='sale-order.html'
+                          href={`/${UserSession?.user?.userType}/transactions/sales-order`}
+                          onClick={() => setShowResponsiveMenu(false)}
                         >
                           Sales Order
                         </Link>
                         <Link
                           className='nav-link py-2 px-3'
-                          href='invoice.html'
+                          href={`/${UserSession?.user?.userType}/transactions/invoice`}
+                          onClick={() => setShowResponsiveMenu(false)}
                         >
                           Invoice
                         </Link>
                         <Link
                           className='nav-link py-2 px-3'
-                          href='payment.html'
+                          href={`/${UserSession?.user?.userType}/transactions/payment`}
+                          onClick={() => setShowResponsiveMenu(false)}
                         >
                           Payment
                         </Link>
+                        {UserSession?.user?.userType === "agent" && (
+                          <>
+                            <Link
+                              className='nav-link py-2 px-3'
+                              href='/agent/transactions/commissions'
+                              onClick={() => setShowResponsiveMenu(false)}
+                            >
+                              Commission
+                            </Link>
+                            <Link
+                              className='nav-link py-2 px-3'
+                              href='/agent/transactions/customers'
+                              onClick={() => setShowResponsiveMenu(false)}
+                            >
+                              Customers
+                            </Link>
+                            <Link
+                              className='nav-link py-2 px-3'
+                              href='/agent/transactions/payout'
+                              onClick={() => setShowResponsiveMenu(false)}
+                            >
+                              Payout
+                            </Link>
+                          </>
+                        )}
                       </div>
                     )}
                 </li>

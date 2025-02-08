@@ -1,4 +1,4 @@
-import { AxiosResponse } from "axios";
+import axios, { AxiosResponse } from "axios";
 import {
   AgentLoginResult,
   AgentModel,
@@ -171,7 +171,7 @@ const getRefreshToken = async (refreshToken: RefreshToken) => {
   const headers = {
     tenant: "ho",
   };
-  return axiosInstance.post<RefeshTokenResponse>(
+  return axios.post<RefeshTokenResponse>(
     REFRESH_TOKEN_URL,
     {
       token: refreshToken.token,
@@ -198,7 +198,7 @@ const getAgentRefreshToken = async (refreshToken: RefreshToken) => {
   const headers = {
     tenant: "ho",
   };
-  return axiosInstance.post<RefeshTokenResponse>(
+  return axios.post<RefeshTokenResponse>(
     AGENT_REFRESH_TOKEN_URL,
     {
       token: refreshToken.token,

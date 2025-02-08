@@ -141,7 +141,7 @@ const CheckoutPage = () => {
         name: userSession?.user?.firstName + " " + userSession?.user?.lastName,
       },
       theme: { color: "blue" },
-      amount: cartData?.orderTotalTaxInclusive as number,
+      amount: (cartData?.orderTotalTaxInclusive || 0) * 100,
       modal: {
         escape: false,
         ondismiss: function () {
@@ -185,7 +185,6 @@ const CheckoutPage = () => {
     mutationKey: ["placeReadyStockOrder"],
     mutationFn: (result: PlaceOrderPayload) => placeOrderRS(result),
     onSuccess: (data: Result) => {
-      console.log(data);
       if (data.succeeded) {
         if (isRazorPaySelected) {
           handleRazorPayment(data?.data?.orderId as string);

@@ -288,9 +288,13 @@ const Page = () => {
                   >
                     <BsFilter fontSize={18} />
                   </div>
-                  Showing {paginationFilters?.first + 1} to{" "}
-                  {paginationFilters?.first + (response?.data?.length || 0)} of{" "}
-                  {response?.pagination?.totalCount} products
+                  {(response?.data?.length || 0) > 0
+                    ? `Showing ${paginationFilters?.first + 1} to${" "}
+                  ${
+                    paginationFilters?.first + (response?.data?.length || 0)
+                  } of${" "}
+                  ${response?.pagination?.totalCount} products}`
+                    : ""}
                 </div>
                 <div className='d-flex'>
                   {isLoading ? (
