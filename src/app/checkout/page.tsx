@@ -1,10 +1,7 @@
 "use client";
 import AddressModal from "@/core/component/modal/AddressModal";
 import { useCartCount } from "@/core/context/useCartCount";
-import {
-  PlaceOrderPayload,
-  PlaceOrderRSPayload,
-} from "@/core/models/cartModel";
+import { PlaceOrderPayload } from "@/core/models/cartModel";
 import { CustomerAddress } from "@/core/models/customerModel";
 import { Result } from "@/core/models/model";
 import {
@@ -186,7 +183,7 @@ const CheckoutPage = () => {
 
   const { mutate: placeOrderReadyStock, isPending: pendingRS } = useMutation({
     mutationKey: ["placeReadyStockOrder"],
-    mutationFn: (result: PlaceOrderRSPayload) => placeOrderRS(result),
+    mutationFn: (result: PlaceOrderPayload) => placeOrderRS(result),
     onSuccess: (data: Result) => {
       console.log(data);
       if (data.succeeded) {

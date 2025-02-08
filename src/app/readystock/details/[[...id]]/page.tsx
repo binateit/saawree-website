@@ -482,8 +482,10 @@ const Page = () => {
                               (se) =>
                                 se?.propertyName === `Items[${index}].Quantity`
                             )
-                            .map((err) => (
-                              <p className='text-danger'>{err?.errorMessage}</p>
+                            .map((err, i) => (
+                              <p className='text-danger' key={i}>
+                                {err?.errorMessage}
+                              </p>
                             ))}
                         </div>
                       ))}
@@ -582,6 +584,17 @@ const Page = () => {
                                 </div>
                               </>
                             )}
+                            {stockErrors
+                              ?.filter(
+                                (se) =>
+                                  se?.propertyName ===
+                                  `Items[${index}].Quantity`
+                              )
+                              .map((err, i) => (
+                                <p className='text-danger' key={i}>
+                                  {err?.errorMessage}
+                                </p>
+                              ))}
                           </div>
                         ))}
                       </div>

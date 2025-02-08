@@ -5,7 +5,6 @@ import {
   AddCart,
   CartDetails,
   PlaceOrderPayload,
-  PlaceOrderRSPayload,
   RazorPay,
   UpdateCartPayload,
 } from "../models/cartModel";
