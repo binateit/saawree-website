@@ -13,26 +13,43 @@ import { useMutation, useQueryClient } from "@tanstack/react-query";
 import React, { useEffect, useState } from "react";
 import { BsDash, BsPlus, BsTrash } from "react-icons/bs";
 import { toast } from "react-toastify";
-import { useSession } from "next-auth/react";
-import { useRouter } from "next/navigation";
+// import { useSession } from "next-auth/react";
+// import { useRouter } from "next/navigation";
 import { useCartCount } from "@/core/context/useCartCount";
 import Link from "next/link";
 import ProductImage from "@/core/component/Products/ProductImage";
 import Image from "next/image";
 import customLoader from "@/core/component/shared/image-loader";
-
+import usePreventNavigation from "@/core/context/usePreventNavigation";
+import ConfirmationChangesModal from "@/core/component/modal/ConfirmChangesModal";
 const Page = () => {
-  const { status: authStatus } = useSession();
-  const router = useRouter();
+  // const { status: authStatus } = useSession();
+  // const router = useRouter();
   const { setCartCount, cartCount, cartData } = useCartCount();
   const queryClient = useQueryClient();
   const [cartDetails, setCartDetails] = useState<CartDetails | undefined>(
     undefined
   );
-  if (authStatus === "unauthenticated") {
-    router.push("/auth/login");
-    toast.error("Please login to view your cart.");
-  }
+  // if (authStatus === "unauthenticated") {
+  //   router.push("/auth/login");
+  //   toast.error("Please login to view your cart.");
+  // }
+
+  const [isDirty, setIsDirty] = useState(false);
+
+  const {
+    attemptNavigation,
+    isNavigating,
+    confirmNavigation,
+    cancelNavigation,
+    navigationType,
+  } = usePreventNavigation({
+    isDirty,
+    onConfirmNavigation: () => {
+      // Optional: Reset form or perform cleanup
+      console.log("Navigation confirmed");
+    },
+  });
 
   const { mutate: handleRemoveCartItem } = useMutation({
     mutationKey: ["removeItem"],
@@ -43,7 +60,7 @@ const Page = () => {
       setCartCount((cartCount as number) - 1);
     },
   });
-
+  console.log("navigationType ", navigationType);
   const { mutate: updateCart } = useMutation({
     mutationKey: ["updateItem"],
     mutationFn: (cart: UpdateCartPayload) => updateCartItems(cart),
@@ -149,6 +166,7 @@ const Page = () => {
         ),
       }));
     }
+    setIsDirty(true);
   };
 
   const increaseQuantity = async (item: Item) => {
@@ -187,6 +205,7 @@ const Page = () => {
         0
       ),
     }));
+    setIsDirty(true);
   };
 
   return (
@@ -420,14 +439,31 @@ const Page = () => {
                             <span className='amount'>
                               <span id='bk-cart-subtotal-price'>
                                 <span className='money'>
-                                  {` - ${formatCurrency(
-                                    cartDetails?.totalDiscountedPrice
-                                  )}`}
+                                  {cartDetails?.totalDiscountedPrice || 0 > 0
+                                    ? ` - ${formatCurrency(
+                                        cartDetails?.totalDiscountedPrice
+                                      )}`
+                                    : formatCurrency(
+                                        cartDetails?.totalDiscountedPrice
+                                      )}
                                 </span>
                               </span>
                             </span>
                           </td>
                         </tr>
+                        <tr className='cart-subtotal'>
+                          <th>Tax</th>
+                          <td>
+                            <span className='amount'>
+                              <span id='bk-cart-subtotal-price'>
+                                <span className='money'>
+                                  {formatCurrency(cartDetails?.totalTaxAmount)}
+                                </span>
+                              </span>
+                            </span>
+                          </td>
+                        </tr>
+
                         <tr className='order-total'>
                           <th>Grand Total</th>
                           <td>
@@ -447,9 +483,12 @@ const Page = () => {
                       </tbody>
                     </table>
                     <div className='proceed-to-checkout'>
-                      <Link href='/checkout' className='btn btn-saawree'>
+                      <button
+                        onClick={() => attemptNavigation("/checkout")}
+                        className='btn btn-saawree'
+                      >
                         Proceed to Checkout
-                      </Link>
+                      </button>
                     </div>
                   </div>
                 </div>
@@ -475,6 +514,14 @@ const Page = () => {
           </div>
         )}
       </div>
+
+      {isNavigating && (
+        <ConfirmationChangesModal
+          isNavigating={isNavigating}
+          cancelNavigation={cancelNavigation}
+          confirmNavigation={confirmNavigation}
+        />
+      )}
     </section>
   );
 };

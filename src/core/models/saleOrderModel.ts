@@ -291,3 +291,26 @@ export type SaleOrderRecords = {
 };
 
 export type SaleOrderQueryResponse = Response<Array<SaleOrderRecords>>;
+
+export type SaleOrderByNumberDetails = {
+  customerName: string;
+  email: string;
+  mobileNumber: string;
+  saleOrderStatusName: string;
+  orderNumber: string;
+  orderDate: string;
+  orderTotal: number;
+  paymentStatusName: string;
+  billAddressLine1: string;
+  billAddressLine2: string;
+  billCityName: string;
+  billStateName: string;
+  billCountryName: string;
+  billZipCode: string;
+  shipAddressLine1: string;
+  shipAddressLine2: string;
+  shipCityName: string;
+  shipStateName: string;
+  shipCountryName: string;
+  shipZipCode: string;
+};

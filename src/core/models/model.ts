@@ -107,6 +107,7 @@ export type userToken = {
   isGuestUser: boolean;
   userType: string;
   isMakeToOrderEnabled?: boolean;
+  isPayLaterEnabled?: boolean;
 };
 
 export type Session = {
@@ -122,6 +123,7 @@ export type User = {
   emailAddress: string;
   userType: string;
   isMakeToOrderEnabled: boolean;
+  isPayLaterEnabled?: boolean;
 };
 
 export type Search = {

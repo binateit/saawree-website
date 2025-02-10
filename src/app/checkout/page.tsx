@@ -28,7 +28,7 @@ import Link from "next/link";
 import emptyCart from "@/assets/images/empty-cart.png";
 
 const CheckoutPage = () => {
-  const { data: session, status: authStatus } = useSession();
+  const { data: session } = useSession();
   const userSession = session as Session;
   const { Razorpay } = useRazorpay();
   const [isEditMode, setIsEditMode] = useState(false);
@@ -40,9 +40,9 @@ const CheckoutPage = () => {
   const [paymentMode, setPaymentMode] = useState<number>();
 
   const router = useRouter();
-  if (authStatus === "unauthenticated") {
-    router.push("/auth/login");
-  }
+  // if (authStatus === "unauthenticated") {
+  //   router.push("/auth/login");
+  // }
 
   const openModal = () => {
     setModalOpen(true);
@@ -141,7 +141,7 @@ const CheckoutPage = () => {
         name: userSession?.user?.firstName + " " + userSession?.user?.lastName,
       },
       theme: { color: "blue" },
-      amount: cartData?.orderTotalTaxInclusive as number,
+      amount: (cartData?.orderTotalTaxInclusive || 0) * 100,
       modal: {
         escape: false,
         ondismiss: function () {
@@ -185,7 +185,6 @@ const CheckoutPage = () => {
     mutationKey: ["placeReadyStockOrder"],
     mutationFn: (result: PlaceOrderPayload) => placeOrderRS(result),
     onSuccess: (data: Result) => {
-      console.log(data);
       if (data.succeeded) {
         if (isRazorPaySelected) {
           handleRazorPayment(data?.data?.orderId as string);
@@ -238,7 +237,7 @@ const CheckoutPage = () => {
                   <label className='address-label' htmlFor='add1'>
                     <p className='select-add'>
                       {address?.displayAddress}{" "}
-                      <div
+                      <span
                         onClick={() => {
                           onCustomerAddressChange(
                             address.customerAddressId as number
@@ -247,7 +246,7 @@ const CheckoutPage = () => {
                         className='add-link'
                       >
                         Edit Address
-                      </div>
+                      </span>
                     </p>
                   </label>
                 </div>
@@ -280,21 +279,23 @@ const CheckoutPage = () => {
             </label>
             {/* {session?.user?.enableCredit && (
           <> */}
-            <label>
-              <input
-                type='radio'
-                value={2}
-                checked={!isRazorPaySelected}
-                onChange={() => setIsRazorPaySelected(false)}
-              />
-              <Image
-                loader={customLoader}
-                src={paylater_icon?.src}
-                alt='paylater'
-                width={100}
-                height={50}
-              />
-            </label>
+            {userSession?.user?.isPayLaterEnabled && (
+              <label>
+                <input
+                  type='radio'
+                  value={2}
+                  checked={!isRazorPaySelected}
+                  onChange={() => setIsRazorPaySelected(false)}
+                />
+                <Image
+                  loader={customLoader}
+                  src={paylater_icon?.src}
+                  alt='paylater'
+                  width={100}
+                  height={50}
+                />
+              </label>
+            )}
             {/* </>
         )} */}
           </div>

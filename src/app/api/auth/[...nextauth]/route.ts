@@ -46,6 +46,7 @@ const handler = NextAuth({
               mobileNumber: loginResponse.data.mobileNumber,
               userType: "customer",
               isMakeToOrderEnabled: loginResponse?.data?.isMakeToOrderEnabled,
+              isPayLaterEnabled: loginResponse?.data?.isPayLaterEnabled,
             };
           } else {
             throw new Error("Invalid Credentials");
@@ -132,6 +133,7 @@ const handler = NextAuth({
           mobileNumber: string;
           userType: string;
           isMakeToOrderEnabled: boolean;
+          isPayLaterEnabled: boolean;
         };
 
         session.user = {
@@ -145,6 +147,7 @@ const handler = NextAuth({
           mobileNumber: user.mobileNumber || "",
           userType: user.userType || "",
           isMakeToOrderEnabled: user.isMakeToOrderEnabled,
+          isPayLaterEnabled: user.isPayLaterEnabled,
         };
       }
       return session;
@@ -158,8 +161,10 @@ const handler = NextAuth({
           firstName: user.firstName,
           lastName: user.lastName,
           emailAddress: user.emailAddress,
+          mobileNumber: user.mobileNumber,
           userType: user.userType,
           isMakeToOrderEnabled: user.isMakeToOrderEnabled,
+          isPayLaterEnabled: user.isPayLaterEnabled,
         };
       }
 
@@ -176,6 +181,7 @@ const handler = NextAuth({
         emailAddress?: string;
         userType?: string;
         isMakeToOrderEnabled: boolean;
+        isPayLaterEnabled: boolean;
       };
 
       if (typedUser.token) {

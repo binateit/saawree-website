@@ -10,7 +10,6 @@ const Layout = ({
   children: React.ReactNode;
 }>) => {
   const { cartData } = useCartCount();
-  console.log("cartData", cartData);
   return (
     <section className='checkout-page'>
       <div className='container'>
@@ -66,6 +65,21 @@ const Layout = ({
                     {formatCurrency(cartData?.orderSubTotal)}
                   </p>
                 </div>
+                <div className='total-row d-flex align-items-center justify-content-between'>
+                  <p className='subt'>Discount</p>
+                  <p className='subt-amt'>
+                    {cartData?.totalDiscountedPrice || 0 > 0
+                      ? ` - ${formatCurrency(cartData?.totalDiscountedPrice)}`
+                      : formatCurrency(cartData?.totalDiscountedPrice)}
+                  </p>
+                </div>
+                <div className='total-row d-flex align-items-center justify-content-between'>
+                  <p className='subt'>Tax</p>
+                  <p className='subt-amt'>
+                    {formatCurrency(cartData?.totalTaxAmount)}
+                  </p>
+                </div>
+
                 {/* <div className='total-row d-flex align-items-center justify-content-between'>
                 <p className='subt'>Shipping</p>
                 <p className='subt-amt'>₹ 50.00</p>

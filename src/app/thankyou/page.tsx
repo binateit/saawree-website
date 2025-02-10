@@ -1,5 +1,5 @@
 "use client";
-import { getSalesOrderById } from "@/core/requests/saleOrderRequests";
+import { getSalesOrderByNumber } from "@/core/requests/saleOrderRequests";
 import { useQuery } from "@tanstack/react-query";
 import { useSession } from "next-auth/react";
 import Link from "next/link";
@@ -15,11 +15,11 @@ const ThankYouPage = () => {
   const { status: authStatus } = useSession();
   const searchParams = useSearchParams();
   const orderNumber = searchParams.get("orderNumber");
-  console.log(typeof orderNumber);
+
   const { data: orderDetails, isLoading } = useQuery({
     queryKey: ["orderDetails", orderNumber],
 
-    queryFn: () => getSalesOrderById(Number(orderNumber)),
+    queryFn: () => getSalesOrderByNumber(orderNumber as string),
     enabled: !!orderNumber,
   });
 
@@ -28,12 +28,24 @@ const ThankYouPage = () => {
     toast.error("Please login to view your cart.");
   }
 
+  const handleOrderTracking = () => {
+    const trackingData = {
+      orderNumber: orderDetails?.orderNumber,
+      mobileNumber: orderDetails?.mobileNumber,
+    };
+
+    const encodedUserData = encodeURIComponent(JSON.stringify(trackingData));
+    // navigate.push(`/track-order?trackorder=${encodedUserData}`);
+
+    console.log(encodedUserData);
+  };
+
   if (isLoading) return <Loading />;
   return (
     <section className='thankyou-page'>
       <div className='container'>
         <div className='inner-wrap-th'>
-          <BsShieldFillCheck font-size={60} className='text-success' />
+          <BsShieldFillCheck fontSize={60} className='text-success' />
           <h2 className='thank-title text-success mt-3'>Thank you</h2>
           <p className='ord-txt'>
             We are getting started on your order{" "}
@@ -42,9 +54,12 @@ const ThankYouPage = () => {
             {orderDetails?.email}.{" "}
           </p>
           <p className='btn-th'>
-            <Link href='' className='btn btn-saawree mr-2'>
+            <button
+              className='btn btn-saawree mr-2'
+              onClick={() => handleOrderTracking()}
+            >
               Track your order
-            </Link>
+            </button>
             <Link href='/' className='btn btn-saawree'>
               Continue Shoping
             </Link>

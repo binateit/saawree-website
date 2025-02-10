@@ -129,7 +129,7 @@ const Page = () => {
 
       <div className='card mb-3'>
         <div className='card-header'>
-          <h6 className='mb-0'>Order Details</h6>
+          <h6 className='mb-0'>Order Details </h6>
         </div>
         <div className='card-body'>
           <div className='row'>
@@ -159,7 +159,11 @@ const Page = () => {
             <div className='col-xl-4 col-lg-12 col-md-12 col-sm-12'>
               <div className='row'>
                 <div className='col-xl-6 col-lg-3 col-md-3 col-sm-4'>
-                  <label className='mb-0 font-weight-bold'>Date Added</label>
+                  <label className='mb-0 font-weight-bold'>Order Number</label>
+                  <p>{orderDetails?.orderNumber}</p>
+                </div>
+                <div className='col-xl-6 col-lg-3 col-md-3 col-sm-4'>
+                  <label className='mb-0 font-weight-bold'>Order Date</label>
                   <p>
                     {formatDate(
                       orderDetails?.orderDate as unknown as string,

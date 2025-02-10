@@ -40,8 +40,8 @@ import customLoader from "@/core/component/shared/image-loader";
 import Loading from "@/app/loading";
 
 type StockError = {
-  propertyName: string;
-  errorMessage: string;
+  productId: number;
+  message: string;
 };
 const Page = () => {
   const { data: session, status: authStatus } = useSession();
@@ -178,7 +178,7 @@ const Page = () => {
             return true;
           } else {
             console.log(result?.data?.propertyResults);
-            setStockErrors(result?.data?.propertyResults);
+            setStockErrors(result?.data);
             toast.error("Failed to add items to cart");
             return false;
           }
@@ -266,7 +266,6 @@ const Page = () => {
   };
 
   if (isLoading) return <Loading />;
-  console.log(stockErrors);
   return (
     <section className='product-details'>
       <div className='container'>
@@ -478,13 +477,10 @@ const Page = () => {
                             )}
                           </div>
                           {stockErrors
-                            ?.filter(
-                              (se) =>
-                                se?.propertyName === `Items[${index}].Quantity`
-                            )
+                            ?.filter((se) => se?.productId === color?.productId)
                             .map((err, i) => (
                               <p className='text-danger' key={i}>
-                                {err?.errorMessage}
+                                {err?.message}
                               </p>
                             ))}
                         </div>
@@ -535,67 +531,67 @@ const Page = () => {
                         </div>
 
                         {response?.colorList?.map((color, index) => (
-                          <div className='d-flex' key={color?.colorId}>
-                            <div className='moti-color'>
-                              <Image
-                                loader={customLoader}
-                                src={`${process.env.NEXT_PUBLIC_APP_IMAGE_API_URL}/${color?.imagePath}`}
-                                alt='colors'
-                                width={20}
-                                height={20}
-                              />
-                              <span className='color-name'>
-                                {color.colorName}{" "}
-                              </span>
+                          <>
+                            <div className='d-flex' key={color?.colorId}>
+                              <div className='moti-color'>
+                                <Image
+                                  loader={customLoader}
+                                  src={`${process.env.NEXT_PUBLIC_APP_IMAGE_API_URL}/${color?.imagePath}`}
+                                  alt='colors'
+                                  width={20}
+                                  height={20}
+                                />
+                                <span className='color-name'>
+                                  {color.colorName}{" "}
+                                </span>
+                              </div>
+                              {authStatus === "authenticated" && (
+                                <>
+                                  <div className='stock'>
+                                    {color.avaliableQuantity}
+                                  </div>
+                                  <div className='color-quntity'>
+                                    <input
+                                      type='text'
+                                      className='quntity-input'
+                                      id={index.toString()}
+                                      defaultValue={0}
+                                      min={1}
+                                      max={99999}
+                                      onChange={(e) => {
+                                        const qty = parseInt(e.target.value);
+                                        if (qty < 0) {
+                                          e.target.value = "";
+                                        } else if (
+                                          qty > (color?.avaliableQuantity || 0)
+                                        ) {
+                                          e.target.value = "";
+                                          toast.error(
+                                            "Quantity should be less than available quantity"
+                                          );
+                                        } else {
+                                          handleQuantityChange(
+                                            color.productId as number,
+                                            color.colorId as number,
+                                            qty
+                                          );
+                                        }
+                                      }}
+                                    />
+                                  </div>
+                                </>
+                              )}
                             </div>
-                            {authStatus === "authenticated" && (
-                              <>
-                                <div className='stock'>
-                                  {color.avaliableQuantity}
-                                </div>
-                                <div className='color-quntity'>
-                                  <input
-                                    type='text'
-                                    className='quntity-input'
-                                    id={index.toString()}
-                                    defaultValue={0}
-                                    min={1}
-                                    max={99999}
-                                    onChange={(e) => {
-                                      const qty = parseInt(e.target.value);
-                                      if (qty < 0) {
-                                        e.target.value = "";
-                                      } else if (
-                                        qty > (color?.avaliableQuantity || 0)
-                                      ) {
-                                        e.target.value = "";
-                                        toast.error(
-                                          "Quantity should be less than available quantity"
-                                        );
-                                      } else {
-                                        handleQuantityChange(
-                                          color.productId as number,
-                                          color.colorId as number,
-                                          qty
-                                        );
-                                      }
-                                    }}
-                                  />
-                                </div>
-                              </>
-                            )}
                             {stockErrors
                               ?.filter(
-                                (se) =>
-                                  se?.propertyName ===
-                                  `Items[${index}].Quantity`
+                                (se) => se?.productId === color?.productId
                               )
                               .map((err, i) => (
                                 <p className='text-danger' key={i}>
-                                  {err?.errorMessage}
+                                  {err?.message}
                                 </p>
                               ))}
-                          </div>
+                          </>
                         ))}
                       </div>
                       {authStatus === "authenticated" &&

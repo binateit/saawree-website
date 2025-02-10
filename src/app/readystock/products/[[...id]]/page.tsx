@@ -28,6 +28,7 @@ import {
   PaginatorRowsPerPageDropdownOptions,
 } from "primereact/paginator";
 import customLoader from "@/core/component/shared/image-loader";
+import Head from "next/head";
 
 const Page = () => {
   const searchParams = useSearchParams();
@@ -142,14 +143,20 @@ const Page = () => {
 
   useEffect(() => {
     const result: { id: number; name: string }[] = [];
-    polishTypeList?.map((t) =>
-      result.push({ ...polishList, id: t.id as number, name: t.name as string })
-    );
+    polishTypeList
+      ?.filter((t) => t?.name !== "NA")
+      ?.map((t) =>
+        result.push({
+          ...polishList,
+          id: t.id as number,
+          name: t.name as string,
+        })
+      );
 
     const colors: { id: number; name: string }[] = [];
-    colorTypeList?.map((t) =>
-      colors.push({ ...colorList, id: t.id, name: t.printName })
-    );
+    colorTypeList
+      ?.filter((t) => t?.printName !== "NA")
+      ?.map((t) => colors.push({ ...colorList, id: t.id, name: t.printName }));
     const mulitiFilter: CategoryList[] = [];
     categoryList?.map((t) =>
       mulitiFilter.push({
@@ -246,53 +253,6 @@ const Page = () => {
         });
       }
     }
-
-    // if (catList?.includes(id)) {
-    //   const allSubCat = categoryFilterList
-    //     ?.filter((item) => item?.parentCategoryId === id)
-    //     ?.map((cat) => cat?.id);
-    //   console.log(allSubCat);
-    //   return setSelectedFilters({
-    //     ...selectedFilters,
-    //     categoryIds: catList.filter((item, index) => item !== allSubCat[index]),
-    //   });
-    // } else {
-    //   if (parentCategorySelected?.length > 0) {
-    //     const allSubCat = categoryFilterList
-    //       ?.filter((item) => item?.parentCategoryId === id)
-    //       ?.map((cat) => cat?.id);
-    //     return setSelectedFilters({
-    //       ...selectedFilters,
-    //       categoryIds: [...allSubCat, id],
-    //     });
-    //   } else {
-    //     catList.push(id);
-    //     return setSelectedFilters({
-    //       ...selectedFilters,
-    //       categoryIds: catList,
-    //     });
-    //   }
-
-    //   // categoryFilterList?.map((item: CategoryList) => {
-    //   //   if (item?.id === id && item?.isParent === true) {
-    //   //     const allSubCat = categoryFilterList
-    //   //       ?.filter((item) => item?.parentCategoryId === id)
-    //   //       ?.map((cat) => cat?.id);
-    //   //     console.log("inside handle category", [...allSubCat, id]);
-    //   //     return setSelectedFilters({
-    //   //       ...selectedFilters,
-    //   //       categoryIds: [allSubCat, id],
-    //   //     });
-    //   //   } else {
-    //   //     console.log("inside handle category", [id]);
-    //   //     catList.push(id);
-    //   //     return setSelectedFilters({
-    //   //       ...selectedFilters,
-    //   //       categoryIds: catList,
-    //   //     });
-    //   //   }
-    //   // });
-    // }
   };
   const handlePolishChange = (id: number) => {
     const poList = selectedFilters?.polishingTypeIds;
@@ -389,6 +349,9 @@ const Page = () => {
 
   return (
     <>
+      <Head>
+        <title>Ready Stock</title>
+      </Head>
       <section className='page-title-box'>
         <div className='container'>
           <h1 className='page-title'>{categoryName}</h1>
@@ -452,9 +415,13 @@ const Page = () => {
                   >
                     <BsFilter fontSize={25} />
                   </div>
-                  Showing {paginationFilters?.first + 1} to{" "}
-                  {paginationFilters?.first + (response?.data?.length || 0)} of{" "}
-                  {response?.pagination?.totalCount} products
+                  {(response?.data?.length || 0) > 0
+                    ? `Showing ${paginationFilters?.first + 1} to${" "}
+                  ${
+                    paginationFilters?.first + (response?.data?.length || 0)
+                  } of${" "}
+                  ${response?.pagination?.totalCount} products}`
+                    : ""}
                 </div>
                 <div className='d-flex'>
                   {isLoading ? (

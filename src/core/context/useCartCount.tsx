@@ -6,7 +6,6 @@ import { CartDetails } from "../models/cartModel";
 import { useSession } from "next-auth/react";
 import { Session } from "next-auth";
 
-
 interface CartCountContextType {
   cartCount: number | null;
   setCartCount: (data: number | null) => void;
@@ -38,6 +37,7 @@ export const CartCountProvider: React.FC<CartCountProviderProps> = ({
     enabled:
       authStatus === "authenticated" &&
       userSession?.user?.userType === "customer",
+    refetchOnWindowFocus: false,
   });
 
   useEffect(() => {
