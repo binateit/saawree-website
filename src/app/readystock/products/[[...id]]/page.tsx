@@ -28,6 +28,7 @@ import {
   PaginatorRowsPerPageDropdownOptions,
 } from "primereact/paginator";
 import customLoader from "@/core/component/shared/image-loader";
+import Head from "next/head";
 
 const Page = () => {
   const searchParams = useSearchParams();
@@ -348,6 +349,9 @@ const Page = () => {
 
   return (
     <>
+      <Head>
+        <title>Ready Stock</title>
+      </Head>
       <section className='page-title-box'>
         <div className='container'>
           <h1 className='page-title'>{categoryName}</h1>

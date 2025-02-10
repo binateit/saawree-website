@@ -28,25 +28,9 @@ const usePreventNavigation = ({
       }
     };
 
-    // Handle browser back/forward buttons
-    const handlePopState = () => {
-      // if (isDirty) {
-      //   e.preventDefault();
-      //   e.returnValue = true;
-      //   setNe
-      //   setIsNavigating(true);
-      //   // Prevent default navigation
-      //   history.pushState({}, "", pathname);
-      // }
-      console.log("click");
-    };
-
-    window.addEventListener("popstate", handlePopState);
     window.addEventListener("beforeunload", handleBeforeUnload);
-
     return () => {
       window.removeEventListener("beforeunload", handleBeforeUnload);
-      window.removeEventListener("popstate", handlePopState);
     };
   }, [isDirty, pathname]);
 

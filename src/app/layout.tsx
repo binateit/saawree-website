@@ -12,6 +12,15 @@ import "./globals.css";
 import { Suspense } from "react";
 import Loading from "./loading";
 import { SpeedInsights } from "@vercel/speed-insights/next";
+import type { Metadata } from "next";
+import FavIcon from "../../public/favicon.ico";
+
+export const metadata: Metadata = {
+  title: {
+    template: "%s | My Website",
+    default: "My Website", // default if no title is set
+  },
+};
 
 export default async function RootLayout({
   children,
@@ -21,9 +30,10 @@ export default async function RootLayout({
   return (
     <html lang='en'>
       <head>
-        <title>Index</title>
+        {/* <title>Index</title> */}
         <meta name='viewport' content='width=device-width, initial-scale=1.0' />
         {/* <link rel='stylesheet' href='/bootstrap/bootstrap.min.css' /> */}
+        <link rel='shortcut icon' href={FavIcon.src} />
       </head>
 
       <body>

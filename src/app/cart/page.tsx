@@ -434,18 +434,6 @@ const Page = () => {
                           </td>
                         </tr>
                         <tr className='cart-subtotal'>
-                          <th>Tax</th>
-                          <td>
-                            <span className='amount'>
-                              <span id='bk-cart-subtotal-price'>
-                                <span className='money'>
-                                  {formatCurrency(cartDetails?.totalTaxAmount)}
-                                </span>
-                              </span>
-                            </span>
-                          </td>
-                        </tr>
-                        <tr className='cart-subtotal'>
                           <th>Discount</th>
                           <td>
                             <span className='amount'>
@@ -463,6 +451,19 @@ const Page = () => {
                             </span>
                           </td>
                         </tr>
+                        <tr className='cart-subtotal'>
+                          <th>Tax</th>
+                          <td>
+                            <span className='amount'>
+                              <span id='bk-cart-subtotal-price'>
+                                <span className='money'>
+                                  {formatCurrency(cartDetails?.totalTaxAmount)}
+                                </span>
+                              </span>
+                            </span>
+                          </td>
+                        </tr>
+
                         <tr className='order-total'>
                           <th>Grand Total</th>
                           <td>

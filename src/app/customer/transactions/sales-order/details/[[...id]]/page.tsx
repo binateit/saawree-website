@@ -13,6 +13,8 @@ import React from "react";
 import { toast } from "react-toastify";
 import { saveAs } from "file-saver";
 import OrderTracking from "@/core/component/OrderTracking";
+import { ColumnGroup } from "primereact/columngroup";
+import { Row } from "react-bootstrap";
 
 const Page = () => {
   const searchParams = useSearchParams();
@@ -37,6 +39,79 @@ const Page = () => {
     });
   };
 
+  const footerGroup = (
+    <ColumnGroup>
+      <Row>
+        <Column footer='SubTotal:' footerStyle={{ textAlign: "right" }} />
+        <Column
+          footer={orderDetails?.itemList?.reduce(
+            (acc, item) => acc + (item?.quantity || 0),
+            0
+          )}
+        />
+        <Column
+          footer={formatCurrency(
+            orderDetails?.itemList?.reduce(
+              (acc, item) => acc + (item?.productPrice || 0),
+              0
+            )
+          )}
+        />
+        <Column
+          footer={formatCurrency(
+            orderDetails?.itemList?.reduce(
+              (acc, item) => acc + (item?.discountAmount || 0),
+              0
+            )
+          )}
+        />
+        <Column
+          footer={formatCurrency(
+            orderDetails?.itemList?.reduce(
+              (acc, item) => acc + (item?.subTotal || 0),
+              0
+            )
+          )}
+        />
+      </Row>
+      {orderDetails?.otherCharges?.map((ocitem) => (
+        <Row key={ocitem.id}>
+          <Column
+            colSpan={orderDetails.totalTaxAmount !== 0 ? 4 : 3}
+            footer={ocitem.label}
+            footerStyle={{ textAlign: "right" }}
+          />
+          <Column footer={formatCurrency(ocitem.amount)} />
+        </Row>
+      ))}
+      <Row>
+        <Column
+          colSpan={4}
+          footer='Total Discount:'
+          footerStyle={{ textAlign: "right" }}
+        />
+        <Column footer={formatCurrency(orderDetails?.totalDiscountedPrice)} />
+      </Row>
+      <Row>
+        <Column
+          colSpan={4}
+          footer='Total Tax:'
+          footerStyle={{ textAlign: "right" }}
+        />
+        <Column footer={formatCurrency(orderDetails?.totalTaxAmount)} />
+      </Row>
+
+      <Row>
+        <Column
+          colSpan={4}
+          footer='Grand Total:'
+          footerStyle={{ textAlign: "right" }}
+        />
+        <Column footer={formatCurrency(orderDetails?.orderTotal)} />
+      </Row>
+    </ColumnGroup>
+  );
+
   if (isLoading) return <p>Loading....</p>;
   return (
     <>
@@ -46,7 +121,7 @@ const Page = () => {
 
       <div className='card mb-3'>
         <div className='card-header'>
-          <h6 className='mb-0'>Order Details</h6>
+          <h6 className='mb-0'>Order Details </h6>
         </div>
         <div className='card-body'>
           <div className='row'>
@@ -75,6 +150,10 @@ const Page = () => {
 
             <div className='col-xl-4 col-lg-12 col-md-12 col-sm-12'>
               <div className='row'>
+                <div className='col-xl-6 col-lg-3 col-md-3 col-sm-4'>
+                  <label className='mb-0 font-weight-bold'>Order Number</label>
+                  <p>{orderDetails?.orderNumber}</p>
+                </div>
                 <div className='col-xl-6 col-lg-3 col-md-3 col-sm-4'>
                   <label className='mb-0 font-weight-bold'>Order Date</label>
                   <p>
@@ -118,7 +197,7 @@ const Page = () => {
             tableClassName='table table-bordered table-hover mb-0'
             value={orderDetails?.itemList}
             tableStyle={{ minWidth: "60rem" }}
-            // footerColumnGroup={footerGroup}
+            footerColumnGroup={footerGroup}
             emptyMessage='No Items found.'
           >
             <Column field='productName' header='Product'></Column>

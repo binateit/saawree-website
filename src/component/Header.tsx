@@ -212,7 +212,7 @@ const Header = () => {
                         setSelectedCategory(Number(e.target?.value))
                       }
                     >
-                      <option value={undefined}>Category</option>
+                      <option value={undefined}>All Categories</option>
                       {menuCategoryData?.rsc
                         ?.filter((item) => item?.pcid === null)
                         .map((cat) => (

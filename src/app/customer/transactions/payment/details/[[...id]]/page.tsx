@@ -17,7 +17,7 @@ const Page = () => {
   const searchParams = useSearchParams();
   const paymentId = searchParams.get("paymentId");
 
-  const { data: paymentDetails } = useQuery({
+  const { data: paymentDetails, isLoading } = useQuery({
     queryKey: ["paymentDetailsById"],
     queryFn: () => getPaymentDetailsById(Number(paymentId)),
     enabled: !!paymentId,
@@ -36,11 +36,13 @@ const Page = () => {
       }
     });
   };
+
+  if (isLoading) return <p>Loading....</p>;
   return (
     <>
       <div className='card mb-3'>
         <div className='card-header justify-content-between'>
-          <h6 className='mb-0'>Payment Details</h6>
+          <h6 className='mb-0'>Payment Details </h6>
           <button className='btn btn-saawree' onClick={() => challanpdf()}>
             Download
           </button>
@@ -49,6 +51,12 @@ const Page = () => {
           <div className='row'>
             <div className='col-xl-4 col-lg-6 col-md-6 col-sm-12'>
               <div className='row'>
+                <div className='col-xl-6 col-lg-3 col-md-3 col-sm-4'>
+                  <label className='mb-0 font-weight-bold'>
+                    Payment Number
+                  </label>
+                  <p>{paymentDetails?.paymentNumber}</p>
+                </div>
                 <div className='col-xl-6 col-lg-3 col-md-3 col-sm-4'>
                   <label className='mb-0 font-weight-bold'>Customer</label>
                   <p>
@@ -75,11 +83,19 @@ const Page = () => {
             <div className='col-xl-4 col-lg-12 col-md-12 col-sm-12'>
               <div className='row'>
                 <div className='col-xl-6 col-lg-3 col-md-3 col-sm-4'>
+                  <label className='mb-0 font-weight-bold'>
+                    Payment Reference Number
+                  </label>
+                  <p>{paymentDetails?.referenceNumber} </p>
+                </div>
+                <div className='col-xl-6 col-lg-3 col-md-3 col-sm-4'>
                   <label className='mb-0 font-weight-bold'>Date Added</label>
-                  {/* {formatDate(
-                        invoiceDetails?.payment as string,
-                        "dd MMM yyyy"
-                      )} */}
+                  <p>
+                    {formatDate(
+                      paymentDetails?.paymentDate as unknown as string,
+                      "dd MMM yyyy"
+                    )}
+                  </p>
                 </div>
                 <div className='col-xl-6 col-lg-3 col-md-3 col-sm-4'>
                   <label className='mb-0 font-weight-bold'>
@@ -95,28 +111,43 @@ const Page = () => {
                 </div>
               </div>
             </div>
-            <div className='col-xl-4 col-lg-12 col-md-12 col-sm-12'>
-              <div className='row'>
-                <div className='col-xl-6 col-lg-3 col-md-3 col-sm-4'>
-                  <label className='mb-0 font-weight-bold'>
-                    Cheque Bank name
-                  </label>
-                  <p>{paymentDetails?.chequeBankName}</p>
-                </div>
-                <div className='col-xl-6 col-lg-3 col-md-3 col-sm-4'>
-                  <label className='mb-0 font-weight-bold'>
-                    Amount Received
-                  </label>
-                  <p>{paymentDetails?.chequeNumber}</p>
-                </div>
-                <div className='col-xl-6 col-lg-3 col-md-3 col-sm-4'>
-                  <label className='mb-0 font-weight-bold'>
-                    Amount Received Mode
-                  </label>
-                  <p>{paymentDetails?.chequeDate} </p>
+            {paymentDetails?.paymentModeId === 2 && (
+              <div className='col-xl-4 col-lg-12 col-md-12 col-sm-12'>
+                <div className='row'>
+                  <div className='col-xl-6 col-lg-3 col-md-3 col-sm-4'>
+                    <label className='mb-0 font-weight-bold'>
+                      Cheque Bank name
+                    </label>
+                    <p>{paymentDetails?.chequeBankName}</p>
+                  </div>
+                  <div className='col-xl-6 col-lg-3 col-md-3 col-sm-4'>
+                    <label className='mb-0 font-weight-bold'>
+                      Check Number
+                    </label>
+                    <p>{paymentDetails?.chequeNumber}</p>
+                  </div>
+                  <div className='col-xl-6 col-lg-3 col-md-3 col-sm-4'>
+                    <label className='mb-0 font-weight-bold'>
+                      Amount Received Mode
+                    </label>
+                    <p>{paymentDetails?.chequeDate} </p>
+                  </div>
                 </div>
               </div>
-            </div>
+            )}
+            {(paymentDetails?.paymentModeId === 4 ||
+              paymentDetails?.paymentModeId === 3 ||
+              paymentDetails?.paymentModeId === 6 ||
+              paymentDetails?.paymentModeId === 5) && (
+              <div className='col-xl-4 col-lg-12 col-md-12 col-sm-12'>
+                <div className='row'>
+                  <div className='col-xl-6 col-lg-3 col-md-3 col-sm-4'>
+                    <label className='mb-0 font-weight-bold'>Bank name</label>
+                    <p>{paymentDetails?.bankName}</p>
+                  </div>
+                </div>
+              </div>
+            )}
           </div>
         </div>
       </div>

@@ -266,7 +266,6 @@ const Page = () => {
   };
 
   if (isLoading) return <Loading />;
-  console.log(stockErrors);
   return (
     <section className='product-details'>
       <div className='container'>
