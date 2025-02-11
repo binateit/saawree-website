@@ -11,7 +11,7 @@ const Page = () => {
   const searchParams = useSearchParams();
   const orderNumber = searchParams.get("orderNumber");
 
-  const { data: orderDetails, isLoading } = useQuery({
+  const { data: orderDetails } = useQuery({
     queryKey: ["orderDetails", orderNumber],
 
     queryFn: () => getSalesOrderByNumber(orderNumber as string),

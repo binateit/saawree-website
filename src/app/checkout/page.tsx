@@ -127,14 +127,16 @@ const CheckoutPage = () => {
     }
   };
 
-  const handleRazorPayment = (orderid: string) => {
-    console.log(orderid);
+  const handleRazorPayment = (orderData: {
+    razorpayOrderId: string;
+    orderNumber: string;
+  }) => {
     const options: RazorpayOrderOptions = {
       description: "Payment towrads Order",
       currency: "INR",
       key: "rzp_test_pQBxkazjOOxrwX",
       name: "Saawree",
-      order_id: orderid,
+      order_id: orderData?.razorpayOrderId,
       handler: handlePayment,
       prefill: {
         email: userSession?.user?.emailAddress,
@@ -147,7 +149,7 @@ const CheckoutPage = () => {
         escape: false,
         ondismiss: function () {
           // setCartCount(0);
-          router.push("/payment-failed");
+          router.push(`/payment-failed?orderNumber=${orderData?.orderNumber}`);
           queryClient.invalidateQueries({ queryKey: ["cartDetails"] });
         },
       },
@@ -171,7 +173,7 @@ const CheckoutPage = () => {
       if (data.succeeded) {
         if (isRazorPaySelected) {
           console.log(data?.data);
-          // handleRazorPayment(data?.data?.orderId as string);
+          handleRazorPayment(data?.data);
         } else {
           const orderData = data.data;
           router.push(`/thankyou?orderNumber=${orderData?.orderNumber}`);
@@ -190,7 +192,7 @@ const CheckoutPage = () => {
     onSuccess: (data: Result) => {
       if (data.succeeded) {
         if (isRazorPaySelected) {
-          handleRazorPayment(data?.data?.razorpayOrderId as string);
+          handleRazorPayment(data?.data);
         } else {
           const orderData = data.data;
           router.push(`/thankyou?orderNumber=${orderData?.orderNumber}`);
