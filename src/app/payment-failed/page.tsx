@@ -1,8 +1,22 @@
+"use client";
+import { formatCurrency } from "@/core/helpers/helperFunctions";
+import { getSalesOrderByNumber } from "@/core/requests/saleOrderRequests";
+import { useQuery } from "@tanstack/react-query";
 import Link from "next/link";
+import { useSearchParams } from "next/navigation";
 import React from "react";
 import { BsShieldFillX } from "react-icons/bs";
 
 const Page = () => {
+  const searchParams = useSearchParams();
+  const orderNumber = searchParams.get("orderNumber");
+
+  const { data: orderDetails } = useQuery({
+    queryKey: ["orderDetails", orderNumber],
+
+    queryFn: () => getSalesOrderByNumber(orderNumber as string),
+    enabled: !!orderNumber,
+  });
   return (
     <>
       <section className='thankyou-page'>
@@ -13,12 +27,14 @@ const Page = () => {
               Payment Failed
             </h2>
             <p className='h5 font-weight-bold text-muted mb-2'>
-              Order Amount : ₹ 4,556
+              Order Amount : {formatCurrency(orderDetails?.orderTotal)}
             </p>
             <p className='text-center mb-2 ord-txt'>
               It&apos;s Seems like there was some trouble
             </p>
-            <p className='text-center ord-txt'>Payment ID : 452SDS </p>
+            <p className='text-center ord-txt'>
+              Payment ID : {orderDetails?.orderNumber}{" "}
+            </p>
             <Link href='#' className='btn btn-saawree'>
               Try Again
             </Link>

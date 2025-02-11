@@ -110,6 +110,7 @@ const CheckoutPage = () => {
     razorpay_order_id: string;
     razorpay_signature: string;
   }) => {
+    console.log(response);
     const { razorpay_payment_id, razorpay_order_id, razorpay_signature } =
       response;
     const razorpayData = {
@@ -120,20 +121,22 @@ const CheckoutPage = () => {
 
     const result = await createRazorPay(razorpayData);
     if (result.succeeded) {
-      const orderDataa = JSON.stringify(result?.data);
-      router.push(`/thankyou?orderData=${orderDataa}`);
+      const orderData = result.data;
+      router.push(`/thankyou?orderNumber=${orderData}`);
       setCartCount(0);
     }
   };
 
-  const handleRazorPayment = (orderid: string) => {
-    console.log(orderid);
+  const handleRazorPayment = (orderData: {
+    razorpayOrderId: string;
+    orderNumber: string;
+  }) => {
     const options: RazorpayOrderOptions = {
       description: "Payment towrads Order",
       currency: "INR",
-      key: "rzp_live_KQQun3Vu4PO6ht",
+      key: process.env.NEXT_PUBLIC_APP_RAZORPAY_API_KEY as string,
       name: "Saawree",
-      order_id: orderid,
+      order_id: orderData?.razorpayOrderId,
       handler: handlePayment,
       prefill: {
         email: userSession?.user?.emailAddress,
@@ -146,6 +149,7 @@ const CheckoutPage = () => {
         escape: false,
         ondismiss: function () {
           // setCartCount(0);
+          router.push(`/payment-failed?orderNumber=${orderData?.orderNumber}`);
           queryClient.invalidateQueries({ queryKey: ["cartDetails"] });
         },
       },
@@ -156,7 +160,7 @@ const CheckoutPage = () => {
 
     rzpay.on("payment.failed", () => {
       setCartCount(0);
-      router.push("/payment-failed");
+      router.push(`/payment-failed?orderNumber=${orderData?.orderNumber}`);
       queryClient.invalidateQueries({ queryKey: ["cartDetails"] });
     });
   };
@@ -168,7 +172,8 @@ const CheckoutPage = () => {
     onSuccess: (data: Result) => {
       if (data.succeeded) {
         if (isRazorPaySelected) {
-          handleRazorPayment(data?.data?.orderId as string);
+          console.log(data?.data);
+          handleRazorPayment(data?.data);
         } else {
           const orderData = data.data;
           router.push(`/thankyou?orderNumber=${orderData?.orderNumber}`);
@@ -187,7 +192,7 @@ const CheckoutPage = () => {
     onSuccess: (data: Result) => {
       if (data.succeeded) {
         if (isRazorPaySelected) {
-          handleRazorPayment(data?.data?.orderId as string);
+          handleRazorPayment(data?.data);
         } else {
           const orderData = data.data;
           router.push(`/thankyou?orderNumber=${orderData?.orderNumber}`);
