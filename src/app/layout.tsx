@@ -17,8 +17,8 @@ import FavIcon from "../../public/favicon.ico";
 
 export const metadata: Metadata = {
   title: {
-    template: "%s | My Website",
-    default: "My Website", // default if no title is set
+    template: "%s | Welcome to Saawree Art!",
+    default: "Welcome to Saawree Art!", // default if no title is set
   },
 };
 
