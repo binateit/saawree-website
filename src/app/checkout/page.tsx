@@ -134,7 +134,7 @@ const CheckoutPage = () => {
     const options: RazorpayOrderOptions = {
       description: "Payment towrads Order",
       currency: "INR",
-      key: "rzp_test_pQBxkazjOOxrwX",
+      key: process.env.NEXT_PUBLIC_APP_RAZORPAY_API_KEY as string,
       name: "Saawree",
       order_id: orderData?.razorpayOrderId,
       handler: handlePayment,
@@ -160,7 +160,7 @@ const CheckoutPage = () => {
 
     rzpay.on("payment.failed", () => {
       setCartCount(0);
-      router.push("/payment-failed");
+      router.push(`/payment-failed?orderNumber=${orderData?.orderNumber}`);
       queryClient.invalidateQueries({ queryKey: ["cartDetails"] });
     });
   };
