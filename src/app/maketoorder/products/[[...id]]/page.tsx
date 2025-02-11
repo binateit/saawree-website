@@ -293,7 +293,7 @@ const Page = () => {
                   ${
                     paginationFilters?.first + (response?.data?.length || 0)
                   } of${" "}
-                  ${response?.pagination?.totalCount} products}`
+                  ${response?.pagination?.totalCount} products`
                     : ""}
                 </div>
                 <div className='d-flex'>
