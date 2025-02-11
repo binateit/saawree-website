@@ -486,25 +486,6 @@ const Page = () => {
                         </div>
                       ))}
                     </div>
-
-                    {authStatus === "authenticated" &&
-                      userSession?.user?.userType === "customer" && (
-                        <div className='action-btn-wrapper'>
-                          <button
-                            className='btn btn-saawree-outline'
-                            onClick={() => handleAddToCart(false)}
-                          >
-                            Add to cart
-                          </button>
-                          <a href='cart.html' className='btn btn-saawree'>
-                            Buy now
-                          </a>
-                          {/* <button className="btn btn-saawree-outline"><i className="bi bi-heart"></i></button>  */}
-                          <a href='#' className='whatsapp'>
-                            <BsWhatsapp fontSize={25} color='green' />
-                          </a>
-                        </div>
-                      )}
                   </div>
                 ) : (
                   <div className='row'>
@@ -594,32 +575,32 @@ const Page = () => {
                           </>
                         ))}
                       </div>
-                      {authStatus === "authenticated" &&
-                        userSession?.user?.userType === "customer" && (
-                          <div className='action-btn-wrapper'>
-                            <button
-                              className='btn btn-saawree-outline'
-                              onClick={() => handleAddToCart(false)}
-                            >
-                              Add to cart
-                            </button>
-                            <div
-                              onClick={() => {
-                                handleAddToCart(true);
-                              }}
-                              className='btn btn-saawree'
-                            >
-                              Buy now
-                            </div>
-                            {/* <button className="btn btn-saawree-outline"><i className="bi bi-heart"></i></button>  */}
-                            <a href='#' className='whatsapp'>
-                              <BsWhatsapp fontSize={25} color='green' />
-                            </a>
-                          </div>
-                        )}
                     </div>
                   </div>
                 )}
+                {authStatus === "authenticated" &&
+                  userSession?.user?.userType === "customer" && (
+                    <div className='action-btn-wrapper'>
+                      <button
+                        className='btn btn-saawree-outline'
+                        onClick={() => handleAddToCart(false)}
+                      >
+                        Add to cart
+                      </button>
+                      <div
+                        onClick={() => {
+                          handleAddToCart(true);
+                        }}
+                        className='btn btn-saawree'
+                      >
+                        Buy now
+                      </div>
+                      {/* <button className="btn btn-saawree-outline"><i className="bi bi-heart"></i></button>  */}
+                      <a href='#' className='whatsapp'>
+                        <BsWhatsapp fontSize={25} color='green' />
+                      </a>
+                    </div>
+                  )}
               </div>
             </div>
           </div>
