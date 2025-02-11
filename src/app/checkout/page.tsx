@@ -140,8 +140,8 @@ const CheckoutPage = () => {
       handler: handlePayment,
       prefill: {
         email: userSession?.user?.emailAddress,
-        // contact: session?.user?.m,
         name: userSession?.user?.firstName + " " + userSession?.user?.lastName,
+        contact: userSession?.user?.mobileNumber,
       },
       theme: { color: "blue" },
       amount: (cartData?.orderTotalTaxInclusive || 0) * 100,
