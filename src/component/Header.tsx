@@ -404,15 +404,10 @@ const Header = () => {
                       .map((cat) => (
                         <React.Fragment key={cat?.id}>
                           <li className='has_dropdown'>
-                            <Link
-                              href={`/readystock/products?categoryName=${cat.n}&categoryId=${cat?.id}`}
-                              onClick={() => {
-                                setCloseSubMenu(!closeSubMenu);
-                              }}
-                            >
+                            <a href='#'>
                               {cat?.n}
                               <BsChevronDown fontSize={16} className='ml-2' />
-                            </Link>
+                            </a>
                             <ul className='sub_menu'>
                               {menuCategoryData?.rsc
                                 ?.filter(
