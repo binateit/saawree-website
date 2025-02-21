@@ -304,7 +304,7 @@ const Page = () => {
 
   const paginatorTemplate = {
     layout:
-      "RowsPerPageDropdown PrevPageLink PageLinks NextPageLink CurrentPageReport",
+      "RowsPerPageDropdown PrevPageLink PageLinks NextPageLink CurrentPageReport ",
     RowsPerPageDropdown: (options: PaginatorRowsPerPageDropdownOptions) => {
       const dropdownOptions = [
         { label: 12, value: 12 },
