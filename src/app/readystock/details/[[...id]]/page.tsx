@@ -1,43 +1,26 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 "use client";
-import {
-  checkIfImageExists,
-  formatCurrency,
-} from "@/core/helpers/helperFunctions";
-import { SelectOptionProps } from "@/core/models/model";
-import underlineIcon from "@/assets/images/underlineIcon.png";
-import {
-  getReadyStockRecomendedProducts,
-  getRSProductDetails,
-} from "@/core/requests/productsRequests";
-import {
-  keepPreviousData,
-  useQuery,
-  useQueryClient,
-} from "@tanstack/react-query";
+import { formatCurrency } from "@/core/helpers/helperFunctions";
+import { getReadyStockRecomendedProducts, getRSProductDetails } from "@/core/requests/productsRequests";
+import { keepPreviousData, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useSession } from "next-auth/react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { Dropdown } from "primereact/dropdown";
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 import Image from "next/image";
-import { BsCart, BsWhatsapp } from "react-icons/bs";
+import { BsWhatsapp } from "react-icons/bs";
 import InnerImageZoom from "react-inner-image-zoom";
-import "react-inner-image-zoom/lib/InnerImageZoom/styles.css";
-import { Dialog } from "primereact/dialog";
 import { createCart } from "@/core/requests/cartRequests";
-import { Items } from "@/core/models/cartModel";
-import { ProductColor } from "@/core/models/productModel";
 import { toast } from "react-toastify";
 import { useCartCount } from "@/core/context/useCartCount";
 import Slider from "react-slick";
 import "slick-carousel/slick/slick.css";
 import "slick-carousel/slick/slick-theme.css";
-import productImagePlaceholder from "@/assets/images/productImagePlaceHolder.jpg";
-import ProductImage from "@/core/component/Products/ProductImage";
-import Link from "next/link";
-import { Session } from "next-auth";
 import customLoader from "@/core/component/shared/image-loader";
 import Loading from "@/app/loading";
+import { TabPanel, TabView } from "primereact/tabview";
+import { Galleria } from "primereact/galleria";
+import { ProductColor, ProductImage } from "@/core/models/productModel";
 
 type StockError = {
   productId: number;
@@ -45,153 +28,78 @@ type StockError = {
 };
 const Page = () => {
   const { data: session, status: authStatus } = useSession();
-  const userSession = session as Session;
+  const queryClient = useQueryClient();
   const router = useRouter();
   const searchParams = useSearchParams();
-  const defalutProductId = searchParams.get("productId");
-  const [productId, setProductId] = useState<number>(Number(defalutProductId));
-  const [stockErrors, setStockErrors] = useState<StockError[]>([]);
-  const [mainProductImage, setMainProductImage] = useState<{
-    mainImage: string | undefined;
-    zoomedImage: string | undefined;
-  }>({
-    mainImage: undefined,
-    zoomedImage: undefined,
-  });
-  const [polishType, setPolishType] = useState<string>("");
-  const [visible, setVisible] = useState(false);
-  const [selectedColors, setSelectedColors] = useState<ProductColor[]>([]);
-  const [polishTypeList, setPolishTypeList] = useState<SelectOptionProps[]>([]);
-  const [visibleTab, setVisibleTab] = useState<string>("description");
-  const { setCartCount, cartCount, setIsBuyNow } = useCartCount();
+  const productId = Number(searchParams.get("productId"));
 
+  const [stockErrors, setStockErrors] = useState<StockError[]>([]);
+  const [selectedColors, setSelectedColors] = useState<ProductColor[]>([]);
+  const { setIsBuyNow } = useCartCount();
+
+  /** Fetch Product Details */
   const { data: response, isLoading } = useQuery({
     queryKey: ["getRSProductDetailsData", productId],
     queryFn: () => getRSProductDetails(productId),
     enabled: !!productId,
-
     placeholderData: keepPreviousData,
-    retry: 1000,
-  });
-  useEffect(() => {
-    const polishTypes: any = [];
-
-    response?.polishingTypeList?.map((ptype) => {
-      return polishTypes.push({
-        name: ptype?.polishingTypeName,
-        value: ptype?.polishingTypeId,
-      });
-    });
-    setPolishTypeList(polishTypes);
-    const selectedPolishType = polishTypes.filter(
-      (p: { name: string }) => p.name === response?.polishingTypeName
-    )[0]?.value;
-    setPolishType(selectedPolishType);
-    response?.polishingTypeList?.filter(
-      (p) => p.polishingTypeId === selectedPolishType
-    );
-    setMainProductImage({
-      mainImage: response?.productImages?.[0]?.mediumImagePath || "",
-      zoomedImage: response?.productImages?.[0]?.zoomImagePath || "",
-    });
-
-    checkIfImageExists(
-      `${process.env.NEXT_PUBLIC_APP_IMAGE_API_URL}/${response?.productImages?.[0]?.mediumImagePath}`,
-      function (status) {
-        if (status) {
-          console.log("image found");
-        } else {
-          setMainProductImage({ mainImage: undefined, zoomedImage: undefined });
-        }
-      }
-    );
-  }, [response, productId]);
-
-  useEffect(() => {
-    if (response) {
-      const selectedPolish = response?.polishingTypeList?.filter(
-        (t) => t.polishingTypeId === Number(polishType)
-      )[0];
-      setProductId(selectedPolish?.productId as number);
-    }
-    // refetch();
-  }, [polishType]);
-
-  const { data: recomendedProducts } = useQuery({
-    queryKey: ["geRecomendedRSProductRecords"],
-    queryFn: async () => {
-      return await getReadyStockRecomendedProducts({
-        categoryIds: [response?.categoryId ?? 0],
-      });
-    },
-    placeholderData: keepPreviousData,
-    enabled: !!response,
   });
 
-  const handleQuantityChange = (
-    productId: number,
-    colorId: number,
-    quantity: number
-  ) => {
-    setSelectedColors((prevColors) => {
-      const existingColor = prevColors.find(
-        (color) => color.colorId === colorId
+  const polishTypeList = response?.polishingTypeList?.map(ptype => ({
+    name: ptype.polishingTypeName,
+    value: ptype.productId,
+  })) || [];
+
+  const selectedPolishType = polishTypeList.find(p => p.value === productId)?.value;
+
+
+  /** Handle Redirect */
+  const handleRedirect = (id: number) => router.push(`/readystock/details?productId=${id}`);
+
+  /** Handle Quantity Change */
+  const handleQuantityChange = (productId: number, colorId: number, quantity: number) => {
+    if (quantity < 1) return toast.error("Quantity must be at least 1");
+
+    setSelectedColors(prevColors => {
+      const updatedColors = prevColors.map(color =>
+        color.colorId === colorId ? { ...color, quantity, productId } : color
       );
-      if (existingColor) {
-        return prevColors.map((color) =>
-          color.colorId === colorId ? { ...color, quantity, productId } : color
-        );
-      } else {
-        return [...prevColors, { colorId, quantity, productId }];
-      }
+      return updatedColors.find(color => color.colorId === colorId) ? updatedColors : [...prevColors, { colorId, quantity, productId }];
     });
   };
-  const queryClient = useQueryClient();
 
+  /** Handle Add to Cart */
   const handleAddToCart = async (isBuyNow: boolean) => {
-    try {
-      if (authStatus === "unauthenticated") {
-        router.push("/auth/login");
-      } else {
-        if (
-          authStatus === "authenticated" &&
-          response &&
-          selectedColors.length > 0
-        ) {
-          const updatedItems: Items[] = selectedColors.map((color) => ({
-            productId: color.productId as number,
-            quantity: color.quantity as number,
-          }));
-          const carts = {
-            orderType: 1,
-            items: updatedItems,
-            isFromBuyNow: isBuyNow,
-          };
+    if (authStatus === "unauthenticated") return router.push("/auth/login");
 
-          const result = await createCart(carts);
-          if (result.succeeded) {
-            setCartCount((cartCount as number) + 1);
-            toast.success("Items added to cart successfully");
-            setIsBuyNow(isBuyNow);
-            router.push(isBuyNow ? "/checkout" : "/cart");
-            queryClient.invalidateQueries({ queryKey: ["cartDetails"] });
-            return true;
-          } else {
-            console.log(result?.data?.propertyResults);
-            setStockErrors(result?.data);
-            toast.error("Failed to add items to cart");
-            return false;
-          }
+    if (authStatus === "authenticated" && response && selectedColors.length > 0) {
+      try {
+        const updatedItems = selectedColors.map(color => ({
+          productId: color.productId,
+          quantity: color.quantity,
+        }));
+
+        const result = await createCart({ orderType: 1, items: updatedItems, isFromBuyNow: isBuyNow });
+        if (result.succeeded) {
+          // setCartCount(prev => prev + 1);
+          toast.success("Items added to cart successfully");
+          setIsBuyNow(isBuyNow);
+          router.push(isBuyNow ? "/checkout" : "/cart");
+          queryClient.invalidateQueries({ queryKey: ["cartDetails"] });
         } else {
-          toast.error("Please select the quantity");
-          return false;
+          setStockErrors(result.data || []);
+          toast.error(result.messages?.[0] || "Failed to add items to cart");
         }
+      } catch {
+        toast.error("An error occurred while adding item to cart");
       }
-    } catch (error) {
-      toast.error("An error occurred while adding item to cart");
-      console.log(error);
+    } else {
+      toast.error("Please select the quantity");
     }
   };
+
+  if (isLoading) return <Loading />;
+
 
   const collectionSettings = {
     dots: false,
@@ -265,90 +173,60 @@ const Page = () => {
     ],
   };
 
+  const responsiveOptions = [
+    {
+      breakpoint: '1024px',
+      numVisible: 5
+    },
+    {
+      breakpoint: '960px',
+      numVisible: 4
+    },
+    {
+      breakpoint: '768px',
+      numVisible: 3
+    },
+    {
+      breakpoint: '560px',
+      numVisible: 1
+    }
+  ];
+
+  const itemTemplate = (item: ProductImage) => {
+    return (
+      // <InnerImageZoom
+      //   src={`${process.env.NEXT_PUBLIC_APP_IMAGE_API_URL}/${item?.imagePath}`}
+      //   zoomSrc={`${process.env.NEXT_PUBLIC_APP_IMAGE_API_URL}/${item?.zoomImagePath}`}
+      //   zoomType='hover'
+      //   hideHint
+      //   width={600}
+      //   zoomScale={2}
+      //   hasSpacer={true}
+      //   zoomPreload={true}
+      // />
+
+      <img src={`${process.env.NEXT_PUBLIC_APP_IMAGE_API_URL}/${item?.imagePath}`} alt={response?.name} style={{ width: '100%' }} />
+
+    )
+    // return <img src={item.itemImageSrc} alt={response?.name} style={{ width: '100%' }} />
+  }
+
+  const thumbnailTemplate = (item: ProductImage) => {
+    return <img src={`${process.env.NEXT_PUBLIC_APP_IMAGE_API_URL}/${item?.thumbnailImagePath}`} alt={response?.name} />
+  }
+
   if (isLoading) return <Loading />;
   return (
     <section className='product-details'>
       <div className='container'>
         <div className='row'>
           <div className='col-md-6'>
-            <div id='js-gallery' className='gallery sticky-layer'>
-              <div className='gallery__hero'>
-                <div
-                  onClick={() =>
-                    mainProductImage?.mainImage && setVisible(true)
-                  }
-                >
-                  {mainProductImage?.mainImage === undefined ? (
-                    <Image
-                      loader={customLoader}
-                      src={productImagePlaceholder?.src}
-                      width={600}
-                      height={600}
-                      alt='product image'
-                      className='w-100 h-100'
-                    />
-                  ) : (
-                    <InnerImageZoom
-                      src={`${process.env.NEXT_PUBLIC_APP_IMAGE_API_URL}/${mainProductImage?.mainImage}`}
-                      zoomSrc={`${process.env.NEXT_PUBLIC_APP_IMAGE_API_URL}/${mainProductImage?.zoomedImage}`}
-                      zoomType='hover'
-                      hideHint
-                      width={600}
-                      zoomScale={2}
-                      hasSpacer={true}
-                      zoomPreload={true}
-                    />
-                  )}
-                </div>
-              </div>
-              <Slider {...productImagesThumbnails}>
-                {response?.productImages?.map((pi, index) => (
-                  <div
-                    data-gallery='thumb'
-                    className='is-active'
-                    onClick={() => {
-                      return (
-                        mainProductImage?.mainImage &&
-                        setMainProductImage({
-                          mainImage: pi?.mediumImagePath,
-                          zoomedImage: pi?.zoomImagePath,
-                        })
-                      );
-                    }}
-                    key={index}
-                  >
-                    <ProductImage
-                      url={`${process.env.NEXT_PUBLIC_APP_IMAGE_API_URL}/${pi?.thumbnailImagePath}`}
-                      className={"img-responsive"}
-                    />
-                  </div>
-                ))}
-              </Slider>
-              {/* <div className='gallery__thumbs'>
-                {response?.productImages?.map((pi, index) => (
-                  <div
-                    data-gallery='thumb'
-                    className='is-active'
-                    onClick={() =>
-                      mainProductImage?.mainImage &&
-                      setMainProductImage({
-                        mainImage: pi?.mediumImagePath,
-                        zoomedImage: pi?.zoomImagePath,
-                      })
-                    }
-                    key={index}
-                  >
-                    <ProductImage
-                      url={`${process.env.NEXT_PUBLIC_APP_IMAGE_API_URL}/${pi?.thumbnailImagePath}`}
-                      className={"img-responsive"}
-                    />
-                  </div>
-                ))}
-              </div> */}
-            </div>
+            <Galleria value={response?.productImages} responsiveOptions={responsiveOptions} circular numVisible={5} style={{ maxWidth: '800px' }}
+              item={itemTemplate} thumbnail={thumbnailTemplate} />
+
+
           </div>
           <div className='col-md-6'>
-            {/* <pre>{JSON.stringify(response)}</pre> */}
             <div className='product-details-wrapper'>
               <h1 className='product-name-title'>{response?.name}</h1>
               <div className='product-price'>
@@ -357,9 +235,6 @@ const Page = () => {
                 </span>{" "}
                 {/* <p className='instruction'>(Tax included)</p> */}
               </div>
-
-              <p className='short-des'>{response?.description}</p>
-
               <ul className='list-unstyled'>
                 <li className='product-dimension'>
                   <b>Design number:</b>{" "}
@@ -380,8 +255,8 @@ const Page = () => {
                 <p className='opiton-label'>Polishing Type :</p>
                 <div className='product-options search-category-dropdown'>
                   <Dropdown
-                    value={polishType}
-                    onChange={(e) => setPolishType(e.value)}
+                    value={selectedPolishType}
+                    onChange={(e) => handleRedirect(e.value)}
                     options={polishTypeList}
                     optionLabel='name'
                     placeholder='Select options'
@@ -389,88 +264,60 @@ const Page = () => {
                     panelClassName='custom-dropDown-panel'
                   />
                 </div>
-                {(response?.colorList?.length as number) > 1 ? (
-                  <div className='product-color-options mt-4'>
-                    <div className='row option-heading'>
-                      <div className='col-xl-6 col-lg-6 col-md-12 col-sm-6'>
-                        <div className='d-flex'>
-                          <div className='moti-color options-title'>Colors</div>
+
+                {response?.colorList?.length ? (
+                  <div className="product-color-options mt-4">
+                    <div className="row option-heading">
+                      <div className="col-xl-6 col-lg-6 col-md-12 col-sm-6">
+                        <div className="d-flex">
+                          <div className="moti-color options-title">Colors</div>
                           {authStatus === "authenticated" && (
                             <>
-                              <div className='stock options-title'>Stock</div>
-                              <div className='color-quntity  options-title text-center'>
-                                Qty
-                              </div>
-                            </>
-                          )}
-                        </div>
-                      </div>
-                      <div className='col-xl-6 col-lg-6 col-md-12 col-sm-6 d-none d-sm-block d-md-none d-lg-block'>
-                        <div className='d-flex'>
-                          <div className='moti-color options-title'>Colors</div>
-                          {authStatus === "authenticated" && (
-                            <>
-                              <div className='stock options-title'>Stock</div>
-                              <div className='color-quntity  options-title text-center'>
-                                Qty
-                              </div>
+                              <div className="stock options-title">Stock</div>
+                              <div className="color-quntity options-title text-center">Qty</div>
                             </>
                           )}
                         </div>
                       </div>
                     </div>
-                    <div className='row '>
-                      {response?.colorList?.map((color, index) => (
-                        <div
-                          className='col-xl-6 col-lg-6 col-md-12 col-sm-6 mb-4'
-                          key={color?.colorId}
-                        >
-                          <div className='d-flex '>
-                            <div className='moti-color'>
+
+                    <div className="row">
+                      {response.colorList.map((color, index) => (
+                        <div className="col-xl-6 col-lg-6 col-md-12 col-sm-6 mb-4" key={color.colorId}>
+                          <div className="d-flex">
+                            {/* Color Image & Name */}
+                            <div className="moti-color">
                               <Image
                                 loader={customLoader}
-                                src={`${process.env.NEXT_PUBLIC_APP_IMAGE_API_URL}/${color?.imagePath}`}
-                                alt='colors'
+                                src={`${process.env.NEXT_PUBLIC_APP_IMAGE_API_URL}/${color.imagePath}`}
+                                alt="color"
                                 width={20}
                                 height={20}
                               />
-                              <Link
-                                href={`/readystock/details?productId=${color.productId}`}
-                                className='color-name'
-                              >
-                                {color.colorName}{" "}
-                              </Link>
+                              <span onClick={() => handleRedirect(color.productId)} className="cursor-pointer color-name">
+                                {color.colorName}
+                              </span>
                             </div>
+
+                            {/* Stock & Quantity Input for Authenticated Users */}
                             {authStatus === "authenticated" && (
                               <>
-                                <div className='stock'>
-                                  {color.avaliableQuantity}
-                                </div>
-                                <div className='color-quntity'>
+                                <div className="stock">{color.avaliableQuantity}</div>
+                                <div className="color-quntity">
                                   <input
-                                    type='text'
-                                    className='quntity-input'
-                                    id={index.toString()}
+                                    type="number"
+                                    className="quntity-input"
+                                    id={`qty-${index}`}
                                     defaultValue={0}
                                     min={1}
-                                    max={99999}
+                                    max={color.avaliableQuantity}
                                     onChange={(e) => {
                                       const qty = parseInt(e.target.value);
-                                      if (qty < 0) {
-                                        e.target.value = "";
-                                      } else if (
-                                        qty > (color?.avaliableQuantity || 0)
-                                      ) {
-                                        e.target.value = "";
-                                        toast.error(
-                                          "Quantity should be less than available quantity"
-                                        );
+                                      if (qty < 1 || qty > (color?.avaliableQuantity ?? 0)) {
+                                        e.target.value = "0";
+                                        toast.error("Quantity should be between 1 and available stock");
                                       } else {
-                                        handleQuantityChange(
-                                          color.productId as number,
-                                          color.colorId as number,
-                                          qty
-                                        );
+                                        handleQuantityChange(color.productId, color.colorId, qty);
                                       }
                                     }}
                                   />
@@ -478,110 +325,24 @@ const Page = () => {
                               </>
                             )}
                           </div>
+
+                          {/* Stock Errors */}
                           {stockErrors
-                            ?.filter((se) => se?.productId === color?.productId)
+                            ?.filter((se) => se.productId === color.productId)
                             .map((err, i) => (
-                              <p className='text-danger' key={i}>
-                                {err?.message}
+                              <p className="text-danger mb-0" key={i}>
+                                {err.message}
                               </p>
                             ))}
                         </div>
                       ))}
                     </div>
                   </div>
-                ) : (
-                  <div className='row'>
-                    <div className='col-md-6'>
-                      <div className='product-color-options'>
-                        <div className='row option-heading'>
-                          <div className='col-md-12'>
-                            <div className='d-flex'>
-                              <div className='moti-color options-title'>
-                                Colors
-                              </div>
-                              {authStatus === "authenticated" && (
-                                <>
-                                  <div className='stock options-title'>
-                                    Stock
-                                  </div>
-                                  <div className='color-quntity  options-title text-center'>
-                                    Qty
-                                  </div>
-                                </>
-                              )}
-                            </div>
-                          </div>
-                        </div>
+                ) : null}
 
-                        {response?.colorList?.map((color, index) => (
-                          <>
-                            <div className='d-flex' key={color?.colorId}>
-                              <div className='moti-color'>
-                                <Image
-                                  loader={customLoader}
-                                  src={`${process.env.NEXT_PUBLIC_APP_IMAGE_API_URL}/${color?.imagePath}`}
-                                  alt='colors'
-                                  width={20}
-                                  height={20}
-                                />
-                                <span className='color-name'>
-                                  {color.colorName}{" "}
-                                </span>
-                              </div>
-                              {authStatus === "authenticated" && (
-                                <>
-                                  <div className='stock'>
-                                    {color.avaliableQuantity}
-                                  </div>
-                                  <div className='color-quntity'>
-                                    <input
-                                      type='text'
-                                      className='quntity-input'
-                                      id={index.toString()}
-                                      defaultValue={0}
-                                      min={1}
-                                      max={99999}
-                                      onChange={(e) => {
-                                        const qty = parseInt(e.target.value);
-                                        if (qty < 0) {
-                                          e.target.value = "";
-                                        } else if (
-                                          qty > (color?.avaliableQuantity || 0)
-                                        ) {
-                                          e.target.value = "";
-                                          toast.error(
-                                            "Quantity should be less than available quantity"
-                                          );
-                                        } else {
-                                          handleQuantityChange(
-                                            color.productId as number,
-                                            color.colorId as number,
-                                            qty
-                                          );
-                                        }
-                                      }}
-                                    />
-                                  </div>
-                                </>
-                              )}
-                            </div>
-                            {stockErrors
-                              ?.filter(
-                                (se) => se?.productId === color?.productId
-                              )
-                              .map((err, i) => (
-                                <p className='text-danger' key={i}>
-                                  {err?.message}
-                                </p>
-                              ))}
-                          </>
-                        ))}
-                      </div>
-                    </div>
-                  </div>
-                )}
+
                 {authStatus === "authenticated" &&
-                  userSession?.user?.userType === "customer" && (
+                  session?.user?.userType === "customer" && (
                     <div className='action-btn-wrapper'>
                       <button
                         className='btn btn-saawree-outline'
@@ -609,76 +370,35 @@ const Page = () => {
         </div>
         <div className='row'>
           <div className='col-md-12'>
-            {/* <div className="titlehome">
-                     <h1>OUR CATEGORY</h1>
-                 </div>
-                 <div className="title-septer">
-                     <img src="img/underline-icon.png" />
-                 </div>  */}
             <div className='des-sec'>
-              <ul className='nav nav-tabs' id='myTab' role='tablist'>
-                <li
-                  className='nav-item'
-                  role='presentation'
-                  onClick={() => setVisibleTab("description")}
-                >
-                  <button
-                    className={`nav-link ${
-                      visibleTab == "description" ? "active" : ""
-                    }`}
-                    id='description-tab'
-                    data-toggle='tab'
-                    data-target='#description'
-                    type='button'
-                    role='tab'
-                    aria-controls='description'
-                    aria-selected={
-                      visibleTab == "description" ? "true" : "false"
-                    }
-                  >
-                    Description
-                  </button>
-                </li>
-                <li
-                  className='nav-item'
-                  role='presentation'
-                  onClick={() => setVisibleTab("policy")}
-                >
-                  <button
-                    className={`nav-link ${
-                      visibleTab == "policy" ? "active" : ""
-                    }`}
-                    id='policy-tab'
-                    data-toggle='tab'
-                    data-target='#policy'
-                    type='button'
-                    role='tab'
-                    aria-controls='policy'
-                    aria-selected={visibleTab == "policy" ? "true" : "false"}
-                  >
-                    Shipping Policy
-                  </button>
-                </li>
-              </ul>
-              <div className='tab-content' id='myTabContent'>
-                <div
-                  className={`tab-pane fade ${
-                    visibleTab == "description" ? "show active" : ""
-                  } `}
-                  id='description'
-                  role='tabpanel'
-                  aria-labelledby='description-tab'
-                >
+              <TabView>
+                <TabPanel header="Description">
+                  {
+                    (response?.description == undefined || response?.description == '') ?
+                      <>
+                        <ul className='list-unstyled'>
+                          <li className='product-dimension'>
+                            <b>Design number:</b>{" "}
+                            <span>{response?.productGroupName}</span>
+                          </li>
+                          <li className='product-upc'>
+                            <b>Polish type:</b> <span>{response?.polishingTypeName}</span>
+                          </li>
+                          <li className='product-ean'>
+                            <b>Category:</b> <span>{response?.categoryName}</span>
+                          </li>
+                          <li className='product-isbn'>
+                            <b>Color:</b> <span>{response?.colorName}</span>
+                          </li>
+                        </ul>
+                      </> : (
+                        response?.description
+                      )
+                  }
+
                   {response?.description}
-                </div>
-                <div
-                  className={`tab-pane fade ${
-                    visibleTab == "policy" ? "show active" : ""
-                  } `}
-                  id='policy'
-                  role='tabpanel'
-                  aria-labelledby='policy-tab'
-                >
+                </TabPanel>
+                <TabPanel header="Shipping Policy">
                   <h4>Shipping policy for our store</h4>
                   <p>
                     Lorem ipsum dolor sit amet, consectetuer adipiscing elit,
@@ -713,148 +433,12 @@ const Page = () => {
                     seacula quarta decima et quinta decima. Eodem modo typi, qui
                     nunc nobis videntur parum clari, fiant sollemnes in futurum.
                   </p>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-        <div className='row'>
-          <div className='col-md-12'>
-            <div className='titlehome'>
-              <h1>YOU MAY ALSO LIKE THIS</h1>
-            </div>
-            <div className='title-septer'>
-              <Image
-                loader={customLoader}
-                src={underlineIcon.src}
-                alt='underline'
-                className='img-fluid'
-                width={120}
-                height={20}
-              />
-            </div>
-            <div className='kada-collections'>
-              <Slider {...collectionSettings}>
-                {recomendedProducts?.data
-                  ?.filter(
-                    (prodData) => prodData?.productId !== Number(productId)
-                  )
-                  ?.map((prodData) => (
-                    <Link
-                      href={`/readystock/details?productId=${prodData?.productId}`}
-                      key={prodData?.productId}
-                    >
-                      <div className='products-box'>
-                        <div className='inner-box-wraper'>
-                          <div className='prod-img1'>
-                            <ProductImage
-                              url={`${process.env.NEXT_PUBLIC_APP_IMAGE_API_URL}/${prodData?.productId}`}
-                              className={"auto-fit"}
-                            />
-                          </div>
-                          <div className='prod-name1 text-dark'>
-                            {prodData?.productName} <br />{" "}
-                            <small className='text-dark'>
-                              Design Number: {prodData?.productGroupName}
-                            </small>
-                          </div>
-                          <div className='prod-rate1 d-flex justify-content-between align-items-center'>
-                            {!!session?.user ? (
-                              <>
-                                <div className='value'>
-                                  <span className='seling'>
-                                    {formatCurrency(
-                                      prodData?.productPrice as number
-                                    )}
-                                  </span>
-                                </div>
-                                <div
-                                  className='cart-link'
-                                  onClick={() =>
-                                    router.push(
-                                      `/readystock/details?productId=${prodData?.productId}`
-                                    )
-                                  }
-                                >
-                                  <div className='act-btn'>
-                                    <BsCart fontSize={20} />
-                                  </div>
-                                </div>
-                              </>
-                            ) : (
-                              // <a href='#'>
-                              //   <button className='btn btn-small btn-saawree mt-2'>
-                              //     Login
-                              //   </button>
-                              // </a>
-                              ""
-                            )}
-                          </div>
-                        </div>
-                      </div>
-                    </Link>
-                  ))}
-              </Slider>
-              {/* <Carousel
-                value={recomendedProducts?.data || []}
-                numVisible={5}
-                numScroll={5}
-                circular
-                showIndicators={false}
-                itemTemplate={(prodData) => (
-                  <div className='products-box' key={prodData?.id}>
-                    <div className='inner-box-wraper'>
-                      <div className='prod-img1'>
-                        <Image
-                          width={500}
-                          height={500}
-                          src={`${process.env.NEXT_PUBLIC_APP_IMAGE_API_URL}/${prodData?.imagePath}`}
-                          className='auto-fit'
-                          alt=''
-                        />
-                      </div>
-                      <div className='prod-name1'>{prodData?.pn}</div>
-                      <div className='prod-rate1'>
-                        {!!session?.user ? (
-                          <>
-                            <span className='seling'>
-                              {formatCurrency(prodData?.productPrice)}
-                            </span>{" "}
-                          </>
-                        ) : (
-                          <a href='#'>
-                            <button className='btn btn-small btn-saawree-outline'>
-                              Login to view price
-                            </button>
-                          </a>
-                        )}
-                      </div>
-                    </div>
-                  </div>
-                )}
-              /> */}
+                </TabPanel>
+              </TabView>
             </div>
           </div>
         </div>
       </div>
-      <Dialog
-        visible={visible}
-        onHide={() => {
-          if (!visible) return;
-          setVisible(false);
-        }}
-      >
-        <InnerImageZoom
-          src={`${process.env.NEXT_PUBLIC_APP_IMAGE_API_URL}/${mainProductImage?.mainImage}`}
-          zoomSrc={`${process.env.NEXT_PUBLIC_APP_IMAGE_API_URL}/${mainProductImage?.zoomedImage}`}
-          zoomType='hover'
-          hideHint
-          width={650}
-          zoomScale={2}
-          hasSpacer={true}
-          zoomPreload={true}
-        />
-      </Dialog>
     </section>
   );
 };

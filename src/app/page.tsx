@@ -144,7 +144,7 @@ export default function Home() {
               <div className='carousel-caption center-content'>
                 <h2>{prodData?.t}</h2>
                 <h4>{prodData?.sdesc}</h4>
-                <button className='btn btn-saawree mt-2'>Shop Now</button>
+                <Link href={prodData?.url} className='btn btn-saawree mt-2'>Shop Now</Link>
               </div>
             </>
           )}
