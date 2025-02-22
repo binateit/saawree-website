@@ -434,10 +434,12 @@ const Page = () => {
                                 width={20}
                                 height={20}
                               />
-                              <span className='color-name'>
-                                {color.colorName}
-                                {index}{" "}
-                              </span>
+                              <Link
+                                href={`/readystock/details?productId=${color.productId}`}
+                                className='color-name'
+                              >
+                                {color.colorName}{" "}
+                              </Link>
                             </div>
                             {authStatus === "authenticated" && (
                               <>
