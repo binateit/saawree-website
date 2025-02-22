@@ -14,15 +14,15 @@ import { useSearchParams } from "next/navigation";
 
 const Page = () => {
   const searchParams = useSearchParams();
-  const orderId = searchParams?.get("orderId");
+  const trackingId = searchParams?.get("trackingId");
   const {
     data: orderDetails,
     // isLoading,
     isError,
   } = useQuery({
     queryKey: ["order-tracking"],
-    queryFn: () => getOrderTrackingByTracker(orderId || ""),
-    enabled: !!orderId,
+    queryFn: () => getOrderTrackingByTracker(trackingId || ""),
+    enabled: !!trackingId,
     refetchOnWindowFocus: false,
   });
   // if (!isLoading) return <Loading />;
