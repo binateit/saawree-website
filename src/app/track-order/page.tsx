@@ -58,7 +58,7 @@ const Page = () => {
             </div>
             <div className='form-group'>
               <div className='frg-lbl'>
-                <label htmlFor='password'>Email Id / Mobile No.</label>{" "}
+                <label htmlFor='password'>Mobile No.</label>{" "}
               </div>
               <input
                 type='text'
