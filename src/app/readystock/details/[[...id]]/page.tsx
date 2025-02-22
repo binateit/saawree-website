@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 "use client";
 import { formatCurrency } from "@/core/helpers/helperFunctions";
-import { getReadyStockRecomendedProducts, getRSProductDetails } from "@/core/requests/productsRequests";
+import { getRSProductDetails } from "@/core/requests/productsRequests";
 import { keepPreviousData, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useSession } from "next-auth/react";
 import { useRouter, useSearchParams } from "next/navigation";
@@ -9,13 +9,9 @@ import { Dropdown } from "primereact/dropdown";
 import React, { useState } from "react";
 import Image from "next/image";
 import { BsWhatsapp } from "react-icons/bs";
-import InnerImageZoom from "react-inner-image-zoom";
 import { createCart } from "@/core/requests/cartRequests";
 import { toast } from "react-toastify";
 import { useCartCount } from "@/core/context/useCartCount";
-import Slider from "react-slick";
-import "slick-carousel/slick/slick.css";
-import "slick-carousel/slick/slick-theme.css";
 import customLoader from "@/core/component/shared/image-loader";
 import Loading from "@/app/loading";
 import { TabPanel, TabView } from "primereact/tabview";
@@ -100,78 +96,6 @@ const Page = () => {
 
   if (isLoading) return <Loading />;
 
-
-  const collectionSettings = {
-    dots: false,
-    swipeToSlide: true,
-    draggable: true,
-    arrows: false,
-    infinite: false,
-    speed: 500,
-    slidesToShow: 4,
-    slidesToScroll: 1,
-    initialSlide: 0,
-    responsive: [
-      {
-        breakpoint: 1199,
-        settings: {
-          slidesToShow: 4,
-          slidesToScroll: 1,
-        },
-      },
-      {
-        breakpoint: 991,
-        settings: {
-          slidesToShow: 3,
-          slidesToScroll: 1,
-          initialSlide: 3,
-        },
-      },
-      {
-        breakpoint: 767,
-        settings: {
-          slidesToShow: 2,
-          slidesToScroll: 1,
-        },
-      },
-    ],
-  };
-
-  const productImagesThumbnails = {
-    dots: false,
-    swipeToSlide: true,
-    draggable: true,
-    arrows: true,
-    infinite: false,
-    speed: 500,
-    slidesToShow: 4,
-    slidesToScroll: 1,
-    initialSlide: 0,
-    responsive: [
-      {
-        breakpoint: 1199,
-        settings: {
-          slidesToShow: 4,
-          slidesToScroll: 1,
-        },
-      },
-      {
-        breakpoint: 991,
-        settings: {
-          slidesToShow: 3,
-          slidesToScroll: 1,
-          initialSlide: 3,
-        },
-      },
-      {
-        breakpoint: 767,
-        settings: {
-          slidesToShow: 3,
-          slidesToScroll: 1,
-        },
-      },
-    ],
-  };
 
   const responsiveOptions = [
     {

@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 "use client";
 import { formatCurrency } from "@/core/helpers/helperFunctions";
-import { CartDetails, Item, UpdateCartPayload } from "@/core/models/cartModel";
+import { UpdateCartPayload } from "@/core/models/cartModel";
 import underlineIcon from "@/assets/images/underlineIcon.png";
 import emptyCart from "@/assets/images/empty-cart.png";
 import {
@@ -27,14 +27,13 @@ const Page = () => {
   const { setCartCount, cartCount, cartData } = useCartCount();
   const queryClient = useQueryClient();
   const [cartItems, setCartItems] = useState<{ cartId: number; quantity: number }[]>([]);
-  const [isDirty, setIsDirty] = useState(false);
+  const [isDirty] = useState(false);
 
   const {
     attemptNavigation,
     isNavigating,
     confirmNavigation,
     cancelNavigation,
-    navigationType,
   } = usePreventNavigation({
     isDirty,
     onConfirmNavigation: () => {
