@@ -22,19 +22,11 @@ import Image from "next/image";
 import customLoader from "@/core/component/shared/image-loader";
 import usePreventNavigation from "@/core/context/usePreventNavigation";
 import ConfirmationChangesModal from "@/core/component/modal/ConfirmChangesModal";
+
 const Page = () => {
-  // const { status: authStatus } = useSession();
-  // const router = useRouter();
   const { setCartCount, cartCount, cartData } = useCartCount();
   const queryClient = useQueryClient();
-  const [cartDetails, setCartDetails] = useState<CartDetails | undefined>(
-    undefined
-  );
-  // if (authStatus === "unauthenticated") {
-  //   router.push("/auth/login");
-  //   toast.error("Please login to view your cart.");
-  // }
-
+  const [cartItems, setCartItems] = useState<{ cartId: number; quantity: number }[]>([]);
   const [isDirty, setIsDirty] = useState(false);
 
   const {
@@ -46,8 +38,6 @@ const Page = () => {
   } = usePreventNavigation({
     isDirty,
     onConfirmNavigation: () => {
-      // Optional: Reset form or perform cleanup
-      console.log("Navigation confirmed");
     },
   });
 
@@ -60,7 +50,7 @@ const Page = () => {
       setCartCount((cartCount as number) - 1);
     },
   });
-  console.log("navigationType ", navigationType);
+
   const { mutate: updateCart } = useMutation({
     mutationKey: ["updateItem"],
     mutationFn: (cart: UpdateCartPayload) => updateCartItems(cart),
@@ -75,138 +65,57 @@ const Page = () => {
     mutationFn: () => clearCart(),
     onSuccess: () => {
       toast.success("Cart cleared successfully.");
-      setCartDetails(undefined);
+      setCartItems([]);
       setCartCount(0);
     },
   });
 
   useEffect(() => {
     if (cartData) {
-      setCartDetails(cartData);
+      // Extract only productId and quantity
+      const extractedItems = cartData.items.map((item) => ({
+        cartId: item.cartId,
+        quantity: item.quantity,
+      }));
+      setCartItems(extractedItems);
     }
   }, [cartData]);
 
-  const handleCartItemsUpdate = async () => {
-    const result: { cartId: number; quantity: number }[] = [];
-    cartDetails?.items?.map((item) => {
-      result.push({
-        cartId: item.cartId,
-        quantity: item.quantity,
-      });
-    });
-    updateCart(result);
-  };
 
-  const handleQtyUpdate = async (item: Item, newQuantity: number) => {
-    if (isNaN(newQuantity) || newQuantity < 1) {
-      toast.error("Quantity must be a number greater than or equal to 1.");
+  const handleQtyUpdate = (cartId: number, newQuantity: number) => {
+    if (newQuantity < 1) {
+      toast.error("Quantity must be at least 1.");
       return;
     }
 
-    try {
-      const updatedCart = cartDetails?.items?.map((cartItem) => {
-        if (cartItem.cartId === item?.cartId) {
-          return {
-            ...cartItem,
-            quantity: newQuantity,
-            subTotal: cartItem.productPrice * newQuantity,
-          };
-        }
-        return cartItem;
-      });
-      setCartDetails((prevCartDetails: any) => ({
-        ...prevCartDetails,
-        items: updatedCart,
-        orderTotal: updatedCart?.reduce((acc, item) => acc + item.subTotal, 0),
-        orderTotalTaxInclusive: updatedCart?.reduce(
-          (acc, item) => acc + item.subTotal,
-          0
-        ),
-        totalTaxAmount: updatedCart?.reduce(
-          (acc, item) => acc + item.taxAmount,
-          0
-        ),
-      }));
-    } catch (error) {
-      toast.error("Error updating product quantity. Please try again.");
-      console.log(error);
-    }
-  };
-  const decreaseQuantity = async (item: Item) => {
-    if ((item.quantity ?? 1) > 1) {
-      const updatedCartDetails = cartDetails?.items?.map((cartItem) =>
-        cartItem.cartId === item.cartId
-          ? {
-              ...cartItem,
-              quantity: (cartItem?.quantity ?? 0) - 1,
-              subTotal:
-                (cartItem.productPrice ?? 0) * ((cartItem.quantity ?? 0) - 1),
-              discountAmount:
-                ((cartItem?.subTotal ?? 0) * (cartItem?.discountPercent ?? 0)) /
-                100,
-              taxAmount:
-                ((cartItem?.subTotal ?? 0) * (cartItem?.taxPercent ?? 0)) / 100,
-            }
-          : cartItem
-      );
-      setCartDetails((prevCartDetails: any) => ({
-        ...prevCartDetails,
-        items: updatedCartDetails,
-        orderTotal: updatedCartDetails?.reduce(
-          (acc, item) => acc + item?.subTotal,
-          0
-        ),
-        orderTotalTaxInclusive: updatedCartDetails?.reduce(
-          (acc, item) => acc + item?.totalInclusiveTax,
-          0
-        ),
-        totalTaxAmount: updatedCartDetails?.reduce(
-          (acc, item) => acc + item.taxAmount,
-          0
-        ),
-      }));
-    }
-    setIsDirty(true);
+    setCartItems((prevItems) =>
+      prevItems.map((item) =>
+        item.cartId === cartId ? { ...item, quantity: newQuantity } : item
+      )
+    );
   };
 
-  const increaseQuantity = async (item: Item) => {
-    const updatedCartDetails = cartDetails?.items?.map((cartItem) =>
-      cartItem.cartId === item.cartId
-        ? {
-            ...cartItem,
-            quantity: (cartItem.quantity ?? 0) + 1,
-            subTotal:
-              (cartItem.productPrice ?? 0) * ((cartItem?.quantity ?? 0) + 1),
-            discountAmount:
-              ((cartItem?.subTotal ?? 0) * (cartItem?.discountPercent ?? 0)) /
-              100,
-            taxAmount:
-              ((cartItem?.subTotal ?? 0) * (cartItem?.taxPercent ?? 0)) / 100,
-          }
-        : cartItem
+  /** Increment & Decrement Quantity */
+  const updateQuantity = (cartId: number, increment: boolean) => {
+    setCartItems((prevItems) =>
+      prevItems.map((item) =>
+        item.cartId === cartId
+          ? { ...item, quantity: item.quantity + (increment ? 1 : -1) }
+          : item
+      )
     );
-    setCartDetails((prevCartDetails: any) => ({
-      ...prevCartDetails,
-      items: updatedCartDetails,
-      orderSubTotal: updatedCartDetails?.reduce(
-        (acc, item) => acc + item.subTotal,
-        0
-      ),
-      orderTotal: updatedCartDetails?.reduce(
-        (acc, item) => acc + item?.subTotal - item?.discountAmount,
-        0
-      ),
-      orderTotalTaxInclusive: updatedCartDetails?.reduce(
-        (acc, item) => acc + item?.totalInclusiveTax,
-        0
-      ),
-      totalTaxAmount: updatedCartDetails?.reduce(
-        (acc, item) => acc + item?.taxAmount,
-        0
-      ),
-    }));
-    setIsDirty(true);
   };
+
+  /** Update Cart API Call */
+  const handleCartUpdate = () => {
+    const payload: UpdateCartPayload = cartItems.map(({ cartId, quantity }) => ({
+      cartId,
+      quantity,
+    }));
+
+    updateCart(payload);
+  };
+
 
   return (
     <section className='cart-page'>
@@ -224,11 +133,11 @@ const Page = () => {
           />
         </div>
 
-        {(cartDetails?.items?.length as number) > 0 ? (
+        {(cartItems?.length as number) > 0 ? (
           <>
             <div className='cart-wraper'>
               <div className='cart-wrapper-for-mobile d-md-none'>
-                {cartDetails?.items?.map((item) => (
+                {cartItems.map((item) => (
                   <div
                     className='cart-item-mobile border mb-2'
                     key={item?.cartId}
@@ -238,26 +147,23 @@ const Page = () => {
                         className='cart-product-image-mobile'
                         style={{ flex: "0 0 100px" }}
                       >
-                        <ProductImage
-                          url={`${process.env.NEXT_PUBLIC_APP_IMAGE_API_URL}/${item?.imagePath}`}
-                          className='fit-cover'
-                        />
+                        <ProductImage className='fit-cover' url={`${process.env.NEXT_PUBLIC_APP_IMAGE_API_URL}/${cartData?.items.find(i => i.cartId === item.cartId)?.imagePath}`} />
                       </div>
                       <div className='cart-product-details-mobile p-2'>
                         <Link
                           href={
-                            item?.orderType === 2
-                              ? `/maketoorder/details?productId=${item?.productId}`
-                              : `/readystock/details?productId=${item?.productId}`
+                            cartData?.items.find(i => i.cartId === item.cartId)?.orderType === 2
+                              ? `/maketoorder/details?productId=${cartData?.items.find(i => i.cartId === item.cartId)?.productId}`
+                              : `/readystock/details?productId=${cartData?.items.find(i => i.cartId === item.cartId)?.productId}`
                           }
                         >
-                          <h6 className='mb-2'>{item?.productName}</h6>
+                          <h6 className='mb-2'>{cartData?.items.find(i => i.cartId === item.cartId)?.productName}</h6>
                         </Link>
                         <p className='mb-0'>
-                          Unit : {formatCurrency(item?.productPrice)}
+                          Unit : {formatCurrency(cartData?.items.find(i => i.cartId === item.cartId)?.productPrice)}
                         </p>
                         <p className='mb-0 font-weight-bold'>
-                          Total : {formatCurrency(item?.subTotal)}
+                          Total : {formatCurrency(cartData?.items.find(i => i.cartId === item.cartId)?.subTotal)}
                         </p>
                       </div>
                     </div>
@@ -273,7 +179,7 @@ const Page = () => {
                           type='button'
                           className='minus'
                           aria-label='Decrease'
-                          onClick={() => decreaseQuantity(item)}
+                          onClick={() => updateQuantity(item.cartId, false)}
                         >
                           <BsDash />
                         </button>
@@ -281,25 +187,13 @@ const Page = () => {
                           type='number'
                           className='input-box'
                           value={item?.quantity}
-                          min='1'
-                          max='10'
-                          onChange={(e) => {
-                            const data = parseInt(e.target.value);
-                            if (data < 10000) {
-                              const value =
-                                e.target.value === undefined
-                                  ? 0
-                                  : parseInt(e.target.value);
-                              handleQtyUpdate(item, value);
-                            }
-                          }}
+                          min="1"
+                          onChange={(e) => handleQtyUpdate(item.cartId, Number(e.target.value))}
                         />
                         <button
                           className='plus'
                           aria-label='Increase'
-                          onClick={() => {
-                            increaseQuantity(item);
-                          }}
+                          onClick={() => updateQuantity(item.cartId, true)}
                         >
                           <BsPlus />
                         </button>
@@ -321,12 +215,12 @@ const Page = () => {
                     </tr>
                   </thead>
                   <tbody>
-                    {cartDetails?.items?.map((item) => (
+                    {cartItems.map((item) => (
                       <tr key={item?.cartId}>
                         <td>
                           <div className='selected-prod-img'>
                             <ProductImage
-                              url={`${process.env.NEXT_PUBLIC_APP_IMAGE_API_URL}/${item?.imagePath}`}
+                              url={`${process.env.NEXT_PUBLIC_APP_IMAGE_API_URL}/${cartData?.items.find(i => i.cartId === item.cartId)?.imagePath}`}
                             />
                           </div>
                         </td>
@@ -334,23 +228,23 @@ const Page = () => {
                           <div className='selected-product'>
                             <Link
                               href={
-                                item?.orderType === 2
-                                  ? `/maketoorder/details?productId=${item?.productId}`
-                                  : `/readystock/details?productId=${item?.productId}`
+                                cartData?.items.find(i => i.cartId === item.cartId)?.orderType === 2
+                                  ? `/maketoorder/details?productId=${cartData?.items.find(i => i.cartId === item.cartId)?.productId}`
+                                  : `/readystock/details?productId=${cartData?.items.find(i => i.cartId === item.cartId)?.productId}`
                               }
                             >
-                              {item?.productName}
+                              {cartData?.items.find(i => i.cartId === item.cartId)?.productName}
                             </Link>
                           </div>
                         </td>
-                        <td>{formatCurrency(item?.productPrice)}</td>
+                        <td>{formatCurrency(cartData?.items.find(i => i.cartId === item.cartId)?.productPrice)}</td>
                         <td>
                           <div className='quantity'>
                             <button
                               type='button'
                               className='minus'
                               aria-label='Decrease'
-                              onClick={() => decreaseQuantity(item)}
+                              onClick={() => updateQuantity(item.cartId, false)}
                             >
                               <BsDash />
                             </button>
@@ -359,30 +253,18 @@ const Page = () => {
                               className='input-box'
                               value={item?.quantity}
                               min='1'
-                              max='10'
-                              onChange={(e) => {
-                                const data = parseInt(e.target.value);
-                                if (data < 10000) {
-                                  const value =
-                                    e.target.value === undefined
-                                      ? 0
-                                      : parseInt(e.target.value);
-                                  handleQtyUpdate(item, value);
-                                }
-                              }}
+                              onChange={(e) => handleQtyUpdate(item.cartId, Number(e.target.value))}
                             />
                             <button
                               className='plus'
                               aria-label='Increase'
-                              onClick={() => {
-                                increaseQuantity(item);
-                              }}
+                              onClick={() => updateQuantity(item.cartId, true)}
                             >
                               <BsPlus />
                             </button>
                           </div>
                         </td>
-                        <td>{formatCurrency(item?.subTotal)}</td>
+                        <td>{formatCurrency(cartData?.items.find(i => i.cartId === item.cartId)?.subTotal)}</td>
                         <td className='trash-box'>
                           <BsTrash
                             cursor={"pointer"}
@@ -402,7 +284,7 @@ const Page = () => {
                     </Link>
                     <button
                       className='btn btn-saawree'
-                      onClick={() => handleCartItemsUpdate()}
+                      onClick={() => handleCartUpdate()}
                     >
                       Update Cart
                     </button>
@@ -412,87 +294,16 @@ const Page = () => {
                     >
                       Clear Cart
                     </button>
+                    <button
+                      onClick={() => attemptNavigation("/checkout")}
+                      className='btn btn-saawree'
+                    >
+                      Proceed to Checkout
+                    </button>
                   </div>
                 </div>
               </div>
-              <div className='row justify-content-end mt-4'>
-                <div className='col-md-6'>
-                  <div className='cart-total'>
-                    <h4>Cart Totals</h4>
-                    <table className='table table-bordered cart-btn2'>
-                      <tbody>
-                        <tr className='cart-subtotal'>
-                          <th>Subtotal</th>
-                          <td>
-                            <span className='amount'>
-                              <span id='bk-cart-subtotal-price'>
-                                <span className='money'>
-                                  {formatCurrency(cartDetails?.orderSubTotal)}
-                                </span>
-                              </span>
-                            </span>
-                          </td>
-                        </tr>
-                        <tr className='cart-subtotal'>
-                          <th>Discount</th>
-                          <td>
-                            <span className='amount'>
-                              <span id='bk-cart-subtotal-price'>
-                                <span className='money'>
-                                  {cartDetails?.totalDiscountedPrice || 0 > 0
-                                    ? ` - ${formatCurrency(
-                                        cartDetails?.totalDiscountedPrice
-                                      )}`
-                                    : formatCurrency(
-                                        cartDetails?.totalDiscountedPrice
-                                      )}
-                                </span>
-                              </span>
-                            </span>
-                          </td>
-                        </tr>
-                        <tr className='cart-subtotal'>
-                          <th>Tax</th>
-                          <td>
-                            <span className='amount'>
-                              <span id='bk-cart-subtotal-price'>
-                                <span className='money'>
-                                  {formatCurrency(cartDetails?.totalTaxAmount)}
-                                </span>
-                              </span>
-                            </span>
-                          </td>
-                        </tr>
 
-                        <tr className='order-total'>
-                          <th>Grand Total</th>
-                          <td>
-                            <strong>
-                              <span className='amount'>
-                                <span id='bk-cart-subtotal-price'>
-                                  <span className='money'>
-                                    {formatCurrency(
-                                      cartDetails?.orderTotalTaxInclusive
-                                    )}
-                                  </span>
-                                </span>
-                              </span>
-                            </strong>
-                          </td>
-                        </tr>
-                      </tbody>
-                    </table>
-                    <div className='proceed-to-checkout'>
-                      <button
-                        onClick={() => attemptNavigation("/checkout")}
-                        className='btn btn-saawree'
-                      >
-                        Proceed to Checkout
-                      </button>
-                    </div>
-                  </div>
-                </div>
-              </div>
             </div>
           </>
         ) : (
