@@ -23,7 +23,7 @@ const ProductListCard = ({ product, session, type }: ProductsProps) => {
           ? `/maketoorder/details?productId=${product?.productId}`
           : `/readystock/details?productId=${product?.productId}`
       }
-      className='mb-3 border d-block'
+      className='mb-4 border d-block'
       key={product?.productId}
     >
       <div className='category-prod-box mb-0 d-flex'>
@@ -32,7 +32,7 @@ const ProductListCard = ({ product, session, type }: ProductsProps) => {
             url={`${process.env.NEXT_PUBLIC_APP_IMAGE_API_URL}/${product?.imagePath}`}
           />
         </div>
-        <div className='pt-3'>
+        <div className='pt-3 product-list-details'>
           <span className='text-dark'>{product?.categoryName}</span>
           <div className='prod-name2'>
             <p className='mb-0'>{product?.productName}</p>

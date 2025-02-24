@@ -42,7 +42,7 @@ const Page = () => {
           <h3 className='form-heading1'>
             Fill the details to track your order
           </h3>
-          <div className='login-form mt-3'>
+          <div className='login-form mt-3 box-shadow'>
             <div className='form-group'>
               <label htmlFor='username'>Order ID</label>
               <input

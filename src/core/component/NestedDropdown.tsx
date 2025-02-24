@@ -41,7 +41,7 @@ const NestedDropdown = ({
     return menuCategoryData
       .filter((cat) => cat.pcid === parentId)
       .map((cat) => (
-        <li key={cat.id} className='has_dropdown'>
+        <li key={cat.id} className='has_dropdown py-1 px-3 nav-link-item'>
           <div>
             <span onClick={() => handleNavigation(cat?.id, cat?.n)}>
               {" "}

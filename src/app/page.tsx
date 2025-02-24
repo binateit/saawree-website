@@ -67,7 +67,7 @@ export default function Home() {
     dots: false,
     swipeToSlide: true,
     draggable: true,
-    arrows: false,
+    arrows: true,
     infinite: false,
     speed: 500,
     slidesToShow: 3,
@@ -206,7 +206,7 @@ export default function Home() {
               />
             </div>
             {homePageData?.nal?.map((newArraival, index) => (
-              <div className='row mt-2' key={index}>
+              <div className='row' key={index}>
                 <div
                   className={`col-md-6 col-lg-6 mb-2 mt-2 mt-md-0 mb-md-0 ${
                     index / 2 == 0 ? "order-1" : "order-2"
@@ -294,7 +294,7 @@ export default function Home() {
       )}
 
       {/* <!----------- Middle Banner Section ----------> */}
-      <section className='banner-slider'>
+      <section className="mid-banner">
         <Galleria
           value={homePageData?.bl?.filter((t) => t.sid == 2)}
           numVisible={1}

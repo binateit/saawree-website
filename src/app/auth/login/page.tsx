@@ -34,7 +34,7 @@ const Page = () => {
     <section className='login-page'>
       <div className='container'>
         <h3 className='form-heading1'>Login</h3>
-        <form className='login-form'>
+        <form className='login-form box-shadow'>
           {alertMessage && (
             <div className='alert alert-danger' role='alert'>
               {alertMessage}

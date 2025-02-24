@@ -6,25 +6,25 @@ import underlineIcon from "@/assets/images/underlineIcon.png";
 import emptyCart from "@/assets/images/empty-cart.png";
 import {
   clearCart,
+  getCartDetails,
   removeCartItem,
   updateCartItems,
 } from "@/core/requests/cartRequests";
-import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import React, { useEffect, useState } from "react";
 import { BsDash, BsPlus, BsTrash } from "react-icons/bs";
 import { toast } from "react-toastify";
 // import { useSession } from "next-auth/react";
 // import { useRouter } from "next/navigation";
-import { useCartCount } from "@/core/context/useCartCount";
 import Link from "next/link";
 import ProductImage from "@/core/component/Products/ProductImage";
 import Image from "next/image";
 import customLoader from "@/core/component/shared/image-loader";
 import usePreventNavigation from "@/core/context/usePreventNavigation";
 import ConfirmationChangesModal from "@/core/component/modal/ConfirmChangesModal";
+import Loading from "../loading";
 
 const Page = () => {
-  const { setCartCount, cartCount, cartData } = useCartCount();
   const queryClient = useQueryClient();
   const [cartItems, setCartItems] = useState<{ cartId: number; quantity: number }[]>([]);
   const [isDirty] = useState(false);
@@ -40,13 +40,29 @@ const Page = () => {
     },
   });
 
+  const { data: cartData, isLoading } = useQuery({
+    queryKey: ["cartDetails"],
+    queryFn: () => getCartDetails(false),
+    refetchOnWindowFocus: false,
+  });
+
+  useEffect(() => {
+    if (cartData?.items) {
+      setCartItems(
+        cartData.items.map((item) => ({
+          cartId: item.cartId,
+          quantity: item.quantity,
+        }))
+      );
+    }
+  }, [cartData]);
+
   const { mutate: handleRemoveCartItem } = useMutation({
     mutationKey: ["removeItem"],
     mutationFn: (id: number) => removeCartItem(id),
     onSuccess: () => {
       toast.success("Item removed from cart successfully.");
       queryClient.invalidateQueries({ queryKey: ["cartDetails"] });
-      setCartCount((cartCount as number) - 1);
     },
   });
 
@@ -65,20 +81,12 @@ const Page = () => {
     onSuccess: () => {
       toast.success("Cart cleared successfully.");
       setCartItems([]);
-      setCartCount(0);
     },
   });
 
-  useEffect(() => {
-    if (cartData) {
-      // Extract only productId and quantity
-      const extractedItems = cartData.items.map((item) => ({
-        cartId: item.cartId,
-        quantity: item.quantity,
-      }));
-      setCartItems(extractedItems);
-    }
-  }, [cartData]);
+  if(isLoading) return <Loading />;
+
+ 
 
 
   const handleQtyUpdate = (cartId: number, newQuantity: number) => {

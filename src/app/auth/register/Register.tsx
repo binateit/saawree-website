@@ -163,7 +163,7 @@ const Registration = ({ updateStep, setUserId }: Props) => {
         <section className='register-page'>
           <div className='container'>
             <h3 className='form-heading1 mb-4'>Signup with Saawree</h3>
-            <form className='register-form' onSubmit={formik.handleSubmit}>
+            <form className='register-form box-shadow' onSubmit={formik.handleSubmit}>
               <div className='form-group'>
                 <div className='row'>
                   <div className='col-md-6 pr-md-1'>
