@@ -357,7 +357,7 @@ const Header = () => {
                                             }}
                                           >
                                             {subCat.n}{" "}
-                                            <i className='fas fa-angle-right' />
+                                            {/* <BsChevronRight fontSize={10} className='ml-2' /> */}
                                           </Link>
                                           <ul
                                             className={
@@ -384,7 +384,7 @@ const Header = () => {
                                                       );
                                                     }}
                                                   >
-                                                    {ssubCat.n}
+                                                    {ssubCat.n} 
                                                   </Link>
                                                 </li>
                                               ))}
@@ -741,14 +741,14 @@ const Header = () => {
                   navigate.push("/contact-us");
                   setShowResponsiveMenu(false);
                 }}
-                className='font-weight-bold small text-uppercase nav-link-item  py-1 px-3 d-block'
+                className='font-weight-bold small text-uppercase nav-link-item py-1 px-3 d-block'
               >
                 Contact
               </div>
             </li>
             {authStatus === "authenticated" && (
               <>
-                <li className='ml-3 mt-2 my-account-label'>My Account</li>
+                <li className='ml-3 mt-2 mb-2 font-weight-bold small text-uppercase'>My Account</li>
                 <li className='nav-link mb-2'>
                   <Link
                     href={`/${UserSession?.user?.userType}`}
