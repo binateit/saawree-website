@@ -16,7 +16,6 @@ import { BsDash, BsPlus, BsTrash } from "react-icons/bs";
 import { toast } from "react-toastify";
 // import { useSession } from "next-auth/react";
 // import { useRouter } from "next/navigation";
-import { useCartCount } from "@/core/context/useCartCount";
 import Link from "next/link";
 import ProductImage from "@/core/component/Products/ProductImage";
 import Image from "next/image";
@@ -64,7 +63,6 @@ const Page = () => {
     onSuccess: () => {
       toast.success("Item removed from cart successfully.");
       queryClient.invalidateQueries({ queryKey: ["cartDetails"] });
-      setCartCount((cartCount as number) - 1);
     },
   });
 
@@ -83,7 +81,6 @@ const Page = () => {
     onSuccess: () => {
       toast.success("Cart cleared successfully.");
       setCartItems([]);
-      setCartCount(0);
     },
   });
 
