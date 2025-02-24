@@ -8,6 +8,7 @@ import {
   BsBoxArrowRight,
   BsCart,
   BsChevronDown,
+  BsChevronRight,
   BsList,
   BsSearch,
   BsSpeedometer2,
@@ -159,7 +160,7 @@ const Header = () => {
                   <BsList
                     fontSize={25}
                     onClick={() => setShowResponsiveMenu(true)}
-                    // onClick={handleShow}
+                  // onClick={handleShow}
                   />
                 </span>
                 <Link href='/'>
@@ -175,9 +176,8 @@ const Header = () => {
               </div>
             </div>
             <div
-              className={`col-xl-8 col-lg-7 col-md-8 col-sm-12 d-none d-md-block order-3 order-md-2 ${
-                showMobileSearchBar ? "show" : " "
-              }`}
+              className={`col-xl-8 col-lg-7 col-md-8 col-sm-12 d-none d-md-block order-3 order-md-2 ${showMobileSearchBar ? "show" : " "
+                }`}
               id='product-search-bar'
             >
               <form className='search-form position-relative'>
@@ -247,9 +247,8 @@ const Header = () => {
                 </div>
 
                 <div
-                  className={`global-search-results ${
-                    (queryResult?.data?.length || 0) > 0 ? "border shadow" : ""
-                  } position-absolute w-100 bg-white`}
+                  className={`global-search-results ${(queryResult?.data?.length || 0) > 0 ? "border shadow" : ""
+                    } position-absolute w-100 bg-white`}
                 >
                   {showSearchDropDown &&
                     ((queryResult?.data?.length || 0) > 0 ? (
@@ -291,7 +290,7 @@ const Header = () => {
                     <BsList
                       fontSize={20}
                       onClick={() => setShow(true)}
-                      // onClick={handleShow}
+                    // onClick={handleShow}
                     />
                   </div>
                 )}
@@ -425,6 +424,7 @@ const Header = () => {
                                         }}
                                       >
                                         {subCat?.n}
+                                        <BsChevronRight fontSize={10} className='ml-2' />
                                       </Link>
                                       <ul className='sub_menu'>
                                         {menuCategoryData?.rsc
@@ -447,6 +447,7 @@ const Header = () => {
                                                 }}
                                               >
                                                 {ssubCat?.n}
+                                                {/* <BsChevronRight fontSize={10} className='ml-2' /> */}
                                               </Link>
                                             </li>
                                           ))}
@@ -712,7 +713,7 @@ const Header = () => {
                   )}
                 </li>
               ))}
-            <li className='nav-link mb-2 active'>
+            <li className='nav-link mb-2'>
               <div
                 onClick={() => {
                   navigate.push("/track-order");
@@ -723,7 +724,7 @@ const Header = () => {
                 Track Order
               </div>
             </li>
-            <li className='nav-link mb-2 active'>
+            <li className='nav-link mb-2'>
               <div
                 onClick={() => {
                   navigate.push("/order-process");
@@ -734,7 +735,7 @@ const Header = () => {
                 Order Process
               </div>
             </li>
-            <li className='nav-link mb-2 active'>
+            <li className='nav-link mb-2'>
               <div
                 onClick={() => {
                   navigate.push("/contact-us");
@@ -747,14 +748,14 @@ const Header = () => {
             </li>
             {authStatus === "authenticated" && (
               <>
-                <li className='mt-2 my-account-label'>My Account</li>
-                <li className='nav-link mb-2 active'>
+                <li className='ml-3 mt-2 my-account-label'>My Account</li>
+                <li className='nav-link mb-2'>
                   <Link
                     href={`/${UserSession?.user?.userType}`}
                     className='font-weight-bold small text-uppercase nav-link-item  py-1 px-3 d-block'
                     onClick={() => setShowResponsiveMenu(false)}
                   >
-                    Overview
+                    <span>Overview</span>
                   </Link>
                 </li>
                 <li className='mb-2 tab-has-dropdown nav-link cursor-pointer'>

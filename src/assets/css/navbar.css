@@ -36,6 +36,7 @@
   color: #3e3e3e;
   text-transform: capitalize;
   font-weight: 500;
+  text-align:left;
 }
 
 .main_menu ul li.mega_menu_dropdown .mega_menu a {
