@@ -100,19 +100,19 @@ const Page = () => {
   const responsiveOptions = [
     {
       breakpoint: '1024px',
+      numVisible: 5
+    },
+    {
+      breakpoint: '960px',
       numVisible: 4
     },
     {
-      breakpoint: '1430px',
+      breakpoint: '768px',
       numVisible: 3
     },
     {
-      breakpoint: '1200px',
-      numVisible: 3
-    },
-    {
-      breakpoint: '1000px',
-      numVisible: 2
+      breakpoint: '560px',
+      numVisible: 1
     }
   ];
 
@@ -136,7 +136,7 @@ const Page = () => {
   }
 
   const thumbnailTemplate = (item: ProductImage) => {
-    return <img src={`${process.env.NEXT_PUBLIC_APP_IMAGE_API_URL}/${item?.thumbnailImagePath}`} alt={response?.name} className="w-100" />
+    return <img src={`${process.env.NEXT_PUBLIC_APP_IMAGE_API_URL}/${item?.thumbnailImagePath}`} alt={response?.name} />
   }
 
   if (isLoading) return <Loading />;
@@ -145,14 +145,10 @@ const Page = () => {
       <div className='container'>
         <div className='row'>
           <div className='col-md-6'>
-            <Galleria 
-            value={response?.productImages} 
-            responsiveOptions={responsiveOptions} 
-            circular
-            numVisible={4} 
-            // style={{ maxWidth: '800px' }}
-            item={itemTemplate} 
-            thumbnail={thumbnailTemplate} />
+            <Galleria value={response?.productImages} responsiveOptions={responsiveOptions} circular numVisible={5} style={{ maxWidth: '800px' }}
+              item={itemTemplate} thumbnail={thumbnailTemplate} />
+
+
           </div>
           <div className='col-md-6'>
             <div className='product-details-wrapper'>
@@ -193,149 +189,80 @@ const Page = () => {
                   />
                 </div>
 
-                {(response?.colorList?.length as number) > 1 ? (
-                  <div className='product-color-options mt-4'>
-                    <div className='row option-heading'>
-                      <div className='col-xl-6 col-lg-6 col-md-12 col-sm-6'>
-                        <div className='d-flex'>
-                          <div className='moti-color options-title'>Colors</div>
-                          {/* <div className='stock options-title'>Stock</div> */}
+                {response?.colorList?.length ? (
+                  <div className="product-color-options mt-4">
+                    <div className="row option-heading">
+                      <div className="col-xl-6 col-lg-6 col-md-12 col-sm-6">
+                        <div className="d-flex">
+                          <div className="moti-color options-title">Colors</div>
                           {authStatus === "authenticated" && (
-                            <div className='color-quntity  options-title text-center'>
-                              Qty
-                            </div>
-                          )}
-                        </div>
-                      </div>
-                      <div className='col-xl-6 col-lg-6 col-md-12 col-sm-6 d-none d-sm-block d-md-none d-lg-block'>
-                        <div className='d-flex'>
-                          <div className='moti-color options-title'>Colors</div>
-                          {authStatus === "authenticated" && (
-                            <div className='color-quntity  options-title text-center'>
-                              Qty
-                            </div>
+                            <>
+                              <div className="stock options-title">Stock</div>
+                              <div className="color-quntity options-title text-center">Qty</div>
+                            </>
                           )}
                         </div>
                       </div>
                     </div>
-                    <div className='row'>
-                      {response?.colorList?.map((color, index) => (
-                        <div
-                          className='col-xl-6 col-lg-6 col-md-12 col-sm-6 mb-2'
-                          key={color?.colorId}
-                        >
-                          <div className='d-flex'>
-                            <div className='moti-color'>
+
+                    <div className="row">
+                      {response.colorList.map((color, index) => (
+                        <div className="col-xl-6 col-lg-6 col-md-12 col-sm-6 mb-4" key={color.colorId}>
+                          <div className="d-flex">
+                            {/* Color Image & Name */}
+                            <div className="moti-color">
                               <Image
                                 loader={customLoader}
-                                src={`${process.env.NEXT_PUBLIC_APP_IMAGE_API_URL}/${color?.imagePath}`}
-                                alt='color'
+                                src={`${process.env.NEXT_PUBLIC_APP_IMAGE_API_URL}/${color.imagePath}`}
+                                alt="color"
                                 width={20}
                                 height={20}
                               />
-                              <span className='color-name'>
-                                {color.colorName}{" "}
+                              <span onClick={() => handleRedirect(color.productId)} className="cursor-pointer color-name">
+                                {color.colorName}
                               </span>
                             </div>
 
+                            {/* Stock & Quantity Input for Authenticated Users */}
                             {authStatus === "authenticated" && (
-                              <div className='color-quntity'>
-                                <input
-                                  type='text'
-                                  className='quntity-input'
-                                  id={index.toString()}
-                                  defaultValue={0}
-                                  min={1}
-                                  max={99999}
-                                  onChange={(e) => {
-                                    const qty = parseInt(e.target.value);
-                                    if (qty < 0) {
-                                      e.target.value = "";
-                                    } else if (qty > 99999) {
-                                      e.target.value = "";
-                                    } else {
-                                      handleQuantityChange(
-                                        color.productId as number,
-                                        color.colorId as number,
-                                        qty
-                                      );
-                                    }
-                                  }}
-                                />
-                              </div>
+                              <>
+                                <div className="stock">{color.avaliableQuantity}</div>
+                                <div className="color-quntity">
+                                  <input
+                                    type="number"
+                                    className="quntity-input"
+                                    id={`qty-${index}`}
+                                    defaultValue={0}
+                                    min={1}
+                                    max={color.avaliableQuantity}
+                                    onChange={(e) => {
+                                      const qty = parseInt(e.target.value);
+                                      if (qty < 1 || qty > (color?.avaliableQuantity ?? 0)) {
+                                        e.target.value = "0";
+                                        toast.error("Quantity should be between 1 and available stock");
+                                      } else {
+                                        handleQuantityChange(color.productId, color.colorId, qty);
+                                      }
+                                    }}
+                                  />
+                                </div>
+                              </>
                             )}
                           </div>
+
+                          {/* Stock Errors */}
+                          {stockErrors
+                            ?.filter((se) => se.productId === color.productId)
+                            .map((err, i) => (
+                              <p className="text-danger mb-0" key={i}>
+                                {err.message}
+                              </p>
+                            ))}
                         </div>
                       ))}
                     </div>
                   </div>
-                ) : (
-                  <div className='row'>
-                    <div className='col-md-6'>
-                      <div className='product-color-options mt-4'>
-                        <div className='row option-heading'>
-                          <div className='col-md-12'>
-                            <div className='d-flex'>
-                              <div className='moti-color options-title'>
-                                Colors
-                              </div>
-
-                              {authStatus === "authenticated" && (
-                                <div className='color-quntity  options-title text-center'>
-                                  Qty
-                                </div>
-                              )}
-                            </div>
-                          </div>
-                        </div>
-
-                        {response?.colorList?.map((color, index) => (
-                          <div className='d-flex' key={color?.colorId}>
-                            <div className='moti-color'>
-                              <Image
-                                loader={customLoader}
-                                src={`${process.env.NEXT_PUBLIC_APP_IMAGE_API_URL}/${color?.imagePath}`}
-                                alt='color'
-                                width={20}
-                                height={20}
-                              />
-                              <span className='color-name'>
-                                {color.colorName}{" "}
-                              </span>
-                            </div>
-
-                            {authStatus === "authenticated" && (
-                              <div className='color-quntity'>
-                                <input
-                                  type='text'
-                                  className='quntity-input'
-                                  id={index.toString()}
-                                  defaultValue={0}
-                                  min={1}
-                                  max={99999}
-                                  onChange={(e) => {
-                                    const qty = parseInt(e.target.value);
-                                    if (qty < 0) {
-                                      e.target.value = "";
-                                    } else if (qty > 99999) {
-                                      e.target.value = "";
-                                    } else {
-                                      handleQuantityChange(
-                                        color.productId as number,
-                                        color.colorId as number,
-                                        qty
-                                      );
-                                    }
-                                  }}
-                                />
-                              </div>
-                            )}
-                          </div>
-                        ))}
-                      </div>
-                    </div>
-                  </div>
-                )}
+                ) : null}
 
 
                 {authStatus === "authenticated" &&
