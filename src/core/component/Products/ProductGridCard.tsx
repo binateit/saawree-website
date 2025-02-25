@@ -23,8 +23,10 @@ const ProductGridCard = ({ product, session, type }: ProductsProps) => {
             ? `/maketoorder/details?productId=${product?.productId}`
             : `/readystock/details?productId=${product?.productId}`
         }
+        className="h-100"
+        style={{width: '100%', display: 'inline-block'}}
       >
-        <div className='category-prod-box border'>
+        <div className='category-prod-box border h-100'>
           <div className='prod-img-bx1'>
             <ProductImage
               url={`${process.env.NEXT_PUBLIC_APP_IMAGE_API_URL}/${product?.imagePath}`}
@@ -33,7 +35,7 @@ const ProductGridCard = ({ product, session, type }: ProductsProps) => {
           </div>
           <div className='p-2'>
             <div className='prod-name2'>
-              <p className='mb-0'>{product?.productName}</p>
+              <p className='mb-0 text-ellips-2'>{product?.productName}</p>
               <p className='mb-0'>
                 <small>Design Number: {product?.productGroupName}</small>
               </p>

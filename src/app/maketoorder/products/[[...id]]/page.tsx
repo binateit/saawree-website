@@ -360,7 +360,7 @@ const Page = () => {
                       <div className='row'>
                         {response?.data?.map((product) => (
                           <div
-                            className='col-6 col-sm-6 col-md-4 col-lg-4'
+                            className='col-6 col-sm-6 col-md-4 col-lg-4 mb-4'
                             key={product?.productId}
                           >
                             <ProductGridCard

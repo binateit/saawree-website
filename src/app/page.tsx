@@ -361,9 +361,10 @@ export default function Home() {
                       <Link
                         href={`/readystock/details?productId=${prodData?.pi}`}
                         key={prodData?.pi}
+                        className="h-100"
                       >
-                        <div className='products-box'>
-                          <div className='inner-box-wraper'>
+                        <div className='products-box h-100'>
+                          <div className='inner-box-wraper h-100'>
                             <div className='prod-img1'>
                               <ProductImage
                                 url={`${process.env.NEXT_PUBLIC_APP_IMAGE_API_URL}/${prodData?.ip}`}
@@ -371,7 +372,10 @@ export default function Home() {
                               />
                             </div>
                             <div className='prod-name1 text-dark'>
-                              {prodData?.pn} <br />{" "}
+                              <div className=" text-ellips-2">
+                                {prodData?.pn}
+                              </div>
+
                               <small className='text-dark'>
                                 Design Number: {prodData?.pgn}
                               </small>

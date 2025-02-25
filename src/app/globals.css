@@ -976,15 +976,15 @@ ul.sub-menu {
 }
 
 .category-prod-box {
-    margin-bottom: 30px;
+    /* margin-bottom: 30px; */
     border-radius: 0.25rem;
 }
 
 .prod-name2 {
     /* padding: 10px 0px; */
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
+    /* white-space: nowrap; */
+    /* overflow: hidden;
+    text-overflow: ellipsis; */
 }
 
 .prod-name2 a {
