@@ -163,6 +163,7 @@ const Page = () => {
                               ? `/maketoorder/details?productId=${cartData?.items.find(i => i.cartId === item.cartId)?.productId}`
                               : `/readystock/details?productId=${cartData?.items.find(i => i.cartId === item.cartId)?.productId}`
                           }
+                          className="text-saawree"
                         >
                           <h6 className='mb-2'>{cartData?.items.find(i => i.cartId === item.cartId)?.productName}</h6>
                         </Link>
@@ -285,7 +286,7 @@ const Page = () => {
               </div>
               <div className='row'>
                 <div className='col-md-12'>
-                  <div className='cart-pg-btn'>
+                  <div className='cart-pg-btn d-flex flex-wrap column-2'>
                     <Link href={"/"} className='btn btn-saawree'>
                       Continue Shopping
                     </Link>
