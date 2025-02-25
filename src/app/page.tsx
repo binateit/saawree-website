@@ -190,108 +190,109 @@ export default function Home() {
       {/* <!------New Arrivals-------> */}
       {(homePageData?.nal?.filter((nl) => nl?.prods?.length > 0)
         ?.length as number) > 0 && (
-        <section className='new-arrivals'>
-          <div className='container'>
-            <div className='titlehome'>
-              <h1>NEW ARRIVALS</h1>
-            </div>
-            <div className='title-septer'>
-              <Image
-                loader={customLoader}
-                src={underlineIcon?.src}
-                className='img-fluid'
-                width={120}
-                height={20}
-                alt=''
-              />
-            </div>
-            {homePageData?.nal?.map((newArraival, index) => (
-              <div className='row' key={index}>
-                <div
-                  className={`col-md-6 col-lg-6 mb-2 mt-2 mt-md-0 mb-md-0 ${
-                    index / 2 == 0 ? "order-1" : "order-2"
-                  }`}
-                >
-                  <Slider {...newArrivalsSettings}>
-                    {newArraival?.prods?.map((prodData) => (
-                      <Link
-                        href={`/readystock/details?productId=${prodData?.pi}`}
-                        key={prodData?.pi}
-                      >
-                        <div className='products-box h-100'>
-                          <div className='inner-box-wraper new-arrival-box h-100'>
-                            <div className='prod-img1'>
-                              <ProductImage
-                                url={`${process.env.NEXT_PUBLIC_APP_IMAGE_API_URL}/${prodData?.ip}`}
-                                className={"auto-fit"}
-                              />
-                            </div>
-                            <div className='prod-name1 text-dark'>
-                              {prodData?.pn} <br />{" "}
-                              <small className='text-dark'>
-                                Design Number :{prodData?.pgn}
-                              </small>
-                            </div>
-                            {/* <p>{JSON.stringify(prodData)}</p> */}
-                            <div className='prod-rate1 '>
-                              {status === "authenticated" ? (
-                                <>
-                                  <div className='d-flex justify-content-between align-items-center'>
-                                    <div className=''>
-                                      {/* <span className='mrp'>
+          <section className='new-arrivals'>
+            <div className='container'>
+              <div className='titlehome'>
+                <h1>NEW ARRIVALS</h1>
+              </div>
+              <div className='title-septer'>
+                <Image
+                  loader={customLoader}
+                  src={underlineIcon?.src}
+                  className='img-fluid'
+                  width={120}
+                  height={20}
+                  alt=''
+                />
+              </div>
+              {homePageData?.nal?.map((newArraival, index) => (
+                <div className='row mt-md-4' key={index}>
+                  <div
+                    className={`col-md-6 col-lg-6 mb-2 mt-2 mt-md-0 mb-md-0 ${index / 2 == 0 ? "order-1" : "order-2"
+                      }`}
+                  >
+                    <Slider {...newArrivalsSettings}>
+                      {newArraival?.prods?.map((prodData) => (
+                        <Link
+                          href={`/readystock/details?productId=${prodData?.pi}`}
+                          key={prodData?.pi}
+                          className="h-100"
+                        >
+                          <div className='products-box h-100'>
+                            <div className='inner-box-wraper new-arrival-box h-100'>
+                              <div className='prod-img1'>
+                                <ProductImage
+                                  url={`${process.env.NEXT_PUBLIC_APP_IMAGE_API_URL}/${prodData?.ip}`}
+                                  className={"auto-fit"}
+                                />
+                              </div>
+                              <div className='prod-name1 text-dark'>
+                                <div className="text-ellips-2">
+                                  {prodData?.pn}
+                                </div>
+                                <small className='text-dark'>
+                                  Design Number :{prodData?.pgn}
+                                </small>
+                              </div>
+                              {/* <p>{JSON.stringify(prodData)}</p> */}
+                              <div className='prod-rate1 '>
+                                {status === "authenticated" ? (
+                                  <>
+                                    <div className='d-flex justify-content-between align-items-center'>
+                                      <div className=''>
+                                        {/* <span className='mrp'>
                                     <s>₹200.00</s>
                                   </span> */}
-                                      <span className='seling'>
-                                        {formatCurrency(prodData?.pp)}
-                                      </span>
-                                    </div>
+                                        <span className='seling'>
+                                          {formatCurrency(prodData?.pp)}
+                                        </span>
+                                      </div>
 
-                                    <div
-                                      className='cart-link'
-                                      onClick={() =>
-                                        `/readystock/details?productId=${prodData?.pi}`
-                                      }
-                                    >
-                                      <div className='act-btn'>
-                                        <BsCart fontSize={20} />
+                                      <div
+                                        className='cart-link'
+                                        onClick={() =>
+                                          `/readystock/details?productId=${prodData?.pi}`
+                                        }
+                                      >
+                                        <div className='act-btn'>
+                                          <BsCart fontSize={20} />
+                                        </div>
                                       </div>
                                     </div>
-                                  </div>
-                                </>
-                              ) : (
-                                ""
-                              )}
+                                  </>
+                                ) : (
+                                  ""
+                                )}
+                              </div>
                             </div>
                           </div>
-                        </div>
-                      </Link>
-                    ))}
-                  </Slider>
-                </div>
-                <div
-                  className={`col-md-6 col-lg-6  ${
-                    index / 2 == 0 ? "order-2" : "order-1"
-                  }`}
-                >
-                  <div className='shine h-100 mb-2 md-pb-0'>
-                    <ProductImage
-                      url={`${process.env.NEXT_PUBLIC_APP_IMAGE_API_URL}/${newArraival?.ip}`}
-                      className={"product-banner"}
-                    />
-                    {/* <Image
+                        </Link>
+                      ))}
+                    </Slider>
+                  </div>
+                  <div
+                    className={`col-md-6 col-lg-6  ${index / 2 == 0 ? "order-2" : "order-1"
+                      }`}
+                  >
+                    <div className='shine h-100 mb-2 md-pb-0'>
+                      <ProductImage
+                        url={`${process.env.NEXT_PUBLIC_APP_IMAGE_API_URL}/${newArraival?.ip}`}
+                        className={"product-banner"}
+                      />
+                      {/* <Image
                     width={500}
                     height={500}
                     src={`${process.env.NEXT_PUBLIC_APP_IMAGE_API_URL}/${newArraival?.ip}`}
                     className='product-banner'
                     alt={`product-banner ${index + 1}`}
                   /> */}
+                    </div>
                   </div>
                 </div>
-              </div>
-            ))}
-          </div>
-        </section>
-      )}
+              ))}
+            </div>
+          </section>
+        )}
 
       {/* <!----------- Middle Banner Section ----------> */}
       <section className="mid-banner">

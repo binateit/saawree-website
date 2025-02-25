@@ -553,6 +553,14 @@ ul.sub-menu {
     margin-bottom: 50px;
 }
 
+.text-ellips-2 {
+    -webkit-line-clamp: 2;
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+}
+
 .prod-name1 {
     text-align: left;
     margin: 8px 0px 0px;
@@ -3158,16 +3166,18 @@ label .span {
         display: none;
     }
 
-    .category-sec, .new-arrivals{
-        margin-bottom:30px;
+    .category-sec,
+    .new-arrivals {
+        margin-bottom: 30px;
     }
 
-    .collections, .testimonials{
-        margin-top:30px;
+    .collections,
+    .testimonials {
+        margin-top: 30px;
     }
 
-    .new-arrivals .container .row .order-1{
-        margin-top:10px;
+    .new-arrivals .container .row .order-1 {
+        margin-top: 10px;
     }
 
     .action-btns {
@@ -3341,11 +3351,14 @@ label .span {
         display: block;
     }
 
-    .banner-slider .p-galleria-item, .mid-banner .p-galleria-item{
-        aspect-ratio: 6/5!important;
+    .banner-slider .p-galleria-item,
+    .mid-banner .p-galleria-item {
+        aspect-ratio: 6/5 !important;
     }
-    .banner-slider .p-galleria-item img, .mid-banner .p-galleria-item img{
-       object-fit: cover;
+
+    .banner-slider .p-galleria-item img,
+    .mid-banner .p-galleria-item img {
+        object-fit: cover;
     }
 }
 
@@ -3377,7 +3390,7 @@ label .span {
         padding-bottom: 10px;
     }
 
-    
+
     .carousel-caption.center-content {
         top: 40%;
     }
@@ -4451,13 +4464,15 @@ select {
     transform: translateY(-50%);
 }
 
-.banner-slider .p-galleria-item{
+.banner-slider .p-galleria-item,
+.mid-banner .p-galleria-item {
     aspect-ratio: 22/8;
 }
-.p-galleria-item img{
-height:100%;
-width: 100%;
-object-fit: cover;
+
+.p-galleria-item img {
+    height: 100%;
+    width: 100%;
+    object-fit: cover;
 }
 
 /*-----Prime React Accordion-------*/
