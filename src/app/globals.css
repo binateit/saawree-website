@@ -4698,14 +4698,14 @@ select {
     position:relative;
 }
 
-.p-galleria-thumbnail-next>svg{
+.p-galleria-thumbnail-next>svg, .p-galleria-item-next>svg{
     display:none;
 }
 .p-galleria-thumbnail-next{
     position:absolute;
     right:0
 }
-.p-galleria-thumbnail-next::after{
+.p-galleria-thumbnail-next::after, .p-galleria-item-next::after{
     content: "" !important;
     background-image: url('../assets/images/arrow-right.png');
     height: 35px;
@@ -4717,14 +4717,14 @@ select {
     opacity: 1 !important;
     z-index: 99;
 }
-.p-galleria-thumbnail-prev>svg{
+.p-galleria-thumbnail-prev>svg, .p-galleria-item-prev>svg{
     display:none;
 }
 .p-galleria-thumbnail-prev{
     position:absolute;
     left: 0;
 }
-.p-galleria-thumbnail-prev::after{
+.p-galleria-thumbnail-prev::after, .p-galleria-item-prev::after{
     content: "" !important;
     background-image: url('../assets/images/arrow-left.png');
     height: 35px;
