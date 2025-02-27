@@ -1,6 +1,5 @@
 import "../../public/bootstrap/bootstrap.min.css";
 import "@/assets/css/navbar.css";
-import Header from "@/component/Header";
 import Footer from "@/component/Footer";
 import QueryProvider from "@/core/component/QueryProvider";
 import SessionProvider from "@/core/component/SessionProvider";
@@ -14,6 +13,8 @@ import Loading from "./loading";
 import { SpeedInsights } from "@vercel/speed-insights/next";
 import type { Metadata } from "next";
 import FavIcon from "../../public/favicon.ico";
+import ClientWrapper from "@/component/ClientWrapper"; 
+import { fetchMenuCategories } from "@/core/helpers/serverActions";
 
 export const metadata: Metadata = {
   title: {
@@ -22,11 +23,8 @@ export const metadata: Metadata = {
   },
 };
 
-export default async function RootLayout({
-  children,
-}: Readonly<{
-  children: React.ReactNode;
-}>) {
+export default async function RootLayout({ children }: { children: React.ReactNode }) {
+  const menuCategories = await fetchMenuCategories();
   return (
     <html lang='en'>
       <head>
@@ -42,8 +40,8 @@ export default async function RootLayout({
             <CartCountProvider>
               <PrimeReactProvider>
                 <SpeedInsights />
-                <Header />
-                <Suspense fallback={<Loading />}>{children}</Suspense>
+                <Suspense fallback={<Loading />}>
+                <ClientWrapper menuCategories={menuCategories}>{children}</ClientWrapper></Suspense>
                 <Footer />
                 <ToastContainer />
               </PrimeReactProvider>

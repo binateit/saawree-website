@@ -208,7 +208,7 @@ export default function Home() {
               {homePageData?.nal?.map((newArraival, index) => (
                 <div className='row mt-md-4' key={index}>
                   <div
-                    className={`col-md-6 col-lg-6 mb-2 mt-2 mt-md-0 mb-md-0 ${index / 2 == 0 ? "order-1" : "order-2"
+                    className={`col-md-6 col-lg-6 mb-2 mt-2 mt-md-0 mb-md-0 ${index % 2 === 0 ? "order-1" : "order-2"
                       }`}
                   >
                     <Slider {...newArrivalsSettings}>
@@ -271,7 +271,7 @@ export default function Home() {
                     </Slider>
                   </div>
                   <div
-                    className={`col-md-6 col-lg-6  ${index / 2 == 0 ? "order-2" : "order-1"
+                    className={`col-md-6 col-lg-6  ${index % 2 === 0 ? "order-2" : "order-1"
                       }`}
                   >
                     <div className='shine h-100 mb-2 md-pb-0'>
@@ -325,7 +325,6 @@ export default function Home() {
               />
               <div className='carousel-caption center-content'>
                 <h2>{prodData?.t}</h2>
-                <h4>{prodData.sid}</h4>
                 <button className='btn btn-saawree mt-2'>Shop Now</button>
               </div>
             </>

@@ -1,6 +1,6 @@
 import { AxiosResponse } from "axios";
 import axiosInstance from "../helpers/axiosInstance";
-import { HomePageResponse, MenuCaegoriesResponse } from "../models/homeModel";
+import { HomePageResponse, MenuCategoriesResponse } from "../models/homeModel";
 
 const API_URL = process.env.NEXT_PUBLIC_APP_STORE_API_URL;
 
@@ -19,13 +19,13 @@ const getHomePage = async (): Promise<HomePageResponse> => {
     });
 };
 
-const getMenuCategories = async (): Promise<MenuCaegoriesResponse> => {
+const getMenuCategories = async (): Promise<MenuCategoriesResponse> => {
   const headers = {
     tenant: "ho",
   };
   return await axiosInstance
-    .get<MenuCaegoriesResponse>(STORE_WEB_MENU_CAT, { headers: headers })
-    .then((response: AxiosResponse<MenuCaegoriesResponse>) => response.data)
+    .get<MenuCategoriesResponse>(STORE_WEB_MENU_CAT, { headers: headers })
+    .then((response: AxiosResponse<MenuCategoriesResponse>) => response.data)
     .catch((err) => {
       return err;
     });

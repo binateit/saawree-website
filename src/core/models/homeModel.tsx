@@ -52,7 +52,7 @@ export type Bl = {
   url: string;
 };
 
-export type MenuCaegoriesResponse = {
+export type MenuCategoriesResponse = {
   mtoc: Mtoc[];
   rsc: Mtoc[];
 };

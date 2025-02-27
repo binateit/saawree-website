@@ -4,6 +4,7 @@ import React, { useEffect, useState } from "react";
 import finalLogo from "@/assets/images/finalLogo.png";
 import appleStore from "@/assets/images/appleStore.png";
 import playStore from "@/assets/images/playStore.png";
+import clsx from 'clsx'
 import {
   BsBoxArrowRight,
   BsCart,
@@ -69,9 +70,10 @@ const Header = () => {
   };
 
   const { data: menuCategoryData } = useQuery({
-    queryKey: ["menuCategoryData"],
+    queryKey: ["menuCategoryData", authStatus],
     queryFn: () => getMenuCategories(),
     refetchOnWindowFocus: false,
+
   });
 
   const queryResult = useQuery({
@@ -332,7 +334,7 @@ const Header = () => {
                                     }
                                   >
                                     {cat.n}
-                                    <i className='fas fa-angle-right' />
+                                    <BsChevronRight fontSize={10} className='ml-2' />
                                   </Link>
                                   <ul
                                     className={
@@ -348,7 +350,9 @@ const Header = () => {
                                       .map((subCat, index) => (
                                         <li
                                           key={index}
-                                          className='has_dropdown'
+                                          className={clsx({
+                                            'has_dropdown': subCat.hc
+                                          })}
                                         >
                                           <Link
                                             href={`/maketoorder/products?subCategoryName=${subCat.n}&categoryId=${subCat?.id}`}
@@ -357,38 +361,41 @@ const Header = () => {
                                             }}
                                           >
                                             {subCat.n}{" "}
+                                            {subCat?.hc && <BsChevronRight fontSize={10} className='ml-2' />}
                                             {/* <BsChevronRight fontSize={10} className='ml-2' /> */}
                                           </Link>
-                                          <ul
-                                            className={
-                                              closeSubMenu
-                                                ? "sub_menu row category-menu open"
-                                                : "sub_menu row category-menu "
-                                            }
-                                          >
-                                            {menuCategoryData?.mtoc
-                                              .filter(
-                                                (ssubCat) =>
-                                                  ssubCat.pcid === subCat.id
-                                              )
-                                              .map((ssubCat, index) => (
-                                                <li
-                                                  key={index}
-                                                  className='sub-menu-col'
-                                                >
-                                                  <Link
-                                                    href={`/maketoorder/products?subCategoryName=${ssubCat.n}&categoryId=${ssubCat?.id}`}
-                                                    onClick={() => {
-                                                      setCloseSubMenu(
-                                                        !closeSubMenu
-                                                      );
-                                                    }}
+                                          {subCat?.hc &&
+                                            <ul
+                                              className={
+                                                closeSubMenu
+                                                  ? "sub_menu row category-menu open"
+                                                  : "sub_menu row category-menu "
+                                              }
+                                            >
+                                              {menuCategoryData?.mtoc
+                                                .filter(
+                                                  (ssubCat) =>
+                                                    ssubCat.pcid === subCat.id
+                                                )
+                                                .map((ssubCat, index) => (
+                                                  <li
+                                                    key={index}
+                                                    className='sub-menu-col'
                                                   >
-                                                    {ssubCat.n} 
-                                                  </Link>
-                                                </li>
-                                              ))}
-                                          </ul>
+                                                    <Link
+                                                      href={`/maketoorder/products?subCategoryName=${ssubCat.n}&categoryId=${ssubCat?.id}`}
+                                                      onClick={() => {
+                                                        setCloseSubMenu(
+                                                          !closeSubMenu
+                                                        );
+                                                      }}
+                                                    >
+                                                      {ssubCat.n}
+                                                    </Link>
+                                                  </li>
+                                                ))}
+                                            </ul>
+                                          }
                                         </li>
                                       ))}
                                   </ul>
@@ -416,7 +423,10 @@ const Header = () => {
                                 )
                                 .map((subCat) => (
                                   <React.Fragment key={subCat?.id}>
-                                    <li className='has_dropdown'>
+                                    <li
+                                      className={clsx({
+                                        'has_dropdown': subCat.hc
+                                      })}>
                                       <Link
                                         href={`/readystock/products?categoryName=${subCat.n}&categoryId=${subCat?.id}`}
                                         onClick={() => {
@@ -424,7 +434,7 @@ const Header = () => {
                                         }}
                                       >
                                         {subCat?.n}
-                                        <BsChevronRight fontSize={10} className='ml-2' />
+                                        {subCat?.hc && <BsChevronRight fontSize={10} className='ml-2' />}
                                       </Link>
                                       <ul className='sub_menu'>
                                         {menuCategoryData?.rsc
