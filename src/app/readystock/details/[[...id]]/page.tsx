@@ -136,7 +136,7 @@ const Page = () => {
   }
 
   const thumbnailTemplate = (item: ProductImage) => {
-    return <img src={`${process.env.NEXT_PUBLIC_APP_IMAGE_API_URL}/${item?.thumbnailImagePath}`} alt={response?.name} className="w-100" />
+    return <img src={`${process.env.NEXT_PUBLIC_APP_IMAGE_API_URL}/${item?.thumbnailImagePath}`} alt={response?.name} style={{width:'100%'}} />
   }
 
   if (isLoading) return <Loading />;
