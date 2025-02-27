@@ -69,9 +69,9 @@
   padding: 4px 0px;
 }
 
-.main_menu ul li ul li:last-child {
+/* .main_menu ul li ul li:last-child {
   border-bottom: none;
-}
+} */
 
 .main_menu ul li ul li a i {
   float: right;
